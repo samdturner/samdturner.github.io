@@ -10,4 +10,6 @@
   addEventListener('keyup', function (event) {
     delete A.currentlyPressed[event.keyCode];
   }, false);
+
+  //adding comments
 })();
