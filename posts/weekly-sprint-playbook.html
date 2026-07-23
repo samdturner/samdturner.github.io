@@ -45,6 +45,168 @@
     .sketch-fig .loop .plabel { font: 700 17px var(--hand); fill: #fff; }
     .sketch-fig .loop .center { font: 700 20px var(--hand); }
 
+    /* PostHog-style funnel (screenshot pinned in the notebook) */
+    .ph-anno { font-family: var(--hand); font-size: 1.05rem; text-align: center; line-height: 1.4; }
+    .ph-anno.good { color: #2fa96d; margin: 16px 0 0; }
+    .ph-anno.bad  { color: #e0563b; margin: 5px 0 0; }
+    .ph-card {
+      background: #fff; color: #1d1f27; border-radius: 10px; padding: 16px 18px 18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.18); border: 1px solid #e7e7ec;
+      transform: rotate(-0.5deg); font-size: 15px;
+    }
+    .ph-top {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      border-bottom: 1px solid #eee; padding-bottom: 9px; margin-bottom: 6px;
+    }
+    .ph-top .t { font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 6px; }
+    .ph-top .t::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: #1d4aff; display: inline-block; }
+    .ph-top .r { font-size: 0.8rem; color: #6b7280; }
+    .ph-top .r b { color: #1d1f27; }
+    .ph-step { margin: 13px 0 0; }
+    .ph-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.9rem; }
+    .ph-num {
+      width: 19px; height: 19px; flex: none; border-radius: 50%; border: 1px solid #d3d3da;
+      font-size: 0.7rem; color: #6b7280; display: flex; align-items: center; justify-content: center;
+    }
+    .ph-name { font-weight: 600; }
+    .ph-pv { color: #9ca3af; font-weight: 400; font-size: 0.82rem; }
+    .ph-dots { margin-left: auto; color: #c4c4cc; letter-spacing: 1px; }
+    .ph-bar { height: 32px; border-radius: 5px; background: #ececf1; overflow: hidden; display: flex; }
+    .ph-bar i { height: 100%; display: block; }
+    .ph-bar .b { background: #1d4aff; }
+    .ph-stats { font-size: 0.8rem; color: #566072; margin-top: 6px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .ph-stats b { color: #1d1f27; }
+    .ph-stats .done::before { content: "→ "; color: #2fa96d; font-weight: 700; }
+    .ph-stats .drop::before { content: "↘ "; color: #e0563b; font-weight: 700; }
+    .ph-step.activation .ph-bar { outline: 2px dashed #e0563b; outline-offset: 2px; }
+
+    /* before / after result chart */
+    .ba-title { font-family: var(--hand); font-size: 1.15rem; text-align: center; color: var(--ink); margin: 2px 0 20px; }
+    .ba-plot {
+      display: flex; align-items: flex-end; justify-content: center; gap: 64px;
+      border-bottom: 2px solid var(--track); max-width: 380px; margin: 0 auto;
+    }
+    .ba-col { display: flex; flex-direction: column; align-items: center; width: 92px; }
+    .ba-val { font-family: var(--hand); font-weight: 700; font-size: 1.9rem; line-height: 1; margin-bottom: 9px; }
+    .ba-col.before .ba-val { color: var(--ink-soft); }
+    .ba-col.after .ba-val { color: #1d4aff; }
+    .ba-mult { font-family: var(--hand); font-size: 0.95rem; color: #1d4aff; display: block; margin-top: 3px; }
+    .ba-bar { width: 68px; border-radius: 8px 8px 0 0; }
+    .ba-col.before .ba-bar { background: #9aa3b2; }
+    .ba-col.after .ba-bar { background: #1d4aff; }
+    .ba-labels { display: flex; justify-content: center; gap: 64px; margin-top: 9px; }
+    .ba-labels > div { width: 92px; text-align: center; }
+    .ba-labels b { font-family: var(--hand); font-weight: 700; font-size: 1.1rem; color: var(--ink); display: block; }
+    .ba-labels span { font-size: 0.78rem; color: var(--muted); }
+    .ba-note { text-align: center; font-size: 0.85rem; color: var(--muted); font-style: italic; margin: 18px auto 0; max-width: 440px; line-height: 1.5; }
+
+    /* Miro synthesis board (screenshot pinned in the notebook) */
+    .miro-card {
+      position: relative; background: #f7f8fa; color: #262626;
+      border: 1px solid #e2e3e8; border-radius: 10px; padding: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.18); transform: rotate(-0.4deg); overflow: hidden;
+      background-image: radial-gradient(#d9dbe1 1.1px, transparent 1.1px); background-size: 20px 20px;
+    }
+    .miro-title { font-weight: 700; font-size: 0.95rem; text-decoration: underline; text-underline-offset: 3px; margin: 2px 0 16px; color: #333; }
+    .miro-cols { display: flex; gap: 14px; flex-wrap: wrap; }
+    .miro-col { flex: 1 1 150px; min-width: 148px; }
+    .miro-head { background: #141414; color: #fff; font-weight: 700; font-size: 0.8rem; padding: 7px 10px; border-radius: 3px; box-shadow: 0 2px 5px rgba(0,0,0,.28); margin-bottom: 14px; }
+    .miro-sub { font-size: 0.78rem; color: #6b6f7a; margin: 2px 0 16px; }
+    .note {
+      position: relative; padding: 9px 10px; border-radius: 2px; font-size: 0.78rem;
+      line-height: 1.3; margin-bottom: 14px; box-shadow: 2px 3px 7px rgba(0,0,0,.16); color: #2a2a1f;
+      min-height: 80px; display: flex; flex-direction: column;
+    }
+    .note.y { background: #fbef8f; }
+    .note.g { background: #b6e388; }
+    .note.r { background: #f6a5a5; }
+    .note.b { background: #9cc0f7; }
+    .miro-col .note:nth-child(2) { transform: rotate(-1.1deg); }
+    .miro-col .note:nth-child(3) { transform: rotate(0.9deg); }
+    .miro-col .note:nth-child(4) { transform: rotate(-0.6deg); }
+    .miro-col .note:nth-child(5) { transform: rotate(1deg); }
+    .note .tag { font-weight: 800; font-size: 0.6rem; letter-spacing: .07em; text-transform: uppercase; opacity: .5; margin-bottom: 4px; }
+    .note .qt { font-style: italic; }
+    .note .attr { margin-top: auto; padding-top: 6px; font-size: 0.66rem; opacity: .6; }
+    .votes { position: absolute; top: -9px; left: -7px; display: flex; }
+    .votes i { width: 15px; height: 15px; border-radius: 50%; margin-right: -5px; border: 1.5px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+    .v-p { background: #6c3fd4; } .v-b { background: #3f8ae0; }
+    .miro-zoom { position: absolute; right: 10px; bottom: 9px; background: #fff; border: 1px solid #e2e2e7; border-radius: 8px; padding: 4px 9px; font-size: 0.72rem; color: #70737c; display: flex; gap: 9px; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+
+    /* prioritization board (scrappy Miro table) */
+    .miro-h { font-weight: 700; font-size: 0.98rem; text-decoration: underline; text-underline-offset: 3px; color: #333; margin: 2px 0 6px; }
+    .pscroll { overflow-x: auto; }
+    .ptable { display: grid; grid-template-columns: 26px auto auto auto auto; gap: 16px 18px; align-items: center; min-width: 430px; }
+    .pth { font-size: 0.64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #8a8f99; }
+    .note.o { background: #f4b06a; }
+    .ptable .note.o { width: 138px; min-height: 100px; box-sizing: border-box; justify-self: start; margin: 0; padding: 12px 13px; font-size: 0.82rem; font-weight: 600; transform: rotate(-1deg); }
+    .lvl { display: inline-block; min-width: 52px; padding: 11px 12px; border-radius: 2px; font-size: 0.73rem; font-weight: 700; text-align: center; box-shadow: 1.5px 3px 6px rgba(0,0,0,.2); color: #2a2a1f; transform: rotate(1.2deg); }
+    .lvl.g { background: #b6e388; } .lvl.y { background: #fbef8f; } .lvl.pk { background: #f6bcd6; } .lvl.gr { background: #e4e5e8; color: #7a7f88; }
+    .cost { font-family: var(--hand); color: #5a5a5a; font-size: 0.98rem; transform: rotate(-2deg); }
+    .pcheck { color: #1a8f57; font-size: 1.45rem; font-weight: 700; text-align: center; line-height: 1; }
+    .vrow { display: flex; gap: 3px; margin-bottom: 7px; }
+    .vrow i { width: 13px; height: 13px; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+
+    /* low-fi wireframe sketches */
+    .lofi { display: flex; flex-direction: column; gap: 22px; align-items: center; }
+    .lofi-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; }
+    .wf { width: 196px; }
+    .wf .chead { margin: 0 auto 8px; }
+    .wf-svg { width: 100%; height: auto; display: block; }
+    .wf-note { background: #d7c8f2; color: #2c2545; padding: 12px 14px; border-radius: 2px; box-shadow: 2px 4px 10px rgba(0,0,0,.2); font-size: 0.86rem; font-weight: 600; max-width: 182px; transform: rotate(-2deg); }
+    .lofi-row:nth-child(even) .wf-note { transform: rotate(1.6deg); }
+    .wf-note b { font-weight: 800; }
+    .wf-svg .wire { stroke: var(--ink); }
+    .wf-svg .fillg { fill: color-mix(in srgb, var(--ink) 9%, transparent); }
+    .wf-svg .wt { fill: var(--ink); font: 700 10px var(--hand); }
+    .wf-svg .wt.sm { font: 700 8.5px var(--hand); }
+
+    /* concept header label (used by low-fi) */
+    .chead { background: #141414; color: #fff; font-weight: 700; font-size: 0.76rem; padding: 6px 11px; border-radius: 3px; box-shadow: 0 2px 5px rgba(0,0,0,.28); width: fit-content; }
+
+    /* final high-fidelity feedback screen */
+    .fbwrap { max-width: 512px; margin: 0 auto; color: #1f2933; }
+    .fbscreen { background: #fff; border: 1px solid #ecedef; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.14); overflow: hidden; }
+    .fbs-q { background: #eaf5f5; padding: 15px 17px; display: flex; gap: 12px; align-items: flex-start; }
+    .fbs-avatar { width: 42px; height: 42px; border-radius: 50%; flex: none; background: linear-gradient(135deg,#cfe3e0,#9fc3bd); box-shadow: 0 0 0 2px #fff, 0 0 0 3px #d7e6e4; }
+    .fbs-qlabel { font-size: 0.62rem; font-weight: 800; letter-spacing: .09em; color: #3b8a99; }
+    .fbs-qtext { font-weight: 700; font-size: 0.95rem; margin: 2px 0 4px; color: #182430; line-height: 1.3; }
+    .fbs-coach { font-size: 0.72rem; color: #9aa5ad; font-weight: 600; }
+    .fbs-body { padding: 15px 17px 4px; }
+    .fbs-mih { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .fbs-mic { width: 30px; height: 30px; border-radius: 50%; background: #f1f2f4; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; flex: none; }
+    .fbs-mih b { display: block; font-size: 0.85rem; }
+    .fbs-mih span { font-size: 0.71rem; color: #9aa5ad; }
+    .fbs-scorerow { display: flex; align-items: center; gap: 15px; margin-bottom: 17px; }
+    .fbs-level { font-size: 1.35rem; font-weight: 800; }
+    .fbs-metrics { display: flex; flex-direction: column; gap: 11px; margin-bottom: 15px; }
+    .fbs-mrow { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+    .fbs-mname { flex: 0 1 156px; min-width: 100px; color: #3a4650; display: flex; align-items: center; gap: 6px; }
+    .fbs-qi { width: 15px; height: 15px; border-radius: 50%; border: 1px solid #cfd5da; color: #aab2b8; font-size: 0.58rem; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+    .fbs-mtrack { flex: 1 1 80px; min-width: 64px; height: 8px; background: #eef0f2; border-radius: 5px; overflow: hidden; }
+    .fbs-mtrack > span { display: block; height: 100%; border-radius: 5px; }
+    .fbs-mval { flex: none; width: 24px; text-align: right; font-weight: 700; }
+    .fbs-item { border-top: 1px solid #eef0f2; padding: 13px 0; }
+    .fbs-ihead { display: flex; align-items: center; gap: 10px; }
+    .fbs-pill { background: #e7f5e0; color: #4e8a3a; font-weight: 800; font-size: 0.58rem; letter-spacing: .04em; padding: 4px 9px; border-radius: 20px; white-space: nowrap; }
+    .fbs-pill.lo { background: #fbe4d0; color: #bf6626; }
+    .fbs-isum { font-weight: 700; font-size: 0.86rem; color: #1f2933; flex: 1; }
+    .fbs-chev { color: #3b8a99; font-size: 1.2rem; line-height: 1; flex: none; align-self: center; }
+    .fbs-idetail { margin-top: 10px; font-size: 0.84rem; line-height: 1.55; color: #4a555f; }
+    .fbs-transcript { display: inline-flex; align-items: center; gap: 6px; margin: 13px 0 2px; color: #2f7d8c; font-weight: 600; font-size: 0.85rem; border-top: 1px solid #eef0f2; padding-top: 13px; width: 100%; box-sizing: border-box; }
+    .fbs-actions { display: flex; gap: 12px; margin-top: 12px; }
+    .fbs-btn { flex: 1; padding: 13px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,.08); }
+    .fbs-btn.ghost { background: #fff; border: 1px solid #dbe0e3; color: #3a4650; }
+    .fbs-btn.solid { background: #2f7d8c; color: #fff; }
+
+    /* requirements / review checklist */
+    .chead.mid { margin: 0 auto 12px; }
+    .checklist { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 0 auto; max-width: 620px; }
+    .ci { position: relative; flex: 0 1 205px; padding: 11px 13px 11px 38px; border-radius: 2px; box-shadow: 2px 3px 7px rgba(0,0,0,.16); font-size: 0.8rem; font-weight: 600; background: #fbef8f; color: #2a2a1f; }
+    .ci::before { content: "✓"; position: absolute; left: 12px; top: 11px; color: #2e8b3d; font-weight: 800; font-size: 1.15rem; line-height: 1; }
+    .ci.open { background: #ece7d4; color: #6b6550; }
+    .ci.open::before { content: "○"; color: #b3ab90; font-weight: 700; font-size: 1rem; top: 12px; }
+
     /* sticky-note week */
     .sketch-week { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; padding-top: 14px; }
     .sketch-week .sticky {
@@ -67,20 +229,28 @@
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="site-title" href="../index.html">Sam's Blog</a>
-      <p class="site-tagline">Thoughts, notes, and the occasional deep dive.</p>
-    </div>
-  </header>
+  <div class="post-layout">
+    <aside class="toc" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#the-weekly-sprint">The Weekly Sprint</a></li>
+        <li class="sub"><a href="#day-0">Day 0 · Last Friday</a></li>
+        <li class="sub"><a href="#day-1">Day 1 · Understand</a></li>
+        <li class="sub"><a href="#day-2">Day 2 · Prioritize</a></li>
+        <li class="sub"><a href="#day-3">Day 3 · Build</a></li>
+        <li class="sub"><a href="#day-4">Day 4 · Build more</a></li>
+        <li class="sub"><a href="#day-5">Day 5 · Ship</a></li>
+        <li><a href="#closing-thought">Closing Thought</a></li>
+      </ul>
+    </aside>
 
-  <main class="wrap">
-    <article class="post">
-      <p class="back"><a href="../index.html">&larr; All posts</a></p>
-      <h1 class="post-title">The Weekly Sprint Playbook: How We Got Our First Paying Customers</h1>
-      <time class="post-date" datetime="2026-07-23">July 23, 2026</time>
+    <main class="post-main">
+      <article class="post">
+        <p class="post-eyebrow">Sprint Playbook &middot; <time datetime="2026-07-23">July 23, 2026</time> &middot; 17 min read</p>
+        <h1 class="post-title">The Weekly Sprint Playbook: How We Got Our First Paying Customers</h1>
 
-      <h2>Introduction</h2>
+      <h2 id="introduction">Introduction</h2>
       <p>
         For most SaaS businesses, the risk of failure isn't "Can this be built?" With AI and
         vibe coding, building has never been easier or cheaper. The risk is running out of
@@ -131,38 +301,45 @@
           </svg>
         </div>
         <figcaption>
-          The weekly sprint loop: understand, prioritize, build, ship — then straight back to the
+          The weekly sprint loop: understand, prioritize, build, ship. Then straight back to the
           top. Each pass sharpens the next.
         </figcaption>
       </figure>
 
-      <h2>The Weekly Sprint</h2>
+      <h2 id="the-weekly-sprint">The Weekly Sprint</h2>
 
       <figure class="sketch-fig">
         <div class="paper">
           <div class="sketch-week">
             <div class="sticky" style="background:#cfe0ff">
-              <div class="e">🔍</div><div class="d">Mon</div><div class="t">Understand</div>
+              <div class="d">Mon</div><div class="t">Understand</div>
               <ul><li>Weekend data</li><li>Watch recordings</li><li>User interviews</li></ul>
             </div>
             <div class="sticky" style="background:#e0d5ff">
-              <div class="e">🗳️</div><div class="d">Tue</div><div class="t">Prioritize</div>
+              <div class="d">Tue</div><div class="t">Prioritize</div>
               <ul><li>Synthesize</li><li>Dot-vote</li><li>Pick the focus</li></ul>
             </div>
             <div class="sticky" style="background:#ffe6b8">
-              <div class="e">🔨</div><div class="d">Wed</div><div class="t">Build</div>
+              <div class="d">Wed</div><div class="t">Build</div>
               <ul><li>Timebox + sketch</li><li>High-fidelity</li><li>Book interviews</li></ul>
             </div>
             <div class="sticky" style="background:#c7f0e8">
-              <div class="e">📣</div><div class="d">Thu</div><div class="t">Build more</div>
+              <div class="d">Thu</div><div class="t">Build more</div>
               <ul><li>Keep building</li><li>Prep launch (ads)</li></ul>
             </div>
             <div class="sticky" style="background:#cdf0d6">
-              <div class="e">🚀</div><div class="d">Fri</div><div class="t">Ship</div>
+              <div class="d">Fri</div><div class="t">Ship</div>
               <ul><li>QA + analytics</li><li>Plan interviews</li><li>Ship it!</li></ul>
             </div>
+            <div class="sticky" style="background:#dfe1e5">
+              <div class="d">Sat</div><div class="t">Weekend</div>
+              <ul><li>Ads run</li><li>Data collects</li></ul>
+            </div>
+            <div class="sticky" style="background:#dfe1e5">
+              <div class="d">Sun</div><div class="t">Weekend</div>
+              <ul><li>Ads run</li><li>Data collects</li></ul>
+            </div>
           </div>
-          <div class="sketch-week-note">☕ weekend → ads run, data collects, and Monday's answers are waiting</div>
         </div>
         <figcaption>
           One week at a glance. Monday's learning flows all the way to Friday's ship. Then the
@@ -170,12 +347,12 @@
         </figcaption>
       </figure>
 
-      <h3>Day 0: Last Friday</h3>
+      <h3 id="day-0">Day 0: Last Friday</h3>
       <p>
         Every Friday, we ship a new version of the product. Everything below builds toward that.
       </p>
 
-      <h3>Day 1: Monday — Understand</h3>
+      <h3 id="day-1">Day 1: Monday — Understand</h3>
       <p>
         <strong>Quantitative review.</strong> By Monday morning, the weekend's usage data is
         waiting for us, which is exactly why we ship on Fridays. We dig into three questions:
@@ -190,8 +367,9 @@
         person hesitate, misclick, and give up tells you what broke.
       </p>
       <aside class="callout callout-example">
+        <span class="call-tag">From our sprint</span>
         <p>
-          <strong>From our sprint:</strong> The funnel told a clear story. Half the people who
+          The funnel told a clear story. Half the people who
           clicked our Google Ad completed signup, and half of those completed one practice
           question. But only 20% of those completed a second. Onboarding was working; activation
           wasn't. We defined activation as completing two practice attempts, and that became the
@@ -199,20 +377,44 @@
         </p>
       </aside>
 
-      <figure class="visual">
-        <div class="visual-frame">
-          <div class="visual-icon" aria-hidden="true">📉</div>
-          <span class="visual-badge">Suggested visual</span>
-          <p class="visual-title">The activation funnel</p>
+      <figure class="sketch-fig">
+        <div class="paper">
+          <div class="ph-card" role="img" aria-label="Activation funnel: 22 people landed, 11 (50%) signed up, 5 (23%) completed one practice question, and only 1 (5%) completed a second — the activation step.">
+            <div class="ph-top">
+              <span class="t">Activation funnel</span>
+              <span class="r">Total conversion rate: <b>4.55%</b></span>
+            </div>
+
+            <div class="ph-step">
+              <div class="ph-head"><span class="ph-num">1</span><span class="ph-name">Landing page</span><span class="ph-pv">Pageview</span><span class="ph-dots">···</span></div>
+              <div class="ph-bar"><i class="b" style="width:100%"></i></div>
+              <div class="ph-stats"><span><b>22 persons</b> entered</span></div>
+            </div>
+
+            <div class="ph-step">
+              <div class="ph-head"><span class="ph-num">2</span><span class="ph-name">Signed up</span><span class="ph-pv">Pageview</span><span class="ph-dots">···</span></div>
+              <div class="ph-bar"><i class="b" style="width:50%"></i></div>
+              <div class="ph-stats"><span class="done"><b>11 persons</b> (50%) completed</span><span class="drop"><b>11 persons</b> (50%) dropped off</span></div>
+            </div>
+
+            <div class="ph-step">
+              <div class="ph-head"><span class="ph-num">3</span><span class="ph-name">First practice question</span><span class="ph-pv">Pageview</span><span class="ph-dots">···</span></div>
+              <div class="ph-bar"><i class="b" style="width:22.73%"></i></div>
+              <div class="ph-stats"><span class="done"><b>5 persons</b> (22.73%) completed</span><span class="drop"><b>6 persons</b> (27.27%) dropped off</span></div>
+            </div>
+
+            <div class="ph-step activation">
+              <div class="ph-head"><span class="ph-num">4</span><span class="ph-name">Second practice question</span><span class="ph-pv">Pageview</span><span class="ph-dots">···</span></div>
+              <div class="ph-bar"><i class="b" style="width:4.55%"></i></div>
+              <div class="ph-stats"><span class="done"><b>1 person</b> (4.55%) completed</span><span class="drop"><b>4 persons</b> (18.18%) dropped off</span></div>
+            </div>
+          </div>
+          <p class="ph-anno good">✓ Onboarding held — half signed up.</p>
+          <p class="ph-anno bad">✗ Activation was the wall — ~1 in 5 came back for a second question. Our focus.</p>
         </div>
         <figcaption>
-          <strong>What would help:</strong> a funnel chart that makes the drop-off in the story
-          above instantly visible. Ideas:
-          <ul>
-            <li>Four descending bars: <em>Clicked ad → Completed signup (50%) → Completed 1 question (50% of those) → Completed 2 questions (20% of those)</em>.</li>
-            <li>Highlight the last step in red to flag it as the bottleneck the sprint will attack.</li>
-            <li>Optionally an annotation marking where "onboarding ends" and "activation begins."</li>
-          </ul>
+          Our real activation funnel, simplified. Signup held up, but the cliff at the second
+          practice question, the step we defined as activation, is where the sprint went to work.
         </figcaption>
       </figure>
       <p>
@@ -221,8 +423,9 @@
         two give us real clarity on what's working and what needs to improve.
       </p>
       <aside class="callout callout-tip">
+        <span class="call-tag">Pro tip</span>
         <p>
-          <strong>Pro tip:</strong> Interview the same customer segment that shows up in your
+          Interview the same customer segment that shows up in your
           quantitative data. When both come from the same people, they work together: the numbers
           show you a pattern, and the interviews tell you why it's happening. If the segments
           don't match, you'll get confusing results. Something looks great in interviews but
@@ -230,7 +433,7 @@
         </p>
       </aside>
 
-      <h3>Day 2: Tuesday — Synthesize &amp; Prioritize</h3>
+      <h3 id="day-2">Day 2: Tuesday — Synthesize &amp; Prioritize</h3>
       <p>
         <strong>Synthesize the learnings.</strong> We pull the key insights from everything we
         gathered on Monday: user interviews, PostHog data, and screen recordings. All of our
@@ -258,25 +461,46 @@
         picture is the foundation for setting the sprint's priorities.
       </p>
 
-      <figure class="visual">
-        <div class="visual-frame">
-          <div class="visual-icon" aria-hidden="true">🗒️</div>
-          <span class="visual-badge">Suggested visual</span>
-          <p class="visual-title">The Miro synthesis board</p>
+      <figure class="sketch-fig">
+        <div class="paper">
+          <div class="miro-card" role="img" aria-label="A Miro synthesis board with three columns. User interviews: detailed feedback is the product's edge, plus user quotes that the score is unclear and that they want an example of what to say, and a pain that they want clearer, actionable scores. Session recordings: people read the feedback, get confused, and leave, rarely attempt a second question, and long feedback goes unread. Quant from PostHog: half sign up but only about 1 in 5 attempts a second question, a big drop right after the first feedback, and the dot-voted theory that unclear feedback blocks the second try. That theory set the sprint's focus on redesigning feedback.">
+            <div class="miro-sub">silent review → dot-vote → discuss</div>
+            <div class="miro-cols">
+              <div class="miro-col">
+                <div class="miro-head">User interviews</div>
+                <div class="note g"><span class="votes"><i class="v-p"></i><i class="v-b"></i></span><span class="tag">Learning</span>Detailed feedback is our edge</div>
+                <div class="note y"><span class="tag">User quote</span><span class="qt">"I don't get why I got this score"</span><span class="attr">Yuliya, interview</span></div>
+                <div class="note y"><span class="tag">User quote</span><span class="qt">"Give me an example of what to say"</span><span class="attr">Marisa, interview</span></div>
+                <div class="note r"><span class="tag">Pain</span>Wants clearer, actionable scores</div>
+              </div>
+              <div class="miro-col">
+                <div class="miro-head">Session recordings</div>
+                <div class="note r"><span class="tag">Pain</span>Reads feedback, confused, leaves</div>
+                <div class="note y"><span class="tag">Fact</span>Feedback is a wall of text</div>
+                <div class="note r"><span class="tag">Pain</span>Rarely attempts a 2nd question</div>
+                <div class="note y"><span class="tag">Fact</span>Long feedback goes unread</div>
+              </div>
+              <div class="miro-col">
+                <div class="miro-head">Quant · PostHog</div>
+                <div class="note y"><span class="tag">Fact</span>50% sign up, onboarding is fine</div>
+                <div class="note r"><span class="votes"><i class="v-b"></i><i class="v-p"></i></span><span class="tag">Fact</span>Only ~1 in 5 tries a 2nd question</div>
+                <div class="note y"><span class="tag">Fact</span>Big drop right after first feedback</div>
+                <div class="note b"><span class="votes"><i class="v-p"></i><i class="v-b"></i></span><span class="tag">Theory</span>Unclear feedback blocks the 2nd try</div>
+              </div>
+            </div>
+          </div>
+          <p class="ph-anno good">→ This is what sent us into the feedback redesign on Wednesday.</p>
         </div>
         <figcaption>
-          <strong>What would help:</strong> a screenshot (or clean mock) of the actual board so
-          the silent-review-then-dot-vote ritual feels concrete. Ideas:
-          <ul>
-            <li>Sticky notes grouped into columns — Interviews, PostHog data, Screen recordings — with colored dot-votes clustered on the takeaways that won.</li>
-            <li>Blur or anonymize any real customer names if it's a genuine screenshot.</li>
-            <li>A short arrow/annotation calling out one "winning" sticky to connect it to the sprint focus.</li>
-          </ul>
+          The Monday synthesis, simplified. Interviews, recordings, and PostHog all pointed at the
+          same thing: people weren't coming back for a second question because the feedback was hard
+          to act on. That agreement, once dot-voted, set the sprint's focus.
         </figcaption>
       </figure>
       <aside class="callout callout-example">
+        <span class="call-tag">From our sprint</span>
         <p>
-          <strong>From our sprint:</strong> Past users had told us our honest, detailed feedback
+          Past users had told us our honest, detailed feedback
           was a key differentiator. But they also surfaced a problem. We scored candidates on four
           dimensions (substance, structure, conciseness, and delivery), and users weren't clear on
           what each metric meant, why they got the score they did, or how to improve on the next
@@ -285,8 +509,9 @@
         </p>
       </aside>
       <aside class="callout callout-tip">
+        <span class="call-tag">Pro tip</span>
         <p>
-          <strong>Pro tip:</strong> Hold off on pitching solutions until synthesis is done. People
+          Hold off on pitching solutions until synthesis is done. People
           get excited about what they've learned and want to jump straight to fixing things. That
           energy is good. The problem is timing. A solution pitched before everyone has seen the
           full picture invites debate. And every minute spent debating is a minute not spent
@@ -327,25 +552,52 @@
         building. When it was done, we returned to the list and picked the next one.
       </p>
 
-      <figure class="visual">
-        <div class="visual-frame">
-          <div class="visual-icon" aria-hidden="true">🔲</div>
-          <span class="visual-badge">Suggested visual</span>
-          <p class="visual-title">The cost / benefit / certainty prioritization</p>
+      <figure class="sketch-fig">
+        <div class="paper">
+          <div class="miro-card" role="img" aria-label="A scrappy Miro prioritization table. Columns: focus area, benefit, confidence, cost, with a green check on the pick. Clearer, deeper feedback: high benefit, high confidence, cost about two days, and it is the checked pick. Smoother path to the aha moment: medium benefit, medium confidence, low cost. Paywall urgency: medium benefit, medium confidence, medium cost. Onboarding drop-off: unknown benefit, unknown confidence, low cost. Clearer feedback is the only high-high, so it wins.">
+            <div class="miro-h">Possible focus areas this sprint</div>
+            <div class="pscroll">
+              <div class="ptable">
+                <div class="pth"></div><div class="pth">Focus area</div><div class="pth">Benefit</div><div class="pth">Confidence</div><div class="pth">Cost</div>
+
+                <div class="pcheck">✓</div>
+                <div class="note o"><span class="vrow"><i class="v-p"></i><i class="v-b"></i></span>Clearer, deeper feedback</div>
+                <div><span class="lvl g">High</span></div>
+                <div><span class="lvl g">High</span></div>
+                <div><span class="cost">~2 days</span></div>
+
+                <div class="pcheck"></div>
+                <div class="note o"><span class="vrow"><i class="v-b"></i><i class="v-p"></i></span>Smoother path to "aha"</div>
+                <div><span class="lvl y">Med</span></div>
+                <div><span class="lvl y">Med</span></div>
+                <div><span class="cost">low</span></div>
+
+                <div class="pcheck"></div>
+                <div class="note o"><span class="vrow"><i class="v-p"></i></span>Paywall urgency</div>
+                <div><span class="lvl y">Med</span></div>
+                <div><span class="lvl y">Med</span></div>
+                <div><span class="cost">med</span></div>
+
+                <div class="pcheck"></div>
+                <div class="note o">Onboarding drop-off</div>
+                <div><span class="lvl gr">?</span></div>
+                <div><span class="lvl pk">Unknown</span></div>
+                <div><span class="cost">low</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="ph-anno good">→ The only high-benefit, high-confidence option: the feedback redesign wins the week.</p>
         </div>
         <figcaption>
-          <strong>What would help:</strong> a diagram that shows how focus areas get ranked on the
-          three dials mentioned. Ideas:
-          <ul>
-            <li>A 2×2 matrix — <em>cost (low→high)</em> vs <em>benefit (low→high)</em> — with each candidate plotted as a dot, and the dot's size or shade encoding <em>certainty</em>. The top-left "high benefit, low cost" quadrant is the target.</li>
-            <li>Place real example items on it (e.g. "feedback redesign") so readers see the judgment in action.</li>
-            <li>Alternatively, a simple ranked list with three little meters (cost / benefit / certainty) beside each item.</li>
-          </ul>
+          Tuesday's prioritization, simplified. Each candidate weighed on benefit, our confidence,
+          and cost. Clearer feedback was the only high-and-high option, so it got the check and
+          became the week's build.
         </figcaption>
       </figure>
       <aside class="callout callout-tip">
+        <span class="call-tag">Pro tip</span>
         <p>
-          <strong>Pro tip:</strong> One thing that accelerated our progress: our engineer (me) was
+          One thing that accelerated our progress: our engineer (me) was
           in the room. I could estimate the cost of each change on the spot, so there was no back
           and forth. We made informed decisions in real time. If your engineers aren't part of
           prioritization, cost estimates become guesses or follow-up conversations, and either one
@@ -353,7 +605,7 @@
         </p>
       </aside>
 
-      <h3>Day 3: Wednesday — Design, Build, &amp; Schedule User Interviews</h3>
+      <h3 id="day-3">Day 3: Wednesday — Design, Build, &amp; Schedule User Interviews</h3>
       <p>
         <strong>Set a timebox.</strong> Every feature gets a deadline for shipping to production
         before we start building it. Product development is messy and can go on forever without a
@@ -368,8 +620,9 @@
         version stuck in development.
       </p>
       <aside class="callout callout-example">
+        <span class="call-tag">From our sprint</span>
         <p>
-          <strong>From our sprint:</strong> We timeboxed the feedback redesign at two days,
+          We timeboxed the feedback redesign at two days,
           two-thirds of the week's build time and a bigger bet than we ordinarily made. It was
           justified on both dials. High benefit, because candidates told us the feedback is what
           separates us from ChatGPT. High certainty, because we'd heard the same complaint
@@ -377,8 +630,9 @@
         </p>
       </aside>
       <aside class="callout callout-tip">
+        <span class="call-tag">Pro tip</span>
         <p>
-          <strong>Pro tip:</strong> Match your investment to your certainty. When you know exactly
+          Match your investment to your certainty. When you know exactly
           what a feature should be, build it properly. When you're unsure, build the most basic
           version, get feedback, then improve. Uncertainty is a reason to ship sooner, not to build
           longer.
@@ -405,20 +659,86 @@
         point is to explore the space of options cheaply before committing code to any of them.
       </p>
 
-      <figure class="visual">
-        <div class="visual-frame">
-          <div class="visual-icon" aria-hidden="true">✏️</div>
-          <span class="visual-badge">Suggested visual</span>
-          <p class="visual-title">Team sketches, voted on Miro</p>
+      <figure class="sketch-fig">
+        <div class="paper">
+          <p class="ba-title">Low fidelity sketches</p>
+          <div class="chead mid">Requirements</div>
+          <div class="checklist" style="margin-bottom:26px">
+            <div class="ci">Give feedback for each metric</div>
+            <div class="ci">Add context for each metric</div>
+            <div class="ci">Multiple pieces of feedback per card</div>
+            <div class="ci">Let users add details on the answer card</div>
+            <div class="ci">Feedback should prompt how to improve</div>
+          </div>
+          <div class="lofi">
+            <div class="lofi-row">
+              <div class="wf">
+                <div class="chead">Concept A · Tagged list</div>
+                <svg class="wf-svg" viewBox="0 0 196 205" role="img" aria-label="Rough sketch A: a score box on top, then a list of feedback notes, each tagged with the metric it belongs to. Voted.">
+                  <rect class="wire" x="6" y="6" width="184" height="192" rx="7" fill="none" stroke-width="2" filter="url(#rough2)"/>
+                  <rect class="wire fillg" x="16" y="16" width="164" height="34" filter="url(#rough2)" stroke-width="1.5"/>
+                  <text class="wt" x="98" y="37" text-anchor="middle">score + sub-scores</text>
+                  <rect class="wire" x="16" y="62" width="164" height="28" fill="none" stroke-width="1.4" filter="url(#rough2)"/>
+                  <text class="wt" x="23" y="80">feedback note</text>
+                  <rect class="wire fillg" x="130" y="68" width="44" height="16" filter="url(#rough2)" stroke-width="1.2"/>
+                  <text class="wt sm" x="152" y="80" text-anchor="middle">Story</text>
+                  <rect class="wire" x="16" y="98" width="164" height="28" fill="none" stroke-width="1.4" filter="url(#rough2)"/>
+                  <text class="wt" x="23" y="116">feedback note</text>
+                  <rect class="wire fillg" x="130" y="104" width="44" height="16" filter="url(#rough2)" stroke-width="1.2"/>
+                  <text class="wt sm" x="152" y="116" text-anchor="middle">Detail</text>
+                  <rect class="wire" x="16" y="134" width="164" height="28" fill="none" stroke-width="1.4" filter="url(#rough2)"/>
+                  <text class="wt" x="23" y="152">feedback note</text>
+                  <rect class="wire fillg" x="130" y="140" width="44" height="16" filter="url(#rough2)" stroke-width="1.2"/>
+                  <text class="wt sm" x="152" y="152" text-anchor="middle">Tone</text>
+                  <circle cx="176" cy="64" r="8" fill="#6c3fd4" stroke="#fff" stroke-width="1.5"/>
+                  <circle cx="166" cy="66" r="8" fill="#3f8ae0" stroke="#fff" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="wf-note"><b>Like:</b> every note is tied to its metric</div>
+            </div>
+
+            <div class="lofi-row">
+              <div class="wf">
+                <div class="chead">Concept B · Metric tabs</div>
+                <svg class="wf-svg" viewBox="0 0 196 205" role="img" aria-label="Rough sketch B: a score box, a row of metric tabs (Story, Details, Tone, Deliver), and one panel showing tips for the selected metric. Voted.">
+                  <rect class="wire" x="6" y="6" width="184" height="192" rx="7" fill="none" stroke-width="2" filter="url(#rough2)"/>
+                  <rect class="wire fillg" x="16" y="16" width="164" height="34" filter="url(#rough2)" stroke-width="1.5"/>
+                  <text class="wt" x="98" y="37" text-anchor="middle">score + sub-scores</text>
+                  <rect class="wire fillg" x="16" y="62" width="38" height="20" filter="url(#rough2)" stroke-width="1.2"/><text class="wt sm" x="35" y="75" text-anchor="middle">Story</text>
+                  <rect class="wire" x="58" y="62" width="38" height="20" fill="none" stroke-width="1.2" filter="url(#rough2)"/><text class="wt sm" x="77" y="75" text-anchor="middle">Detail</text>
+                  <rect class="wire" x="100" y="62" width="38" height="20" fill="none" stroke-width="1.2" filter="url(#rough2)"/><text class="wt sm" x="119" y="75" text-anchor="middle">Tone</text>
+                  <rect class="wire" x="142" y="62" width="38" height="20" fill="none" stroke-width="1.2" filter="url(#rough2)"/><text class="wt sm" x="161" y="75" text-anchor="middle">Deliv</text>
+                  <rect class="wire" x="16" y="92" width="164" height="82" fill="none" stroke-width="1.4" filter="url(#rough2)"/>
+                  <text class="wt" x="98" y="128" text-anchor="middle">1-2 tips for</text>
+                  <text class="wt" x="98" y="142" text-anchor="middle">the selected metric</text>
+                  <circle cx="35" cy="58" r="8" fill="#6c3fd4" stroke="#fff" stroke-width="1.5"/>
+                  <circle cx="46" cy="60" r="8" fill="#3f8ae0" stroke="#fff" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="wf-note"><b>Like:</b> scan all metrics at a glance</div>
+            </div>
+
+            <div class="lofi-row">
+              <div class="wf">
+                <div class="chead">Concept C · Accordion</div>
+                <svg class="wf-svg" viewBox="0 0 196 205" role="img" aria-label="Rough sketch C: a score box, then stacked metric rows that expand one at a time like an accordion.">
+                  <rect class="wire" x="6" y="6" width="184" height="192" rx="7" fill="none" stroke-width="2" filter="url(#rough2)"/>
+                  <rect class="wire fillg" x="16" y="16" width="164" height="34" filter="url(#rough2)" stroke-width="1.5"/>
+                  <text class="wt" x="98" y="37" text-anchor="middle">score + sub-scores</text>
+                  <rect class="wire" x="16" y="60" width="164" height="22" fill="none" stroke-width="1.4" filter="url(#rough2)"/><text class="wt" x="23" y="75">Story</text><text class="wt" x="170" y="75" text-anchor="end">▸</text>
+                  <rect class="wire fillg" x="16" y="86" width="164" height="46" filter="url(#rough2)" stroke-width="1.4"/><text class="wt" x="23" y="101">Details</text><text class="wt" x="170" y="101" text-anchor="end">▾</text>
+                  <rect class="wire" x="16" y="136" width="164" height="22" fill="none" stroke-width="1.4" filter="url(#rough2)"/><text class="wt" x="23" y="151">Tone</text><text class="wt" x="170" y="151" text-anchor="end">▸</text>
+                  <rect class="wire" x="16" y="162" width="164" height="22" fill="none" stroke-width="1.4" filter="url(#rough2)"/><text class="wt" x="23" y="177">Deliver</text><text class="wt" x="170" y="177" text-anchor="end">▸</text>
+                </svg>
+              </div>
+              <div class="wf-note"><b>Like:</b> focus on one metric at a time</div>
+            </div>
+          </div>
         </div>
         <figcaption>
-          <strong>What would help:</strong> a photo collage that proves "the sketches don't need
-          to be good." Ideas:
-          <ul>
-            <li>3–4 photos of real pen-and-paper sketches side by side, deliberately rough — boxes, arrows, scribbled labels.</li>
-            <li>Dot-votes overlaid on individual elements (not whole designs) to illustrate voting on pieces.</li>
-            <li>An arrow showing how elements from different sketches combine into one direction.</li>
-          </ul>
+          Wednesday's rough layouts, each one an attempt at the requirements above. Sketched fast
+          on paper, dropped into Miro, then dot-voted element by element, so no single sketch won;
+          the winning pieces came from across all three.
         </figcaption>
       </figure>
       <p>
@@ -438,28 +758,83 @@
         to build.
       </p>
       <aside class="callout callout-example">
+        <span class="call-tag">From our sprint</span>
         <p>
-          <strong>From our sprint:</strong> I built three design variations with Claude Code and
+          I built three design variations with Claude Code and
           shared them with my co-founder. The review didn't pick a winner. It picked elements:
           per-metric feedback from one design, the existing score visuals from another, and a
           shared conviction that the result couldn't feel like a wall of text.
         </p>
       </aside>
 
-      <figure class="visual">
-        <div class="visual-frame">
-          <div class="visual-icon" aria-hidden="true">🎨</div>
-          <span class="visual-badge">Suggested visual</span>
-          <p class="visual-title">Three high-fidelity variations → one design</p>
+      <figure class="sketch-fig">
+        <div class="paper">
+          <p class="ba-title">The high fidelity design we shipped</p>
+          <div class="fbwrap" role="img" aria-label="The final feedback screen. Interview question: describe your hiring philosophy, what do you look for when adding a new member to your team. Mock interview results, score 62 out of 100, Intermediate. Metric bars: Structure 85, Content Depth 40, Role / Company Fit 35, Conciseness 88. Per-metric feedback, one expanded at a time: Structure 85, clear logical framework; Content Depth 40, lacks specific examples or methods, expanded; Role / Company Fit 35, generic answer not tailored; Conciseness 88, clear and to the point. Buttons: Practice again, Help me improve.">
+            <div class="fbscreen">
+              <div class="fbs-q">
+                <div class="fbs-avatar"></div>
+                <div>
+                  <div class="fbs-qlabel">INTERVIEW QUESTION</div>
+                  <div class="fbs-qtext">"Describe your hiring philosophy. What do you look for when adding a new member to your team?"</div>
+                </div>
+              </div>
+              <div class="fbs-body">
+                <div class="fbs-mih">
+                  <span class="fbs-mic">🎙️</span>
+                  <div><b>Mock Interview Results</b><span>Completed 2 days ago</span></div>
+                </div>
+                <div class="fbs-scorerow">
+                  <svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#eef0f2" stroke-width="7"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#e6a52e" stroke-width="7" stroke-linecap="round" stroke-dasharray="116.9 188.5" transform="rotate(-90 36 36)"/>
+                    <text x="36" y="35" text-anchor="middle" font-weight="800" font-size="18" fill="#1f2933">62</text>
+                    <text x="36" y="48" text-anchor="middle" font-size="8" fill="#9aa5ad">/ 100</text>
+                  </svg>
+                  <div class="fbs-level">Intermediate</div>
+                </div>
+                <div class="fbs-metrics">
+                  <div class="fbs-mrow"><span class="fbs-mname"><span class="fbs-qi">?</span>Structure</span><span class="fbs-mtrack"><span style="width:85%;background:#8bc53f"></span></span><span class="fbs-mval">85</span></div>
+                  <div class="fbs-mrow"><span class="fbs-mname"><span class="fbs-qi">?</span>Content Depth</span><span class="fbs-mtrack"><span style="width:40%;background:#e07d39"></span></span><span class="fbs-mval">40</span></div>
+                  <div class="fbs-mrow"><span class="fbs-mname"><span class="fbs-qi">?</span>Role / Company Fit</span><span class="fbs-mtrack"><span style="width:35%;background:#e07d39"></span></span><span class="fbs-mval">35</span></div>
+                  <div class="fbs-mrow"><span class="fbs-mname"><span class="fbs-qi">?</span>Conciseness</span><span class="fbs-mtrack"><span style="width:88%;background:#8bc53f"></span></span><span class="fbs-mval">88</span></div>
+                </div>
+                <div class="fbs-item">
+                  <div class="fbs-ihead"><span class="fbs-pill">STRUCTURE · 85</span><span class="fbs-isum">Clear, logical framework.</span><span class="fbs-chev">▾</span></div>
+                </div>
+                <div class="fbs-item">
+                  <div class="fbs-ihead"><span class="fbs-pill lo">CONTENT DEPTH · 40</span><span class="fbs-isum">Lacks specific examples or methods.</span><span class="fbs-chev">▴</span></div>
+                  <div class="fbs-idetail">Your answer lists good qualities (technical competence, growth mindset, collaboration) but doesn't explain <em>how</em> you assess them. For example, what specific interview question do you ask to gauge a growth mindset? What does a good answer look like? This makes the philosophy feel abstract rather than applied.</div>
+                </div>
+                <div class="fbs-item">
+                  <div class="fbs-ihead"><span class="fbs-pill lo">ROLE / COMPANY FIT · 35</span><span class="fbs-isum">Generic answer, not tailored.</span><span class="fbs-chev">▾</span></div>
+                </div>
+                <div class="fbs-item">
+                  <div class="fbs-ihead"><span class="fbs-pill">CONCISENESS · 88</span><span class="fbs-isum">Clear and to the point.</span><span class="fbs-chev">▾</span></div>
+                </div>
+                <a class="fbs-transcript">📄 View transcript</a>
+              </div>
+            </div>
+            <div class="fbs-actions">
+              <div class="fbs-btn ghost">🎙️ Practice again</div>
+              <div class="fbs-btn solid">Help me improve</div>
+            </div>
+          </div>
+          <div class="chead mid" style="margin-top:26px">Design review</div>
+          <div class="checklist">
+            <div class="ci">Tie each point to its category</div>
+            <div class="ci">Keep the visual score summary</div>
+            <div class="ci">One line per point, expand for more</div>
+            <div class="ci">Let users focus on one point at a time</div>
+            <div class="ci">Less text on screen, read less</div>
+            <div class="ci">Prompt how to improve, not just a score</div>
+            <div class="ci open">Two buttons still feel unclear</div>
+          </div>
         </div>
         <figcaption>
-          <strong>What would help:</strong> the concrete artifacts from this step, since it's the
-          most visual moment in the sprint. Ideas:
-          <ul>
-            <li>The three HTML feedback-screen variations shown as thumbnails, with callouts marking which element "won" from each (per-metric feedback, score visuals, no wall of text).</li>
-            <li>A <em>before / after</em> pairing of the feedback screen — the old wall of text next to the new per-metric layout.</li>
-            <li>An optional inset of the Claude Code prompt/iteration to show the build-in-HTML workflow.</li>
-          </ul>
+          The design we shipped, built in HTML with Claude Code. It merges the winning pieces from
+          the three variations, and the review's feedback is checked off against it. One open item,
+          the two buttons, we left for a later sprint.
         </figcaption>
       </figure>
       <p>
@@ -469,8 +844,9 @@
         writing code from scratch.
       </p>
       <aside class="callout callout-tip">
+        <span class="call-tag">Pro tip</span>
         <p>
-          <strong>Pro tip:</strong> Spend engineering effort where it pays back. The engineer in me
+          Spend engineering effort where it pays back. The engineer in me
           loves clean code, but insisting all delivered code is clean means fewer features shipped
           per sprint. You need to weigh the cost of the cleanup now against the future time it
           saves, discounted by the chance the feature gets thrown out entirely. The wrong framing
@@ -491,7 +867,7 @@
         never going to buy.
       </p>
 
-      <h3>Day 4: Thursday — Design, Build, &amp; Prep the Launch</h3>
+      <h3 id="day-4">Day 4: Thursday — Design, Build, &amp; Prep the Launch</h3>
       <p>
         <strong>Repeat the build loop.</strong> Thursday is mostly a continuation. Each time a
         change ships, we return to the priority list from Tuesday and pick up the next highest
@@ -515,7 +891,7 @@
         find and try your product without you in the room.
       </p>
 
-      <h3>Day 5: Friday — Ship</h3>
+      <h3 id="day-5">Day 5: Friday — Ship</h3>
       <p>
         <strong>Finish building.</strong> Whatever state the priority list is in, Friday is when
         building stops and shipping starts.
@@ -535,22 +911,6 @@
         rates at each step toward payment, which made it easy to see where users were dropping off.
       </p>
 
-      <figure class="visual">
-        <div class="visual-frame">
-          <div class="visual-icon" aria-hidden="true">📊</div>
-          <span class="visual-badge">Suggested visual</span>
-          <p class="visual-title">The PostHog conversion funnel</p>
-        </div>
-        <figcaption>
-          <strong>What would help:</strong> a screenshot of the analytics you actually ship each
-          Friday, closing the loop back to Monday's review. Ideas:
-          <ul>
-            <li>A PostHog funnel from ad click → signup → activation → payment, with the conversion percentage at each step.</li>
-            <li>Highlight the step tied to this sprint's goal so readers see what "measuring the bet" looks like.</li>
-            <li>Pair it visually with the Monday funnel placeholder to reinforce that this is the same loop, one week later.</li>
-          </ul>
-        </figcaption>
-      </figure>
       <p>
         <strong>Design next week's user interviews.</strong> An hour with a real user is scarce, so
         we planned interviews carefully to use that time as efficiently as possible. Each interview
@@ -568,32 +928,41 @@
         data, and by Monday morning the results are waiting for you. The loop begins again.
       </p>
       <aside class="callout callout-example">
+        <span class="call-tag">From our sprint</span>
         <p>
-          <strong>From our sprint:</strong> Before the change, about 5% of users who clicked an ad
+          Before the change, about 5% of users who clicked an ad
           completed two questions. Afterward, 13%. In fairness, we shipped other improvements that
           week too, so this change can't claim all the credit. But the bet was directionally right,
           and Monday's data said so.
         </p>
       </aside>
 
-      <figure class="visual">
-        <div class="visual-frame">
-          <div class="visual-icon" aria-hidden="true">📈</div>
-          <span class="visual-badge">Suggested visual</span>
-          <p class="visual-title">Before vs. after: the result of the bet</p>
+      <figure class="sketch-fig">
+        <div class="paper">
+          <p class="ba-title">Ad clicks that completed two questions</p>
+          <div class="ba-plot" role="img" aria-label="Before and after the feedback redesign, the share of ad clicks completing two practice questions rose from about 5 percent (1 of 22) to 13 percent (4 of 31), roughly a 2.8 times increase.">
+            <div class="ba-col before">
+              <span class="ba-val">5%</span>
+              <div class="ba-bar" style="height:53px"></div>
+            </div>
+            <div class="ba-col after">
+              <span class="ba-val">13%<span class="ba-mult">≈2.8×</span></span>
+              <div class="ba-bar" style="height:150px"></div>
+            </div>
+          </div>
+          <div class="ba-labels">
+            <div><b>Before</b><span>1 of 22 clicks</span></div>
+            <div><b>After</b><span>4 of 31 clicks</span></div>
+          </div>
+          <p class="ba-note">We shipped other improvements that week too, so the redesign can't claim all the credit, but the bet was directionally right.</p>
         </div>
         <figcaption>
-          <strong>What would help:</strong> a simple, punchy chart of the payoff so the sprint
-          ends on evidence. Ideas:
-          <ul>
-            <li>Two bars — <em>Before 5%</em> vs <em>After 13%</em> — for "clicked ad → completed two questions," with the jump labeled.</li>
-            <li>A footnote in the chart noting other changes shipped that week, mirroring the honesty of the text.</li>
-            <li>Or a small week-over-week line trend if you have several sprints of data to show the compounding effect.</li>
-          </ul>
+          Before and after the feedback redesign: the share of ad clicks that reached activation,
+          completing two practice questions, climbed from about 5% to 13%.
         </figcaption>
       </figure>
 
-      <h2>Closing Thought</h2>
+      <h2 id="closing-thought">Closing Thought</h2>
       <p>
         Notice what this sprint optimizes for. It's not velocity for its own sake, and it's not
         polish. It's the number of times you get to run the loop before your time, money, or
@@ -601,13 +970,28 @@
         almost always out-learn a team that spends that year perfecting three big releases. Protect
         the loop, and the answer to "what should I build?" takes care of itself.
       </p>
-    </article>
-  </main>
+      </article>
+    </main>
+  </div>
 
-  <footer class="site-footer">
-    <div class="wrap">
-      <p>&copy; 2026 Sam. Built with plain HTML and hosted on GitHub Pages.</p>
-    </div>
-  </footer>
+  <script>
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+      var map = {};
+      links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+      var heads = Array.prototype.slice.call(document.querySelectorAll('.post h2[id], .post h3[id]'));
+      if (!('IntersectionObserver' in window) || !heads.length) return;
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            links.forEach(function (l) { l.classList.remove('active'); });
+            var a = map[e.target.id];
+            if (a) a.classList.add('active');
+          }
+        });
+      }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+      heads.forEach(function (h) { obs.observe(h); });
+    })();
+  </script>
 </body>
 </html>

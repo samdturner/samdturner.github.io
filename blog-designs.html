@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog design directions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #eef0f3; color: #1f2937; font-family: 'Inter', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    .page-head { max-width: 900px; margin: 0 auto; padding: 44px 24px 8px; }
+    .page-head h1 { font-weight: 800; font-size: 1.7rem; letter-spacing: -.02em; margin: 0 0 6px; }
+    .page-head p { color: #6b7280; margin: 0; max-width: 620px; line-height: 1.55; }
+    .dir { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .dir-label { font-weight: 700; font-size: 0.8rem; letter-spacing: .07em; text-transform: uppercase; color: #374151; margin: 46px 0 6px; }
+    .dir-label span { color: #9ca3af; font-weight: 600; }
+    .dir-desc { color: #6b7280; font-size: 0.95rem; margin: 0 0 20px; max-width: 660px; line-height: 1.55; }
+    .frame { border-radius: 16px; overflow: hidden; box-shadow: 0 24px 60px rgba(15,23,42,.12); border: 1px solid rgba(15,23,42,.06); }
+    .article { padding: 50px 54px 54px; }
+    @media (max-width: 640px) { .article { padding: 34px 26px; } }
+    .call svg { flex: none; }
+
+    /* ===================== DESIGN 1 — EDITORIAL SERIF ===================== */
+    .d1 { background: #fdfbf7; color: #241f18; font-family: 'Newsreader', Georgia, serif; }
+    .d1 .meta { font-family: 'Inter', sans-serif; font-size: 0.72rem; letter-spacing: .16em; text-transform: uppercase; color: #a08c72; font-weight: 600; margin: 0 0 20px; }
+    .d1 h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 2.7rem; line-height: 1.08; letter-spacing: -.01em; margin: 0 0 22px; color: #1b160f; }
+    .d1 .lead { font-size: 1.34rem; line-height: 1.5; color: #554c3d; margin: 0 0 32px; }
+    .d1 h2 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.7rem; letter-spacing: -.01em; margin: 42px 0 14px; color: #1b160f; }
+    .d1 p { font-size: 1.16rem; line-height: 1.72; margin: 0 0 22px; }
+    .d1 .call { margin: 32px 0; padding: 4px 28px 4px 26px; border-left: 2px solid var(--c); }
+    .d1 .call .clabel { font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 9px; font-size: 0.7rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: var(--c); margin: 0 0 10px; }
+    .d1 .call .clabel svg { width: 17px; height: 17px; }
+    .d1 .call p { font-family: 'Newsreader', serif; font-size: 1.18rem; font-style: italic; line-height: 1.62; margin: 0; color: #3d362b; }
+    .d1 .ex  { --c: #3f6b53; }
+    .d1 .tip { --c: #9a6a1c; }
+
+    /* ===================== DESIGN 2 — MODERN PRODUCT SANS ===================== */
+    .d2 { background: #ffffff; color: #334155; font-family: 'Inter', sans-serif; }
+    .d2 .meta { font-size: 0.74rem; letter-spacing: .09em; text-transform: uppercase; color: #4f46e5; font-weight: 700; margin: 0 0 16px; }
+    .d2 h1 { font-weight: 800; font-size: 2.45rem; line-height: 1.12; letter-spacing: -.028em; color: #0f172a; margin: 0 0 18px; }
+    .d2 .lead { font-size: 1.22rem; line-height: 1.55; color: #475569; margin: 0 0 30px; }
+    .d2 h2 { font-weight: 700; font-size: 1.5rem; letter-spacing: -.02em; color: #0f172a; margin: 40px 0 12px; }
+    .d2 p { font-size: 1.07rem; line-height: 1.72; margin: 0 0 18px; }
+    .d2 .call { display: flex; gap: 15px; margin: 30px 0; padding: 20px 22px; border-radius: 14px; background: var(--bg); border: 1px solid var(--bd); }
+    .d2 .call .badge { width: 40px; height: 40px; border-radius: 11px; background: var(--c); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px color-mix(in srgb, var(--c) 32%, transparent); }
+    .d2 .call .badge svg { width: 21px; height: 21px; }
+    .d2 .call .clabel { font-size: 0.7rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; color: var(--c); margin: 3px 0 5px; }
+    .d2 .call p { margin: 0; font-size: 1.03rem; line-height: 1.6; color: #334155; }
+    .d2 .ex  { --c: #4f46e5; --bg: #eef2ff; --bd: #e0e7ff; }
+    .d2 .tip { --c: #059669; --bg: #ecfdf5; --bd: #c9f2e0; }
+
+    /* ===================== DESIGN 3 — BOLD & CONFIDENT ===================== */
+    .d3 { background: #ffffff; color: #3f3f46; font-family: 'Inter', sans-serif; }
+    .d3 .meta { font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; letter-spacing: .13em; text-transform: uppercase; color: #0f766e; font-weight: 600; margin: 0 0 16px; }
+    .d3 h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.65rem; line-height: 1.06; letter-spacing: -.02em; color: #18181b; margin: 0 0 18px; }
+    .d3 .lead { font-size: 1.24rem; line-height: 1.55; color: #52525b; margin: 0 0 30px; }
+    .d3 h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.6rem; letter-spacing: -.01em; color: #18181b; margin: 42px 0 12px; }
+    .d3 p { font-size: 1.08rem; line-height: 1.74; margin: 0 0 18px; }
+    .d3 .call { margin: 34px 0; padding: 3px 0 3px 22px; border-left: 3px solid var(--c); }
+    .d3 .call .clabel { display: inline-flex; align-items: center; gap: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) 13%, #fff); padding: 6px 12px; border-radius: 20px; margin: 0 0 12px; }
+    .d3 .call .clabel svg { width: 14px; height: 14px; }
+    .d3 .call p { margin: 0; font-size: 1.08rem; line-height: 1.7; color: #3f3f46; }
+    .d3 .ex  { --c: #0f766e; }
+    .d3 .tip { --c: #c2560c; }
+  </style>
+</head>
+<body>
+  <div class="page-head">
+    <h1>Article design directions</h1>
+    <p>Three high-fidelity takes on the blog's reading experience. Same sample content in each, so you are comparing type, colour, and weight. Pay attention to how the <strong>From our sprint</strong> and <strong>Pro tip</strong> blocks are treated: each aims to feel like a designed insert worth stopping for.</p>
+  </div>
+
+  <!-- ============ DESIGN 1 ============ -->
+  <div class="dir">
+    <div class="dir-label">Design 1 <span>· Editorial serif</span></div>
+    <p class="dir-desc">Literary and authoritative, in the spirit of a print magazine. Fraunces display headings over a Newsreader serif body on warm ivory. Callouts are restrained sidebars: a hairline rule, a small-caps label, and italic serif text that reads like a considered aside.</p>
+    <div class="frame">
+      <div class="article d1">
+        <p class="meta">Sprint Playbook · July 23, 2026 · 8 min read</p>
+        <h1>The weekly sprint that won our first customers</h1>
+        <p class="lead">For most SaaS businesses the risk isn't whether it can be built. It's running out of time, money, or motivation before you learn what to build.</p>
+        <h2>Day 2: Synthesize and prioritize</h2>
+        <p>By Tuesday, the weekend's data and Monday's interviews are in. We pull the signal onto one board, dot-vote the takeaways, and pick a single focus for the week.</p>
+        <div class="call ex">
+          <div class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v5.5L5.2 17a2 2 0 0 0 1.7 3h10.2a2 2 0 0 0 1.7-3L14 8.5V3"/><path d="M7.5 14h9"/></svg> From our sprint</div>
+          <p>Users kept telling us the feedback was why they'd pay, but they couldn't tell what each score meant. We bet a clearer feedback screen would lift second attempts, and it did.</p>
+        </div>
+        <p>Prioritization isn't about evaluating every idea. It's about agreeing, quickly, on the one bet worth making this week.</p>
+        <div class="call tip">
+          <div class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.9 1 1 1.7l.1.5h5l.1-.5c.1-.7.5-1.3 1-1.7A6 6 0 0 0 12 3z"/></svg> Pro tip</div>
+          <p>Keep your engineer in the room. When they can price a change on the spot, prioritization stops being guesswork and the whole loop speeds up.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DESIGN 2 ============ -->
+  <div class="dir">
+    <div class="dir-label">Design 2 <span>· Modern product sans</span></div>
+    <p class="dir-desc">Crisp and current, in the spirit of a well-designed product blog. All Inter, tight headings, indigo accent on clean white. Callouts become rounded, tinted cards with an icon badge and a bold label, so they clearly read as intentional highlight blocks.</p>
+    <div class="frame">
+      <div class="article d2">
+        <p class="meta">Sprint Playbook · July 23, 2026 · 8 min read</p>
+        <h1>The weekly sprint that won our first customers</h1>
+        <p class="lead">For most SaaS businesses the risk isn't whether it can be built. It's running out of time, money, or motivation before you learn what to build.</p>
+        <h2>Day 2: Synthesize and prioritize</h2>
+        <p>By Tuesday, the weekend's data and Monday's interviews are in. We pull the signal onto one board, dot-vote the takeaways, and pick a single focus for the week.</p>
+        <div class="call ex">
+          <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v5.5L5.2 17a2 2 0 0 0 1.7 3h10.2a2 2 0 0 0 1.7-3L14 8.5V3"/><path d="M7.5 14h9"/></svg></div>
+          <div>
+            <div class="clabel">From our sprint</div>
+            <p>Users kept telling us the feedback was why they'd pay, but they couldn't tell what each score meant. We bet a clearer feedback screen would lift second attempts, and it did.</p>
+          </div>
+        </div>
+        <p>Prioritization isn't about evaluating every idea. It's about agreeing, quickly, on the one bet worth making this week.</p>
+        <div class="call tip">
+          <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.9 1 1 1.7l.1.5h5l.1-.5c.1-.7.5-1.3 1-1.7A6 6 0 0 0 12 3z"/></svg></div>
+          <div>
+            <div class="clabel">Pro tip</div>
+            <p>Keep your engineer in the room. When they can price a change on the spot, prioritization stops being guesswork and the whole loop speeds up.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DESIGN 3 ============ -->
+  <div class="dir">
+    <div class="dir-label">Design 3 <span>· Bold &amp; confident (refined)</span></div>
+    <p class="dir-desc">Assertive and modern: Space Grotesk display headings, high-contrast near-black text, a single deep-teal accent. Callouts use the restrained left-rule treatment from Design 1 (accent rule, small-caps label, icon) but in clean upright body text, so they feel considered and distinct without shouting.</p>
+    <div class="frame">
+      <div class="article d3">
+        <p class="meta">Sprint Playbook · July 23, 2026 · 8 min read</p>
+        <h1>The weekly sprint that won our first customers</h1>
+        <p class="lead">For most SaaS businesses the risk isn't whether it can be built. It's running out of time, money, or motivation before you learn what to build.</p>
+        <h2>Day 2: Synthesize and prioritize</h2>
+        <p>By Tuesday, the weekend's data and Monday's interviews are in. We pull the signal onto one board, dot-vote the takeaways, and pick a single focus for the week.</p>
+        <div class="call ex">
+          <div class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v5.5L5.2 17a2 2 0 0 0 1.7 3h10.2a2 2 0 0 0 1.7-3L14 8.5V3"/><path d="M7.5 14h9"/></svg> From our sprint</div>
+          <p>Users kept telling us the feedback was why they'd pay, but they couldn't tell what each score meant. We bet a clearer feedback screen would lift second attempts, and it did.</p>
+        </div>
+        <p>Prioritization isn't about evaluating every idea. It's about agreeing, quickly, on the one bet worth making this week.</p>
+        <div class="call tip">
+          <div class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.9 1 1 1.7l.1.5h5l.1-.5c.1-.7.5-1.3 1-1.7A6 6 0 0 0 12 3z"/></svg> Pro tip</div>
+          <p>Keep your engineer in the room. When they can price a change on the spot, prioritization stops being guesswork and the whole loop speeds up.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dir" style="padding-bottom:60px"></div>
+</body>
+</html>
