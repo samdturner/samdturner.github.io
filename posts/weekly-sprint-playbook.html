@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Weekly Sprint Playbook: How We Got Our First Paying Customers — Sam's Blog</title>
+  <meta name="description" content="A step-by-step playbook for the weekly sprint that took us from zero to our first five paying customers, developed over 2.5 years of building startups." />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-title" href="../index.html">Sam's Blog</a>
+      <p class="site-tagline">Thoughts, notes, and the occasional deep dive.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="post">
+      <p class="back"><a href="../index.html">&larr; All posts</a></p>
+      <h1 class="post-title">The Weekly Sprint Playbook: How We Got Our First Paying Customers</h1>
+      <time class="post-date" datetime="2026-07-23">July 23, 2026</time>
+
+      <h2>Introduction</h2>
+      <p>
+        For most SaaS businesses, the risk of failure isn't "Can this be built?" With AI and
+        vibe coding, building has never been easier or cheaper. The risk is running out of
+        resources (time, money, and motivation) before you figure out what to build, who to
+        build it for, and how to reach them. This playbook shows you how to answer the first
+        of those questions in the most efficient way possible. It's about finding the critical
+        path to go from zero to paying customers.
+      </p>
+      <p>
+        I learned this the hard way, after spending months building products that went nowhere.
+        This playbook is the process I built to make sure that doesn't happen again.
+      </p>
+      <p>
+        That process is a weekly sprint. Every Friday, we shipped a new version of the product.
+        Over the weekend, a few hundred dollars of ads put it in front of strangers who owed us
+        nothing. On Monday, we interviewed five people who fit our ICP, and at the end of every
+        interview, we tried to sell the product. That's how we got our first five paying
+        customers. Each week, the data and the conversations told us where our bets were right
+        and where they were wrong, and the next week's bets got better.
+      </p>
+      <p>
+        What follows is a step-by-step playbook for running that sprint, developed over 2.5
+        years of building startups.
+      </p>
+
+      <h2>The Weekly Sprint</h2>
+
+      <h3>Day 0: Last Friday</h3>
+      <p>
+        Every Friday, we ship a new version of the product. Everything below builds toward that.
+      </p>
+
+      <h3>Day 1: Monday — Learn</h3>
+      <p>
+        <strong>Quantitative review.</strong> By Monday morning, the weekend's usage data is
+        waiting for us, which is exactly why we ship on Fridays. We dig into three questions:
+      </p>
+      <ul>
+        <li>Did last week's changes actually move the metrics we expected them to?</li>
+        <li>How does overall usage compare to last week?</li>
+        <li>And is anything surprising happening that we didn't predict?</li>
+      </ul>
+      <p>
+        Then we watch screen recordings. Numbers tell you where something broke; watching a real
+        person hesitate, misclick, and give up tells you what broke.
+      </p>
+      <aside class="callout callout-example">
+        <p>
+          <strong>From our sprint:</strong> The funnel told a clear story. Half the people who
+          clicked our Google Ad completed signup, and half of those completed one practice
+          question. But only 20% of those completed a second. Onboarding was working; activation
+          wasn't. We defined activation as completing two practice attempts, and that became the
+          sprint's focus.
+        </p>
+      </aside>
+      <p>
+        <strong>User interviews.</strong> We conduct user interviews to test our key hypotheses.
+        Quantitative data tells us how people use the product, but not why. Paired together, the
+        two give us real clarity on what's working and what needs to improve.
+      </p>
+      <aside class="callout callout-tip">
+        <p>
+          <strong>Pro tip:</strong> Interview the same customer segment that shows up in your
+          quantitative data. When both come from the same people, they work together: the numbers
+          show you a pattern, and the interviews tell you why it's happening. If the segments
+          don't match, you'll get confusing results. Something looks great in interviews but
+          terrible in your ad campaigns, and you won't know why.
+        </p>
+      </aside>
+
+      <h3>Day 2: Tuesday — Synthesize &amp; Prioritize</h3>
+      <p>
+        <strong>Synthesize the learnings.</strong> We pull the key insights from everything we
+        gathered on Monday: user interviews, PostHog data, and screen recordings. All of our
+        notes live on a Miro board, and the process is simple:
+      </p>
+      <ol>
+        <li>
+          <strong>Silent review.</strong> Everyone reads through the notes on their own. No
+          discussion yet. This gives each person time to form their own view before anyone can
+          anchor the group.
+        </li>
+        <li>
+          <strong>Dot vote.</strong> We each vote on the takeaways we think matter most. We're
+          looking for the lowest cost, highest-impact, highest certainty ways to improve the
+          business as a whole, focusing on the key bottleneck. This might be activation,
+          monetization, retention, or something else.
+        </li>
+        <li>
+          <strong>Discuss.</strong> We talk through the top-voted takeaways together to make sure
+          we're all on the same page.
+        </li>
+      </ol>
+      <p>
+        By the end, everyone is working from the same picture of what we learned. That shared
+        picture is the foundation for setting the sprint's priorities.
+      </p>
+      <aside class="callout callout-example">
+        <p>
+          <strong>From our sprint:</strong> Past users had told us our honest, detailed feedback
+          was a key differentiator. But they also surfaced a problem. We scored candidates on four
+          dimensions (substance, structure, conciseness, and delivery), and users weren't clear on
+          what each metric meant, why they got the score they did, or how to improve on the next
+          attempt. Our hypothesis: users in the wild were hitting the same wall, and if we fixed
+          it, more of them would complete a second attempt.
+        </p>
+      </aside>
+      <aside class="callout callout-tip">
+        <p>
+          <strong>Pro tip:</strong> Hold off on pitching solutions until synthesis is done. People
+          get excited about what they've learned and want to jump straight to fixing things. That
+          energy is good. The problem is timing. A solution pitched before everyone has seen the
+          full picture invites debate. And every minute spent debating is a minute not spent
+          learning. The solution is simple: write your ideas down as they come to you, then share
+          them when it's time to prioritize. The same idea at the right time, once the learnings
+          are shared, gets a better response.
+        </p>
+      </aside>
+      <p>
+        <strong>Prioritization.</strong> With the learnings shared, we pick the sprint's focus
+        areas. The goal isn't to evaluate every possible idea. It's to quickly agree on what
+        matters most this sprint, because every minute spent on discussion is a minute not spent
+        shipping. Here's the process that worked for us:
+      </p>
+      <ol>
+        <li>
+          <strong>Write down possible focus areas async.</strong> Phrase them as problems or
+          solutions. This is also where the solution ideas you captured during synthesis come back
+          in.
+        </li>
+        <li>
+          <strong>Make sure everyone understands each one.</strong> Clarifying questions only, no
+          debate yet.
+        </li>
+        <li>
+          <strong>Dot vote in Miro.</strong> Weigh each option on cost, benefit, and level of
+          certainty.
+        </li>
+        <li>
+          <strong>Pick one item and start building.</strong> We chose the item we both felt
+          strongly about, discussing any initiative that seemed to warrant it.
+        </li>
+      </ol>
+      <p>
+        This is a deliberately lightweight activity. It's set up to maximize time spent building
+        while making sure we only build the most important things. We didn't discuss every item on
+        the list. We didn't write a lengthy plan. We picked the highest-priority item and started
+        building. When it was done, we returned to the list and picked the next one.
+      </p>
+      <aside class="callout callout-tip">
+        <p>
+          <strong>Pro tip:</strong> One thing that accelerated our progress: our engineer (me) was
+          in the room. I could estimate the cost of each change on the spot, so there was no back
+          and forth. We made informed decisions in real time. If your engineers aren't part of
+          prioritization, cost estimates become guesses or follow-up conversations, and either one
+          slows the whole loop down.
+        </p>
+      </aside>
+
+      <h3>Day 3: Wednesday — Design, Build, &amp; Schedule User Interviews</h3>
+      <p>
+        <strong>Set a timebox.</strong> Every feature gets a deadline for shipping to production
+        before we start building it. Product development is messy and can go on forever without a
+        constraint. There's often the temptation to expand the scope to include "just one more
+        thing." And every "yes" to one more thing is an invisible "no" to something else, often
+        something more important. The timebox makes that tradeoff visible. When adding something
+        means blowing the deadline, you're forced to ask whether it's worth it. Usually it isn't.
+      </p>
+      <p>
+        When the deadline arrives, we ship whatever the feature has become, even if it's smaller
+        than we imagined. A basic version in front of real users teaches you more than a polished
+        version stuck in development.
+      </p>
+      <aside class="callout callout-example">
+        <p>
+          <strong>From our sprint:</strong> We timeboxed the feedback redesign at two days,
+          two-thirds of the week's build time and a bigger bet than we ordinarily made. It was
+          justified on both dials. High benefit, because candidates told us the feedback is what
+          separates us from ChatGPT. High certainty, because we'd heard the same complaint
+          consistently enough to know the ideal flow.
+        </p>
+      </aside>
+      <aside class="callout callout-tip">
+        <p>
+          <strong>Pro tip:</strong> Match your investment to your certainty. When you know exactly
+          what a feature should be, build it properly. When you're unsure, build the most basic
+          version, get feedback, then improve. Uncertainty is a reason to ship sooner, not to build
+          longer.
+        </p>
+      </aside>
+      <p>
+        <strong>Sketch together.</strong> Before building anything with a real interface, we sketch
+        it as a team. We loosely borrowed from the Crazy 8s method: pen and paper, low fidelity,
+        quick. But we skipped the formal structure. Each of us sketched our take on the feature,
+        snapped photos, and uploaded them to Miro. Then we shared what we came up with, dot voted
+        on the elements we each liked, and explained why we voted the way we did. All in, about 35
+        minutes: 20 of sketching, 15 of voting and discussion.
+      </p>
+      <p>
+        Why sketch instead of talk? Putting pen to paper is far more persuasive than discussion. A
+        rough sketch settles in thirty seconds what a debate can circle for twenty minutes. And
+        because everyone sketches, everyone contributes. Voting on elements rather than whole
+        designs meant the final version routinely mixed pieces from different people's sketches
+        into something none of us would have drawn alone. The best ideas rarely come from one
+        person.
+      </p>
+      <p>
+        The sketches don't need to be good. Boxes, arrows, and scribbled labels are enough. The
+        point is to explore the space of options cheaply before committing code to any of them.
+      </p>
+      <p>
+        <strong>Go high fidelity.</strong> The sketches give us alignment on the direction of the
+        solution, but plenty of smaller decisions remain: layout, copy, empty states, edge cases.
+        This is where we shift from working as a group to a single owner. The whole team sketches,
+        one person designs, and the team stays involved through review. The reason is efficiency.
+        Resolving dozens of these decisions is faster with one owner making calls than with a team
+        weighing in on each one.
+      </p>
+      <p>
+        Instead of mocking up designs in Figma, I used Claude Code to build high-fidelity versions
+        directly in HTML. I'd iterate on my own until the design felt presentable, then bring it to
+        the team for review. My co-founder gave feedback, I iterated, and we'd repeat: one to three
+        rounds of team review. The first review almost always surfaced the highest-impact
+        improvements. Once feedback gets into the details, the design is converging and it's time
+        to build.
+      </p>
+      <aside class="callout callout-example">
+        <p>
+          <strong>From our sprint:</strong> I built three design variations with Claude Code and
+          shared them with my co-founder. The review didn't pick a winner. It picked elements:
+          per-metric feedback from one design, the existing score visuals from another, and a
+          shared conviction that the result couldn't feel like a wall of text.
+        </p>
+      </aside>
+      <p>
+        <strong>Implement.</strong> With the design converged, we build. The HTML designs already
+        lived in the codebase, so I used Claude Code to turn them into a production-ready change.
+        That flipped how my time was spent. Most of it went to reviewing and verifying rather than
+        writing code from scratch.
+      </p>
+      <aside class="callout callout-tip">
+        <p>
+          <strong>Pro tip:</strong> Spend engineering effort where it pays back. The engineer in me
+          loves clean code, but insisting all delivered code is clean means fewer features shipped
+          per sprint. You need to weigh the cost of the cleanup now against the future time it
+          saves, discounted by the chance the feature gets thrown out entirely. The wrong framing
+          is "I should clean up this code because that's what good engineers do." The right framing
+          is "I should clean up this code because it will save us more time than it costs."
+        </p>
+      </aside>
+      <p>
+        <strong>Schedule user interviews.</strong> We source participants from UserInterviews.com
+        and sometimes Respondent, usually about five per week. Five turns out to be enough. By the
+        fifth interview, we're mostly hearing things we've already heard, which is the signal that
+        another interview won't teach us much.
+      </p>
+      <p>
+        It's mission critical to make sure every participant fits your ICP. You'll be making product
+        decisions based on their feedback, so the wrong participants won't just waste an interview
+        slot. They'll actively lead you in the wrong direction, and you'll build for people who were
+        never going to buy.
+      </p>
+
+      <h3>Day 4: Thursday — Design, Build, &amp; Prep the Launch</h3>
+      <p>
+        <strong>Repeat the build loop.</strong> Thursday is mostly a continuation. Each time a
+        change ships, we return to the priority list from Tuesday and pick up the next highest
+        priority item. Then the loop repeats. Timebox, sketch, high fidelity, implement. Smaller
+        items collapse the loop to just implementation, since not everything needs sketches and
+        design reviews. The list is a queue we pull from, and how far down we get by Friday is how
+        much we ship.
+      </p>
+      <p>
+        <strong>Prep the launch.</strong> By Friday, the product must be live in production where
+        real people can reach it, and you need a way to drive users to it. This matters because user
+        interviews are a controlled environment. We're there to guide participants, and they're
+        being paid to show up, so they won't abandon the product no matter how confusing it gets.
+        Users in the wild owe you nothing. They arrive with no guide, no incentive, and no patience,
+        and that's what makes their behavior the closest thing you'll get to the truth about how the
+        market is receiving your product.
+      </p>
+      <p>
+        For us, driving users meant Google Search ads at $100 to $200 per sprint. Other mechanisms
+        work too, like a beta program with existing customers. What matters is that strangers can
+        find and try your product without you in the room.
+      </p>
+
+      <h3>Day 5: Friday — Ship</h3>
+      <p>
+        <strong>Finish building.</strong> Whatever state the priority list is in, Friday is when
+        building stops and shipping starts.
+      </p>
+      <p>
+        <strong>QA.</strong> Before shipping, we verify that what we built actually works. For us,
+        the bar isn't perfection. The product needs to work well enough to extract the sprint's
+        learnings. An edge case is tolerable. A broken signup flow that blocks the data you shipped
+        to collect is not. If your changes touch a flow that existing customers rely on, hold a
+        higher bar, because now you're risking trust you've already earned rather than trust you
+        never had.
+      </p>
+      <p>
+        <strong>Configure analytics.</strong> Analytics allow you to measure the impact of what you
+        shipped. We used PostHog to track our analytics. Since our sprint goals focused on
+        activation and monetization, this step usually involved creating a funnel showing conversion
+        rates at each step toward payment, which made it easy to see where users were dropping off.
+      </p>
+      <p>
+        <strong>Design next week's user interviews.</strong> An hour with a real user is scarce, so
+        we planned interviews carefully to use that time as efficiently as possible. Each interview
+        had two jobs. First, test the specific changes we shipped this sprint, and if they don't
+        work, understand why. Second, try to sell the product. Selling in interviews is how we got
+        our first five paying customers. And when people didn't pay, the ask uncovered the gaps
+        between the product and their wallet. Many times we assumed the product needed X when it
+        really needed Y, and Y was often easier to build than X. We planned each interview on a
+        lightweight Miro board and reviewed it as a team before finalizing.
+      </p>
+      <p>
+        <strong>Ship.</strong> Push it live, close the laptop, enjoy the weekend. This is the best
+        part of launching on Friday. You end every single week knowing you took a step forward. And
+        while you rest, the sprint keeps working. Real users find the product, PostHog collects the
+        data, and by Monday morning the results are waiting for you. The loop begins again.
+      </p>
+      <aside class="callout callout-example">
+        <p>
+          <strong>From our sprint:</strong> Before the change, about 5% of users who clicked an ad
+          completed two questions. Afterward, 13%. In fairness, we shipped other improvements that
+          week too, so this change can't claim all the credit. But the bet was directionally right,
+          and Monday's data said so.
+        </p>
+      </aside>
+
+      <h2>Closing Thought</h2>
+      <p>
+        Notice what this sprint optimizes for. It's not velocity for its own sake, and it's not
+        polish. It's the number of times you get to run the loop before your time, money, or
+        motivation runs out. A team that completes fifty honest learning cycles in a year will
+        almost always out-learn a team that spends that year perfecting three big releases. Protect
+        the loop, and the answer to "what should I build?" takes care of itself.
+      </p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Sam. Built with plain HTML and hosted on GitHub Pages.</p>
+    </div>
+  </footer>
+</body>
+</html>

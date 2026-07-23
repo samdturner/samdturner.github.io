@@ -5,6 +5,9 @@
   --accent: #2563eb;
   --border: #e5e7eb;
   --code-bg: #f3f4f6;
+  --example-bg: #eff5ff;
+  --tip-bg: #f0fdf4;
+  --tip-border: #22c55e;
   --max-width: 720px;
 }
 
@@ -16,6 +19,9 @@
     --accent: #60a5fa;
     --border: #262b33;
     --code-bg: #1a1e24;
+    --example-bg: #141c2e;
+    --tip-bg: #10201a;
+    --tip-border: #34d399;
   }
 }
 
@@ -140,6 +146,30 @@ a:hover {
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.9em;
+}
+
+/* Callouts */
+.callout {
+  border-left: 3px solid var(--border);
+  border-radius: 0 6px 6px 0;
+  padding: 4px 20px;
+  margin: 28px 0;
+  font-size: 0.96rem;
+}
+
+.callout p {
+  margin: 12px 0;
+}
+
+.callout-example {
+  border-left-color: var(--accent);
+  background: var(--example-bg);
+  font-style: italic;
+}
+
+.callout-tip {
+  border-left-color: var(--tip-border);
+  background: var(--tip-bg);
 }
 
 /* Footer */
