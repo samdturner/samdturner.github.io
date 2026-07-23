@@ -1,0 +1,156 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --border: #e5e7eb;
+  --code-bg: #f3f4f6;
+  --max-width: 720px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --fg: #e5e7eb;
+    --muted: #9ca3af;
+    --accent: #60a5fa;
+    --border: #262b33;
+    --code-bg: #1a1e24;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  line-height: 1.65;
+  font-size: 18px;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 32px 0;
+  margin-bottom: 40px;
+}
+
+.site-title {
+  display: inline-block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.site-title:hover {
+  text-decoration: none;
+  color: var(--accent);
+}
+
+.site-tagline {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Post list */
+.section-heading {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.post-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-item {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.post-item:first-child {
+  padding-top: 0;
+}
+
+.post-link {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.post-date {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 4px 0 8px;
+}
+
+.post-excerpt {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Single post */
+.post .back {
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.post-title {
+  font-size: 2.1rem;
+  line-height: 1.2;
+  margin: 0 0 4px;
+}
+
+.post h2 {
+  margin-top: 2em;
+  font-size: 1.4rem;
+}
+
+.post code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 60px;
+  padding: 24px 0;
+}
+
+.site-footer p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
