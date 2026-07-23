@@ -4,8 +4,67 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Weekly Sprint Playbook: How We Got Our First Paying Customers — Sam's Blog</title>
-  <meta name="description" content="A step-by-step playbook for the weekly sprint that took us from zero to our first five paying customers, developed over 2.5 years of building startups." />
+  <meta name="description" content="A step-by-step playbook for the weekly sprint that took us from zero to our first paying customers, developed over 2.5 years of building startups." />
   <link rel="stylesheet" href="../style.css" />
+  <style>
+    /* ---- Sketchbook figures (hand-drawn sprint visuals) ---- */
+    .sketch-fig {
+      margin: 36px 0;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.18);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.65);
+      --track: rgba(120,90,50,.42); --wk: #b28a5c;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sketch-fig {
+        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
+        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.6);
+        --track: rgba(210,180,130,.35); --wk: #c99b67;
+      }
+    }
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 22px 20px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    .sketch-fig .emoji { font-size: 19px; }
+
+    /* loop diagram */
+    .sketch-fig .loop { width: 100%; height: auto; max-width: 420px; display: block; margin: 0 auto; }
+    .sketch-fig .loop .track { stroke: var(--track); }
+    .sketch-fig .loop .ahead { fill: var(--ink-soft); }
+    .sketch-fig .loop .ink   { fill: var(--ink); }
+    .sketch-fig .loop .num { font: 700 14px var(--hand); fill: #fff; opacity: .82; }
+    .sketch-fig .loop .plabel { font: 700 17px var(--hand); fill: #fff; }
+    .sketch-fig .loop .center { font: 700 20px var(--hand); }
+
+    /* sticky-note week */
+    .sketch-week { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; padding-top: 14px; }
+    .sketch-week .sticky {
+      position: relative; flex: 1 1 140px; max-width: 185px; padding: 16px 14px 18px;
+      color: #23201a; box-shadow: 2px 5px 12px rgba(0,0,0,.22); border-radius: 2px;
+    }
+    .sketch-week .sticky::before {
+      content: ""; position: absolute; top: -9px; left: 50%;
+      transform: translateX(-50%) rotate(-6deg); width: 56px; height: 18px;
+      background: rgba(255,255,255,.5); border: 1px solid rgba(0,0,0,.08); border-radius: 2px;
+    }
+    .sketch-week .sticky:nth-child(odd)  { transform: rotate(-2.2deg); }
+    .sketch-week .sticky:nth-child(even) { transform: rotate(1.9deg); }
+    .sketch-week .sticky .e { font-size: 1.5rem; }
+    .sketch-week .sticky .d { font-family: var(--hand); font-weight: 700; font-size: 1.3rem; }
+    .sketch-week .sticky .t { font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em; opacity: .65; margin-bottom: 7px; }
+    .sketch-week .sticky ul { margin: 0; padding-left: 1.05em; font-size: 0.82rem; line-height: 1.5; }
+    .sketch-week .sticky li { margin: 2px 0; }
+    .sketch-week-note { text-align: center; margin-top: 18px; font-family: var(--hand); color: var(--ink-soft); font-size: 1.1rem; }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -38,7 +97,7 @@
         That process is a weekly sprint. Every Friday, we shipped a new version of the product.
         Over the weekend, a few hundred dollars of ads put it in front of strangers who owed us
         nothing. On Monday, we interviewed five people who fit our ICP, and at the end of every
-        interview, we tried to sell the product. That's how we got our first five paying
+        interview, we tried to sell the product. That's how we got our first paying
         customers. Each week, the data and the conversations told us where our bets were right
         and where they were wrong, and the next week's bets got better.
       </p>
@@ -47,14 +106,76 @@
         years of building startups.
       </p>
 
+      <figure class="sketch-fig">
+        <div class="paper">
+          <svg class="loop" viewBox="0 0 370 370" role="img" aria-label="The weekly sprint loop: a four-step cycle — 1 Understand, 2 Prioritize, 3 Build, 4 Ship — that repeats continuously.">
+            <defs>
+              <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+              <filter id="rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+            </defs>
+            <circle class="track" cx="185" cy="185" r="125" fill="none" stroke-width="3" filter="url(#rough)"/>
+            <g class="ahead" filter="url(#rough2)">
+              <path d="M-8 -7 L8 0 L-8 7 Z" transform="translate(273.4,96.6) rotate(45)"/>
+              <path d="M-8 -7 L8 0 L-8 7 Z" transform="translate(273.4,273.4) rotate(135)"/>
+              <path d="M-8 -7 L8 0 L-8 7 Z" transform="translate(96.6,273.4) rotate(225)"/>
+              <path d="M-8 -7 L8 0 L-8 7 Z" transform="translate(96.6,96.6) rotate(315)"/>
+            </g>
+            <g text-anchor="middle">
+              <circle cx="185" cy="60" r="54" fill="#2563eb" filter="url(#rough2)"/><text class="num" x="185" y="47">1</text><text class="plabel" x="185" y="68">Understand</text>
+              <circle cx="310" cy="185" r="54" fill="#2563eb" filter="url(#rough2)"/><text class="num" x="310" y="172">2</text><text class="plabel" x="310" y="193">Prioritize</text>
+              <circle cx="185" cy="310" r="54" fill="#2563eb" filter="url(#rough2)"/><text class="num" x="185" y="297">3</text><text class="plabel" x="185" y="318">Build</text>
+              <circle cx="60" cy="185" r="54" fill="#2563eb" filter="url(#rough2)"/><text class="num" x="60" y="172">4</text><text class="plabel" x="60" y="193">Ship</text>
+            </g>
+            <text class="ink center" x="185" y="180" text-anchor="middle">…and</text>
+            <text class="ink center" x="185" y="202" text-anchor="middle">repeat!</text>
+          </svg>
+        </div>
+        <figcaption>
+          The weekly sprint loop: understand, prioritize, build, ship — then straight back to the
+          top. Each pass sharpens the next.
+        </figcaption>
+      </figure>
+
       <h2>The Weekly Sprint</h2>
+
+      <figure class="sketch-fig">
+        <div class="paper">
+          <div class="sketch-week">
+            <div class="sticky" style="background:#cfe0ff">
+              <div class="e">🔍</div><div class="d">Mon</div><div class="t">Understand</div>
+              <ul><li>Weekend data</li><li>Watch recordings</li><li>User interviews</li></ul>
+            </div>
+            <div class="sticky" style="background:#e0d5ff">
+              <div class="e">🗳️</div><div class="d">Tue</div><div class="t">Prioritize</div>
+              <ul><li>Synthesize</li><li>Dot-vote</li><li>Pick the focus</li></ul>
+            </div>
+            <div class="sticky" style="background:#ffe6b8">
+              <div class="e">🔨</div><div class="d">Wed</div><div class="t">Build</div>
+              <ul><li>Timebox + sketch</li><li>High-fidelity</li><li>Book interviews</li></ul>
+            </div>
+            <div class="sticky" style="background:#c7f0e8">
+              <div class="e">📣</div><div class="d">Thu</div><div class="t">Build more</div>
+              <ul><li>Keep building</li><li>Prep launch (ads)</li></ul>
+            </div>
+            <div class="sticky" style="background:#cdf0d6">
+              <div class="e">🚀</div><div class="d">Fri</div><div class="t">Ship</div>
+              <ul><li>QA + analytics</li><li>Plan interviews</li><li>Ship it!</li></ul>
+            </div>
+          </div>
+          <div class="sketch-week-note">☕ weekend → ads run, data collects, and Monday's answers are waiting</div>
+        </div>
+        <figcaption>
+          One week at a glance. Monday's learning flows all the way to Friday's ship. Then the
+          weekend feeds Monday all over again.
+        </figcaption>
+      </figure>
 
       <h3>Day 0: Last Friday</h3>
       <p>
         Every Friday, we ship a new version of the product. Everything below builds toward that.
       </p>
 
-      <h3>Day 1: Monday — Learn</h3>
+      <h3>Day 1: Monday — Understand</h3>
       <p>
         <strong>Quantitative review.</strong> By Monday morning, the weekend's usage data is
         waiting for us, which is exactly why we ship on Fridays. We dig into three questions:
@@ -77,6 +198,23 @@
           sprint's focus.
         </p>
       </aside>
+
+      <figure class="visual">
+        <div class="visual-frame">
+          <div class="visual-icon" aria-hidden="true">📉</div>
+          <span class="visual-badge">Suggested visual</span>
+          <p class="visual-title">The activation funnel</p>
+        </div>
+        <figcaption>
+          <strong>What would help:</strong> a funnel chart that makes the drop-off in the story
+          above instantly visible. Ideas:
+          <ul>
+            <li>Four descending bars: <em>Clicked ad → Completed signup (50%) → Completed 1 question (50% of those) → Completed 2 questions (20% of those)</em>.</li>
+            <li>Highlight the last step in red to flag it as the bottleneck the sprint will attack.</li>
+            <li>Optionally an annotation marking where "onboarding ends" and "activation begins."</li>
+          </ul>
+        </figcaption>
+      </figure>
       <p>
         <strong>User interviews.</strong> We conduct user interviews to test our key hypotheses.
         Quantitative data tells us how people use the product, but not why. Paired together, the
@@ -119,6 +257,23 @@
         By the end, everyone is working from the same picture of what we learned. That shared
         picture is the foundation for setting the sprint's priorities.
       </p>
+
+      <figure class="visual">
+        <div class="visual-frame">
+          <div class="visual-icon" aria-hidden="true">🗒️</div>
+          <span class="visual-badge">Suggested visual</span>
+          <p class="visual-title">The Miro synthesis board</p>
+        </div>
+        <figcaption>
+          <strong>What would help:</strong> a screenshot (or clean mock) of the actual board so
+          the silent-review-then-dot-vote ritual feels concrete. Ideas:
+          <ul>
+            <li>Sticky notes grouped into columns — Interviews, PostHog data, Screen recordings — with colored dot-votes clustered on the takeaways that won.</li>
+            <li>Blur or anonymize any real customer names if it's a genuine screenshot.</li>
+            <li>A short arrow/annotation calling out one "winning" sticky to connect it to the sprint focus.</li>
+          </ul>
+        </figcaption>
+      </figure>
       <aside class="callout callout-example">
         <p>
           <strong>From our sprint:</strong> Past users had told us our honest, detailed feedback
@@ -171,6 +326,23 @@
         the list. We didn't write a lengthy plan. We picked the highest-priority item and started
         building. When it was done, we returned to the list and picked the next one.
       </p>
+
+      <figure class="visual">
+        <div class="visual-frame">
+          <div class="visual-icon" aria-hidden="true">🔲</div>
+          <span class="visual-badge">Suggested visual</span>
+          <p class="visual-title">The cost / benefit / certainty prioritization</p>
+        </div>
+        <figcaption>
+          <strong>What would help:</strong> a diagram that shows how focus areas get ranked on the
+          three dials mentioned. Ideas:
+          <ul>
+            <li>A 2×2 matrix — <em>cost (low→high)</em> vs <em>benefit (low→high)</em> — with each candidate plotted as a dot, and the dot's size or shade encoding <em>certainty</em>. The top-left "high benefit, low cost" quadrant is the target.</li>
+            <li>Place real example items on it (e.g. "feedback redesign") so readers see the judgment in action.</li>
+            <li>Alternatively, a simple ranked list with three little meters (cost / benefit / certainty) beside each item.</li>
+          </ul>
+        </figcaption>
+      </figure>
       <aside class="callout callout-tip">
         <p>
           <strong>Pro tip:</strong> One thing that accelerated our progress: our engineer (me) was
@@ -232,6 +404,23 @@
         The sketches don't need to be good. Boxes, arrows, and scribbled labels are enough. The
         point is to explore the space of options cheaply before committing code to any of them.
       </p>
+
+      <figure class="visual">
+        <div class="visual-frame">
+          <div class="visual-icon" aria-hidden="true">✏️</div>
+          <span class="visual-badge">Suggested visual</span>
+          <p class="visual-title">Team sketches, voted on Miro</p>
+        </div>
+        <figcaption>
+          <strong>What would help:</strong> a photo collage that proves "the sketches don't need
+          to be good." Ideas:
+          <ul>
+            <li>3–4 photos of real pen-and-paper sketches side by side, deliberately rough — boxes, arrows, scribbled labels.</li>
+            <li>Dot-votes overlaid on individual elements (not whole designs) to illustrate voting on pieces.</li>
+            <li>An arrow showing how elements from different sketches combine into one direction.</li>
+          </ul>
+        </figcaption>
+      </figure>
       <p>
         <strong>Go high fidelity.</strong> The sketches give us alignment on the direction of the
         solution, but plenty of smaller decisions remain: layout, copy, empty states, edge cases.
@@ -256,6 +445,23 @@
           shared conviction that the result couldn't feel like a wall of text.
         </p>
       </aside>
+
+      <figure class="visual">
+        <div class="visual-frame">
+          <div class="visual-icon" aria-hidden="true">🎨</div>
+          <span class="visual-badge">Suggested visual</span>
+          <p class="visual-title">Three high-fidelity variations → one design</p>
+        </div>
+        <figcaption>
+          <strong>What would help:</strong> the concrete artifacts from this step, since it's the
+          most visual moment in the sprint. Ideas:
+          <ul>
+            <li>The three HTML feedback-screen variations shown as thumbnails, with callouts marking which element "won" from each (per-metric feedback, score visuals, no wall of text).</li>
+            <li>A <em>before / after</em> pairing of the feedback screen — the old wall of text next to the new per-metric layout.</li>
+            <li>An optional inset of the Claude Code prompt/iteration to show the build-in-HTML workflow.</li>
+          </ul>
+        </figcaption>
+      </figure>
       <p>
         <strong>Implement.</strong> With the design converged, we build. The HTML designs already
         lived in the codebase, so I used Claude Code to turn them into a production-ready change.
@@ -328,12 +534,29 @@
         activation and monetization, this step usually involved creating a funnel showing conversion
         rates at each step toward payment, which made it easy to see where users were dropping off.
       </p>
+
+      <figure class="visual">
+        <div class="visual-frame">
+          <div class="visual-icon" aria-hidden="true">📊</div>
+          <span class="visual-badge">Suggested visual</span>
+          <p class="visual-title">The PostHog conversion funnel</p>
+        </div>
+        <figcaption>
+          <strong>What would help:</strong> a screenshot of the analytics you actually ship each
+          Friday, closing the loop back to Monday's review. Ideas:
+          <ul>
+            <li>A PostHog funnel from ad click → signup → activation → payment, with the conversion percentage at each step.</li>
+            <li>Highlight the step tied to this sprint's goal so readers see what "measuring the bet" looks like.</li>
+            <li>Pair it visually with the Monday funnel placeholder to reinforce that this is the same loop, one week later.</li>
+          </ul>
+        </figcaption>
+      </figure>
       <p>
         <strong>Design next week's user interviews.</strong> An hour with a real user is scarce, so
         we planned interviews carefully to use that time as efficiently as possible. Each interview
         had two jobs. First, test the specific changes we shipped this sprint, and if they don't
         work, understand why. Second, try to sell the product. Selling in interviews is how we got
-        our first five paying customers. And when people didn't pay, the ask uncovered the gaps
+        our first paying customers. And when people didn't pay, the ask uncovered the gaps
         between the product and their wallet. Many times we assumed the product needed X when it
         really needed Y, and Y was often easier to build than X. We planned each interview on a
         lightweight Miro board and reviewed it as a team before finalizing.
@@ -352,6 +575,23 @@
           and Monday's data said so.
         </p>
       </aside>
+
+      <figure class="visual">
+        <div class="visual-frame">
+          <div class="visual-icon" aria-hidden="true">📈</div>
+          <span class="visual-badge">Suggested visual</span>
+          <p class="visual-title">Before vs. after: the result of the bet</p>
+        </div>
+        <figcaption>
+          <strong>What would help:</strong> a simple, punchy chart of the payoff so the sprint
+          ends on evidence. Ideas:
+          <ul>
+            <li>Two bars — <em>Before 5%</em> vs <em>After 13%</em> — for "clicked ad → completed two questions," with the jump labeled.</li>
+            <li>A footnote in the chart noting other changes shipped that week, mirroring the honesty of the text.</li>
+            <li>Or a small week-over-week line trend if you have several sprints of data to show the compounding effect.</li>
+          </ul>
+        </figcaption>
+      </figure>
 
       <h2>Closing Thought</h2>
       <p>

@@ -172,6 +172,62 @@ a:hover {
   background: var(--tip-bg);
 }
 
+/* Visual placeholders */
+.visual {
+  margin: 36px 0;
+}
+
+.visual-frame {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  background: var(--code-bg);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.visual-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.visual-badge {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.visual-title {
+  margin: 6px 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.visual figcaption {
+  margin-top: 14px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.visual figcaption strong {
+  color: var(--fg);
+}
+
+.visual figcaption ul {
+  margin: 8px 0 0;
+  padding-left: 1.2em;
+  text-align: left;
+}
+
+.visual figcaption li {
+  margin: 4px 0;
+}
+
 /* Footer */
 .site-footer {
   border-top: 1px solid var(--border);
