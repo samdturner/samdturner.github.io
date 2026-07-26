@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Weekly Sprint Playbook: How We Got Our First Paying Customers — Sam's Blog</title>
+  <title>Weekly Sprint Playbook: From Zero to Paying Customers</title>
   <meta name="description" content="A step-by-step playbook for the weekly sprint that took us from zero to our first paying customers, developed over 2.5 years of building startups." />
   <link rel="stylesheet" href="../style.css" />
   <style>
@@ -226,6 +226,25 @@
     .sketch-week .sticky ul { margin: 0; padding-left: 1.05em; font-size: 0.82rem; line-height: 1.5; }
     .sketch-week .sticky li { margin: 2px 0; }
     .sketch-week-note { text-align: center; margin-top: 18px; font-family: var(--hand); color: var(--ink-soft); font-size: 1.1rem; }
+
+    /* segment / people diagram */
+    .viz { width: 100%; height: auto; max-width: 560px; display: block; margin: 0 auto; }
+    .viz .hd { font: 700 17px var(--hand); fill: var(--ink-soft); letter-spacing: 1px; }
+    .viz .lbl.sm { font: 700 14px var(--hand); }
+    .viz .ink { fill: var(--ink); }
+    .viz .sub { font: italic 700 17px var(--hand); }
+    .viz .clab { font-family: var(--hand); font-weight: 700; fill: #fff; }
+    .viz .div { stroke: var(--track); }
+    .viz .seg { fill: color-mix(in srgb, var(--ink) 6%, transparent); stroke: var(--ink-soft); }
+
+    /* big-swings vs. small-steps diagram */
+    .dg { width: 100%; height: auto; max-width: 700px; display: block; margin: 0 auto; }
+    .dg .arw { stroke: var(--ink); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .dg .big { stroke-width: 8; }
+    .dg .sm { stroke-width: 3.5; }
+    .dg .div { fill: var(--track); }
+    .dg .st-txt { font: italic 700 19px var(--hand); fill: #33302a; }
+    .dg .cap { font: italic 700 20px var(--hand); }
   </style>
 </head>
 <body>
@@ -248,12 +267,12 @@
     <main class="post-main">
       <article class="post">
         <p class="post-eyebrow">Sprint Playbook &middot; <time datetime="2026-07-23">July 23, 2026</time> &middot; 17 min read</p>
-        <h1 class="post-title">The Weekly Sprint Playbook: How We Got Our First Paying Customers</h1>
+        <h1 class="post-title">Weekly Sprint Playbook: From Zero to Paying Customers</h1>
 
       <h2 id="introduction">Introduction</h2>
       <p>
-        For most SaaS businesses, the risk of failure isn't "Can this be built?" With AI and
-        vibe coding, building has never been easier or cheaper. The risk is running out of
+        For most SaaS businesses, the risk of failure isn't "Can this be built?". With AI and
+        vibe coding, building has never been easier or cheaper. The common failure mode is running out of
         resources (time, money, and motivation) before you figure out what to build, who to
         build it for, and how to reach them. This playbook shows you how to answer the first
         of those questions in the most efficient way possible. It's about finding the critical
@@ -266,7 +285,7 @@
       <p>
         That process is a weekly sprint. Every Friday, we shipped a new version of the product.
         Over the weekend, a few hundred dollars of ads put it in front of strangers who owed us
-        nothing. On Monday, we interviewed five people who fit our ICP, and at the end of every
+        nothing. On Monday, we interviewed people who fit our ICP, and at the end of every
         interview, we tried to sell the product. That's how we got our first paying
         customers. Each week, the data and the conversations told us where our bets were right
         and where they were wrong, and the next week's bets got better.
@@ -355,7 +374,7 @@
       <h3 id="day-1">Day 1: Monday — Understand</h3>
       <p>
         <strong>Quantitative review.</strong> By Monday morning, the weekend's usage data is
-        waiting for us, which is exactly why we ship on Fridays. We dig into three questions:
+        waiting for us, which is why we ship on Fridays. We dig into three questions:
       </p>
       <ul>
         <li>Did last week's changes actually move the metrics we expected them to?</li>
@@ -369,11 +388,9 @@
       <aside class="callout callout-example">
         <span class="call-tag">From our sprint</span>
         <p>
-          The funnel told a clear story. Half the people who
-          clicked our Google Ad completed signup, and half of those completed one practice
-          question. But only 20% of those completed a second. Onboarding was working; activation
-          wasn't. We defined activation as completing two practice attempts, and that became the
-          sprint's focus.
+          The funnel made the problem clear. Half the people who clicked our ad signed up, and half
+          of them tried one practice question. But only one in five of those came back for a second.
+          So getting started wasn't the issue. The problem was coming back for a second question.
         </p>
       </aside>
 
@@ -425,13 +442,47 @@
       <aside class="callout callout-tip">
         <span class="call-tag">Pro tip</span>
         <p>
-          Interview the same customer segment that shows up in your
-          quantitative data. When both come from the same people, they work together: the numbers
-          show you a pattern, and the interviews tell you why it's happening. If the segments
-          don't match, you'll get confusing results. Something looks great in interviews but
-          terrible in your ad campaigns, and you won't know why.
+          Interview the same kind of people you see in your quantitative data. Both groups must be inside 
+          your customer segment. Then both data sets work together. The quantitative data tells you what's 
+          happening and the interviews tell you why. If you interview one group but measure another, you'll 
+          be left with contradictions that are hard to explain.
         </p>
       </aside>
+
+      <figure class="sketch-fig">
+        <div class="paper">
+          <svg class="viz" viewBox="0 0 560 315" role="img" aria-label="A big circle is your customer segment, and the two groups inside are drawn as little people. On the left, both the data group and the interview group sit inside the segment, a match. On the right, the interview group is inside but the data group falls outside, a mismatch.">
+            <defs><symbol id="person" viewBox="0 0 20 22"><circle cx="10" cy="6.5" r="4.3"/><path d="M2.5 21.5 a7.6 7 0 0 1 15 0 Z"/></symbol></defs>
+            <text class="hd" x="150" y="28" text-anchor="middle">MATCH</text>
+            <circle class="seg" cx="150" cy="152" r="88" stroke-width="2" filter="url(#rough)"/>
+            <text class="lbl sm ink" x="150" y="82" text-anchor="middle">your segment</text>
+            <circle cx="114" cy="166" r="40" fill="#2563eb" stroke="#1d4ed8" stroke-width="2" filter="url(#rough2)"/>
+            <use href="#person" x="89" y="143" width="14" height="15" fill="#fff"/><use href="#person" x="107" y="143" width="14" height="15" fill="#fff"/><use href="#person" x="125" y="143" width="14" height="15" fill="#fff"/>
+            <text class="clab" font-size="16" x="114" y="188" text-anchor="middle">Data</text>
+            <circle cx="194" cy="140" r="40" fill="#16a34a" stroke="#15803d" stroke-width="2" filter="url(#rough2)"/>
+            <use href="#person" x="169" y="117" width="14" height="15" fill="#fff"/><use href="#person" x="187" y="117" width="14" height="15" fill="#fff"/><use href="#person" x="205" y="117" width="14" height="15" fill="#fff"/>
+            <text class="clab" font-size="13" x="194" y="162" text-anchor="middle">Interviews</text>
+            <text class="sub" x="150" y="302" text-anchor="middle" fill="#16a34a">both inside ✓</text>
+
+            <line class="div" x1="280" y1="46" x2="280" y2="272" stroke-dasharray="4 6"/>
+
+            <text class="hd" x="416" y="28" text-anchor="middle">MISMATCH</text>
+            <circle class="seg" cx="416" cy="152" r="88" stroke-width="2" filter="url(#rough)"/>
+            <text class="lbl sm ink" x="416" y="82" text-anchor="middle">your segment</text>
+            <circle cx="400" cy="152" r="40" fill="#16a34a" stroke="#15803d" stroke-width="2" filter="url(#rough2)"/>
+            <use href="#person" x="375" y="129" width="14" height="15" fill="#fff"/><use href="#person" x="393" y="129" width="14" height="15" fill="#fff"/><use href="#person" x="411" y="129" width="14" height="15" fill="#fff"/>
+            <text class="clab" font-size="13" x="400" y="174" text-anchor="middle">Interviews</text>
+            <circle cx="505" cy="246" r="33" fill="#2563eb" stroke="#1d4ed8" stroke-width="2" filter="url(#rough2)"/>
+            <use href="#person" x="485" y="227" width="11" height="12" fill="#fff"/><use href="#person" x="499" y="227" width="11" height="12" fill="#fff"/><use href="#person" x="513" y="227" width="11" height="12" fill="#fff"/>
+            <text class="clab" font-size="13" x="505" y="254" text-anchor="middle">Data</text>
+            <text class="lbl sm" x="505" y="206" text-anchor="middle" fill="#dc2626">outside!</text>
+            <text class="sub" x="416" y="302" text-anchor="middle" fill="#dc2626">one outside ✗</text>
+          </svg>
+        </div>
+        <figcaption>
+          A match keeps both groups inside your segment. A mismatch lets one drift outside.
+        </figcaption>
+      </figure>
 
       <h3 id="day-2">Day 2: Tuesday — Synthesize &amp; Prioritize</h3>
       <p>
@@ -464,13 +515,13 @@
       <figure class="sketch-fig">
         <div class="paper">
           <div class="miro-card" role="img" aria-label="A Miro synthesis board with three columns. User interviews: detailed feedback is the product's edge, plus user quotes that the score is unclear and that they want an example of what to say, and a pain that they want clearer, actionable scores. Session recordings: people read the feedback, get confused, and leave, rarely attempt a second question, and long feedback goes unread. Quant from PostHog: half sign up but only about 1 in 5 attempts a second question, a big drop right after the first feedback, and the dot-voted theory that unclear feedback blocks the second try. That theory set the sprint's focus on redesigning feedback.">
-            <div class="miro-sub">silent review → dot-vote → discuss</div>
+            <div class="miro-title">Synthesizing what we learned</div>
             <div class="miro-cols">
               <div class="miro-col">
                 <div class="miro-head">User interviews</div>
                 <div class="note g"><span class="votes"><i class="v-p"></i><i class="v-b"></i></span><span class="tag">Learning</span>Detailed feedback is our edge</div>
-                <div class="note y"><span class="tag">User quote</span><span class="qt">"I don't get why I got this score"</span><span class="attr">Yuliya, interview</span></div>
-                <div class="note y"><span class="tag">User quote</span><span class="qt">"Give me an example of what to say"</span><span class="attr">Marisa, interview</span></div>
+                <div class="note y"><span class="tag">User quote</span><span class="qt">"I don't get why I got this score"</span></div>
+                <div class="note y"><span class="tag">User quote</span><span class="qt">"Give me an example of what to say"</span></div>
                 <div class="note r"><span class="tag">Pain</span>Wants clearer, actionable scores</div>
               </div>
               <div class="miro-col">
@@ -493,8 +544,8 @@
         </div>
         <figcaption>
           The Monday synthesis, simplified. Interviews, recordings, and PostHog all pointed at the
-          same thing: people weren't coming back for a second question because the feedback was hard
-          to act on. That agreement, once dot-voted, set the sprint's focus.
+          same thing. People weren't coming back for a second question because the feedback was hard
+          to act on.
         </figcaption>
       </figure>
       <aside class="callout callout-example">
@@ -504,7 +555,7 @@
           was a key differentiator. But they also surfaced a problem. We scored candidates on four
           dimensions (substance, structure, conciseness, and delivery), and users weren't clear on
           what each metric meant, why they got the score they did, or how to improve on the next
-          attempt. Our hypothesis: users in the wild were hitting the same wall, and if we fixed
+          attempt. Our hypothesis was that users in the wild were hitting the same wall, and if we fixed
           it, more of them would complete a second attempt.
         </p>
       </aside>
@@ -514,17 +565,17 @@
           Hold off on pitching solutions until synthesis is done. People
           get excited about what they've learned and want to jump straight to fixing things. That
           energy is good. The problem is timing. A solution pitched before everyone has seen the
-          full picture invites debate. And every minute spent debating is a minute not spent
-          learning. The solution is simple: write your ideas down as they come to you, then share
+          full picture invites debate. And every minute spent debating is a minute not spent improving 
+          the product. The solution is simple. Write your ideas down as they come to you, then share
           them when it's time to prioritize. The same idea at the right time, once the learnings
           are shared, gets a better response.
         </p>
       </aside>
       <p>
         <strong>Prioritization.</strong> With the learnings shared, we pick the sprint's focus
-        areas. The goal isn't to evaluate every possible idea. It's to quickly agree on what
-        matters most this sprint, because every minute spent on discussion is a minute not spent
-        shipping. Here's the process that worked for us:
+        areas. The goal isn't to evaluate every possible idea. It's to efficiently gain clarity on the 
+        highest leverage focus areas. There are the ones that will have the biggest benefit for the least 
+        amount of time. Here's the process that worked for us:
       </p>
       <ol>
         <li>
@@ -619,16 +670,6 @@
         than we imagined. A basic version in front of real users teaches you more than a polished
         version stuck in development.
       </p>
-      <aside class="callout callout-example">
-        <span class="call-tag">From our sprint</span>
-        <p>
-          We timeboxed the feedback redesign at two days,
-          two-thirds of the week's build time and a bigger bet than we ordinarily made. It was
-          justified on both dials. High benefit, because candidates told us the feedback is what
-          separates us from ChatGPT. High certainty, because we'd heard the same complaint
-          consistently enough to know the ideal flow.
-        </p>
-      </aside>
       <aside class="callout callout-tip">
         <span class="call-tag">Pro tip</span>
         <p>
@@ -636,6 +677,15 @@
           what a feature should be, build it properly. When you're unsure, build the most basic
           version, get feedback, then improve. Uncertainty is a reason to ship sooner, not to build
           longer.
+        </p>
+      </aside>
+      <aside class="callout callout-example">
+        <span class="call-tag">From our sprint</span>
+        <p>
+          We gave the feedback redesign two days, two-thirds of the week's build time and a bigger
+          bet than we usually make. It was worth it for two reasons. The payoff was big, because
+          candidates told us the feedback is what sets us apart from ChatGPT. And we were confident
+          we knew what to build, because we'd heard the same complaint again and again.
         </p>
       </aside>
       <p>
@@ -736,9 +786,8 @@
           </div>
         </div>
         <figcaption>
-          Wednesday's rough layouts, each one an attempt at the requirements above. Sketched fast
-          on paper, dropped into Miro, then dot-voted element by element, so no single sketch won;
-          the winning pieces came from across all three.
+          Rough takes on the requirements above, dot-voted element by element. No single sketch
+          won. The best pieces came from all three.
         </figcaption>
       </figure>
       <p>
@@ -752,7 +801,7 @@
       <p>
         Instead of mocking up designs in Figma, I used Claude Code to build high-fidelity versions
         directly in HTML. I'd iterate on my own until the design felt presentable, then bring it to
-        the team for review. My co-founder gave feedback, I iterated, and we'd repeat: one to three
+        the my co-founder for review. My co-founder gave feedback, I iterated, and we'd repeat: one to three
         rounds of team review. The first review almost always surfaced the highest-impact
         improvements. Once feedback gets into the details, the design is converging and it's time
         to build.
@@ -833,8 +882,7 @@
         </div>
         <figcaption>
           The design we shipped, built in HTML with Claude Code. It merges the winning pieces from
-          the three variations, and the review's feedback is checked off against it. One open item,
-          the two buttons, we left for a later sprint.
+          the three variations, and the review's feedback is checked off against it.
         </figcaption>
       </figure>
       <p>
@@ -855,8 +903,8 @@
         </p>
       </aside>
       <p>
-        <strong>Schedule user interviews.</strong> We source participants from UserInterviews.com
-        and sometimes Respondent, usually about five per week. Five turns out to be enough. By the
+        <strong>Schedule user interviews.</strong> We source participants from <a href="https://www.userinterviews.com/" target="_blank" rel="noopener">UserInterviews.com</a>
+        and sometimes <a href="https://www.respondent.io/" target="_blank" rel="noopener">Respondent</a>, usually about five per week. Five turns out to be enough. By the
         fifth interview, we're mostly hearing things we've already heard, which is the signal that
         another interview won't teach us much.
       </p>
@@ -871,16 +919,14 @@
       <p>
         <strong>Repeat the build loop.</strong> Thursday is mostly a continuation. Each time a
         change ships, we return to the priority list from Tuesday and pick up the next highest
-        priority item. Then the loop repeats. Timebox, sketch, high fidelity, implement. Smaller
-        items collapse the loop to just implementation, since not everything needs sketches and
-        design reviews. The list is a queue we pull from, and how far down we get by Friday is how
-        much we ship.
+        priority item. Then the loop repeats. Timebox, sketch, high fidelity, implement. The list 
+        is a queue we pull from, and how far down we get by Friday is how much we ship.
       </p>
       <p>
         <strong>Prep the launch.</strong> By Friday, the product must be live in production where
-        real people can reach it, and you need a way to drive users to it. This matters because user
-        interviews are a controlled environment. We're there to guide participants, and they're
-        being paid to show up, so they won't abandon the product no matter how confusing it gets.
+        real people can reach it, and you need a way to drive users to it. Interviews alone can
+        flatter you. We're there to guide participants, and they're being paid to show up, so they
+        won't abandon the product no matter how confusing it gets.
         Users in the wild owe you nothing. They arrive with no guide, no incentive, and no patience,
         and that's what makes their behavior the closest thing you'll get to the truth about how the
         market is receiving your product.
@@ -964,34 +1010,56 @@
 
       <h2 id="closing-thought">Closing Thought</h2>
       <p>
-        Notice what this sprint optimizes for. It's not velocity for its own sake, and it's not
-        polish. It's the number of times you get to run the loop before your time, money, or
-        motivation runs out. A team that completes fifty honest learning cycles in a year will
-        almost always out-learn a team that spends that year perfecting three big releases. Protect
-        the loop, and the answer to "what should I build?" takes care of itself.
+        Notice what this sprint optimizes for. It's not velocity for its own sake. It's optimizing for the number of times you can repeat this loop before you run out of resources. It's maximizing your chances of building a product that people want. Small steps, based on evidence, will help you get there. Big swings, based on faith, will burn through your resources without ever landing. Protect the loop, and "what should I build?" stops being a guess. It becomes something you learn, one step at a time.
       </p>
-      </article>
-    </main>
-  </div>
 
-  <script>
-    (function () {
-      var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
-      var map = {};
-      links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
-      var heads = Array.prototype.slice.call(document.querySelectorAll('.post h2[id], .post h3[id]'));
-      if (!('IntersectionObserver' in window) || !heads.length) return;
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            links.forEach(function (l) { l.classList.remove('active'); });
-            var a = map[e.target.id];
-            if (a) a.classList.add('active');
-          }
-        });
-      }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
-      heads.forEach(function (h) { obs.observe(h); });
-    })();
-  </script>
+      <figure class="sketch-fig">
+        <div class="paper">
+          <svg class="dg" viewBox="0 0 880 400" role="img" aria-label="Two paths from Start to Success. On the left, a few big swinging arrows overshoot and stop short, running out of time before reaching Success, a loss. On the right, many small steady steps zig-zag up to Success in time, a win.">
+            <rect class="div" x="436" y="46" width="6" height="312" rx="3"/>
+            <g filter="url(#rough2)">
+              <path class="arw big" d="M100 298 L151.3 157.0 M153.9 171.8 L151.3 157.0 L139.8 166.7"/>
+              <path class="arw big" d="M154.4 148.6 L240.4 271.5 M226.8 265.1 L240.4 271.5 L239.1 256.5"/>
+              <path class="arw big" d="M245.6 278.8 L342.0 163.9 M339.4 178.7 L342.0 163.9 L327.9 169.1"/>
+            </g>
+            <rect x="44" y="306" width="90" height="32" rx="8" fill="#d6d8dc" stroke="#b4b8c0" stroke-width="1.5"/>
+            <text class="st-txt" x="89" y="328" text-anchor="middle">Start</text>
+            <rect x="248" y="54" width="112" height="40" rx="9" fill="#f1df66" stroke="#d7c44c" stroke-width="1.5"/>
+            <text class="st-txt" x="304" y="80" text-anchor="middle">Success</text>
+            <text class="cap" x="218" y="370" text-anchor="middle" fill="#b23a2e">Lose! ran out of resources</text>
+            <g filter="url(#rough2)">
+              <path class="arw sm" d="M560 304 L566.1 290.3 M566.8 296.8 L566.1 290.3 L560.8 294.1"/>
+              <path class="arw sm" d="M567.5 287.1 L579.0 277.5 M576.8 283.6 L579.0 277.5 L572.6 278.6"/>
+              <path class="arw sm" d="M581.7 275.2 L594.4 283.2 M587.9 282.9 L594.4 283.2 L591.4 277.4"/>
+              <path class="arw sm" d="M597.4 285.0 L599.0 270.1 M601.6 276.0 L599.0 270.1 L595.1 275.4"/>
+              <path class="arw sm" d="M599.3 266.6 L608.1 254.5 M607.5 260.9 L608.1 254.5 L602.2 257.1"/>
+              <path class="arw sm" d="M610.2 251.6 L612.8 236.9 M615.0 243.0 L612.8 236.9 L608.6 241.9"/>
+              <path class="arw sm" d="M613.4 233.4 L626.6 240.5 M620.2 240.7 L626.6 240.5 L623.2 235.0"/>
+              <path class="arw sm" d="M629.7 242.1 L637.2 229.1 M637.2 235.6 L637.2 229.1 L631.6 232.4"/>
+              <path class="arw sm" d="M639.0 226.1 L640.0 211.1 M642.9 217.0 L640.0 211.1 L636.4 216.5"/>
+              <path class="arw sm" d="M640.3 207.6 L650.7 196.8 M649.1 203.2 L650.7 196.8 L644.5 198.6"/>
+              <path class="arw sm" d="M653.1 194.3 L665.6 202.7 M659.1 202.3 L665.6 202.7 L662.7 196.9"/>
+              <path class="arw sm" d="M668.5 204.7 L671.6 190.0 M673.6 196.2 L671.6 190.0 L667.2 194.8"/>
+              <path class="arw sm" d="M672.3 186.6 L684.1 177.3 M681.7 183.4 L684.1 177.3 L677.7 178.2"/>
+              <path class="arw sm" d="M686.9 175.2 L688.5 160.3 M691.1 166.2 L688.5 160.3 L684.6 165.5"/>
+              <path class="arw sm" d="M688.8 156.8 L698.1 145.0 M697.2 151.4 L698.1 145.0 L692.0 147.4"/>
+              <path class="arw sm" d="M700.2 142.2 L705.3 128.1 M706.5 134.5 L705.3 128.1 L700.4 132.3"/>
+              <path class="arw sm" d="M706.5 124.8 L717.3 114.4 M715.5 120.7 L717.3 114.4 L711.0 116.0"/>
+              <path class="arw sm" d="M719.9 112.0 L721.9 97.1 M724.4 103.1 L721.9 97.1 L717.9 102.2"/>
+            </g>
+            <rect x="520" y="312" width="90" height="32" rx="8" fill="#d6d8dc" stroke="#b4b8c0" stroke-width="1.5"/>
+            <text class="st-txt" x="565" y="334" text-anchor="middle">Start</text>
+            <rect x="692" y="54" width="112" height="40" rx="9" fill="#f1df66" stroke="#d7c44c" stroke-width="1.5"/>
+            <text class="st-txt" x="748" y="80" text-anchor="middle">Success</text>
+            <text class="cap" x="662" y="370" text-anchor="middle" fill="#2e8b52">Win! didn't run out of resources</text>
+          </svg>
+        </div>
+        <figcaption>
+          Big swings burn through your runway before they land. Small, steady loops reach success
+          while there's still time on the clock.
+        </figcaption>
+      </figure>
+    </article>
+  </main>
 </body>
 </html>

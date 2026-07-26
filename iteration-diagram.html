@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iteration diagram — big swings vs. small steps</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page-head { max-width: 760px; margin: 0 auto; padding: 44px 24px 4px; }
+    .page-head h1 { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; margin: 0 0 6px; color: var(--heading); }
+    .page-head p { color: var(--muted); margin: 0; max-width: 620px; }
+    .wrap-c { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+    /* sketchbook figure base (matches the article) */
+    .sketch-fig {
+      margin: 28px 0;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.18);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.72);
+      --track: rgba(120,90,50,.42); --wk: #b28a5c;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sketch-fig {
+        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
+        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.7);
+        --track: rgba(210,180,130,.35); --wk: #c99b67;
+      }
+    }
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 24px 20px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+
+    .dg { width: 100%; height: auto; max-width: 700px; display: block; margin: 0 auto; }
+    .dg .arw { stroke: var(--ink); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .dg .big { stroke-width: 8; }
+    .dg .sm { stroke-width: 3.5; }
+    .dg .div { fill: var(--track); }
+    .dg .st-txt { font: italic 700 19px var(--hand); fill: #33302a; }
+    .dg .cap { font: italic 700 20px var(--hand); }
+  </style>
+</head>
+<body>
+  <div class="page-head">
+    <h1>Big swings vs. small steps</h1>
+    <p>The attached diagram, redrawn in the article's sketchbook style. It's meant for the end of the piece: erratic, oversized bets burn the clock before they land; small, steady loops reach success in time.</p>
+  </div>
+
+  <div class="wrap-c">
+    <figure class="sketch-fig">
+      <div class="paper">
+        <svg class="dg" viewBox="0 0 880 400" role="img" aria-label="Two paths from Start to Success. On the left, a few big swinging arrows overshoot and stop short, running out of time before reaching Success, a loss. On the right, many small steady steps zig-zag up to Success in time, a win.">
+          <rect class="div" x="436" y="46" width="6" height="312" rx="3"/>
+
+          <!-- LEFT: big equal-length swings, lose (x = time forward, wild vertical swings, small gaps, stops short) -->
+          <g filter="url(#rough2)">
+            <path class="arw big" d="M100 298 L151.3 157.0 M153.9 171.8 L151.3 157.0 L139.8 166.7"/>
+            <path class="arw big" d="M154.4 148.6 L240.4 271.5 M226.8 265.1 L240.4 271.5 L239.1 256.5"/>
+            <path class="arw big" d="M245.6 278.8 L342.0 163.9 M339.4 178.7 L342.0 163.9 L327.9 169.1"/>
+          </g>
+          <rect x="44" y="306" width="90" height="32" rx="8" fill="#d6d8dc" stroke="#b4b8c0" stroke-width="1.5"/>
+          <text class="st-txt" x="89" y="328" text-anchor="middle">Start</text>
+          <rect x="248" y="54" width="112" height="40" rx="9" fill="#f1df66" stroke="#d7c44c" stroke-width="1.5"/>
+          <text class="st-txt" x="304" y="80" text-anchor="middle">Success</text>
+          <text class="cap" x="218" y="362" text-anchor="middle" fill="#b23a2e">Lose! ran out of time</text>
+
+          <!-- RIGHT: many small equal-length steps, win (x = time forward, varied angles incl. down-right setbacks, small gaps, reaches success) -->
+          <g filter="url(#rough2)">
+            <path class="arw sm" d="M560 304 L566.1 290.3 M566.8 296.8 L566.1 290.3 L560.8 294.1"/>
+            <path class="arw sm" d="M567.5 287.1 L579.0 277.5 M576.8 283.6 L579.0 277.5 L572.6 278.6"/>
+            <path class="arw sm" d="M581.7 275.2 L594.4 283.2 M587.9 282.9 L594.4 283.2 L591.4 277.4"/>
+            <path class="arw sm" d="M597.4 285.0 L599.0 270.1 M601.6 276.0 L599.0 270.1 L595.1 275.4"/>
+            <path class="arw sm" d="M599.3 266.6 L608.1 254.5 M607.5 260.9 L608.1 254.5 L602.2 257.1"/>
+            <path class="arw sm" d="M610.2 251.6 L612.8 236.9 M615.0 243.0 L612.8 236.9 L608.6 241.9"/>
+            <path class="arw sm" d="M613.4 233.4 L626.6 240.5 M620.2 240.7 L626.6 240.5 L623.2 235.0"/>
+            <path class="arw sm" d="M629.7 242.1 L637.2 229.1 M637.2 235.6 L637.2 229.1 L631.6 232.4"/>
+            <path class="arw sm" d="M639.0 226.1 L640.0 211.1 M642.9 217.0 L640.0 211.1 L636.4 216.5"/>
+            <path class="arw sm" d="M640.3 207.6 L650.7 196.8 M649.1 203.2 L650.7 196.8 L644.5 198.6"/>
+            <path class="arw sm" d="M653.1 194.3 L665.6 202.7 M659.1 202.3 L665.6 202.7 L662.7 196.9"/>
+            <path class="arw sm" d="M668.5 204.7 L671.6 190.0 M673.6 196.2 L671.6 190.0 L667.2 194.8"/>
+            <path class="arw sm" d="M672.3 186.6 L684.1 177.3 M681.7 183.4 L684.1 177.3 L677.7 178.2"/>
+            <path class="arw sm" d="M686.9 175.2 L688.5 160.3 M691.1 166.2 L688.5 160.3 L684.6 165.5"/>
+            <path class="arw sm" d="M688.8 156.8 L698.1 145.0 M697.2 151.4 L698.1 145.0 L692.0 147.4"/>
+            <path class="arw sm" d="M700.2 142.2 L705.3 128.1 M706.5 134.5 L705.3 128.1 L700.4 132.3"/>
+            <path class="arw sm" d="M706.5 124.8 L717.3 114.4 M715.5 120.7 L717.3 114.4 L711.0 116.0"/>
+            <path class="arw sm" d="M719.9 112.0 L721.9 97.1 M724.4 103.1 L721.9 97.1 L717.9 102.2"/>
+          </g>
+          <rect x="520" y="312" width="90" height="32" rx="8" fill="#d6d8dc" stroke="#b4b8c0" stroke-width="1.5"/>
+          <text class="st-txt" x="565" y="334" text-anchor="middle">Start</text>
+          <rect x="692" y="54" width="112" height="40" rx="9" fill="#f1df66" stroke="#d7c44c" stroke-width="1.5"/>
+          <text class="st-txt" x="748" y="80" text-anchor="middle">Success</text>
+          <text class="cap" x="662" y="362" text-anchor="middle" fill="#2e8b52">Win! didn't run out of time</text>
+        </svg>
+      </div>
+      <figcaption>Big swings burn through your runway before they land. Small, steady loops reach success while there's still time on the clock.</figcaption>
+    </figure>
+  </div>
+</body>
+</html>

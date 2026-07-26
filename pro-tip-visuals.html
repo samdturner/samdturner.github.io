@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro tip visuals — same people, data + interviews</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page-head { max-width: 760px; margin: 0 auto; padding: 44px 24px 4px; }
+    .page-head h1 { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; margin: 0 0 6px; color: var(--heading); }
+    .page-head p { color: var(--muted); margin: 0; max-width: 620px; }
+    .concept { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .concept-label { font-family: var(--font-head); font-weight: 700; font-size: 0.82rem; letter-spacing: .05em; text-transform: uppercase; color: var(--heading); margin: 46px 0 4px; }
+    .concept-label span { color: var(--muted); font-weight: 600; }
+    .concept-desc { color: var(--muted); font-size: 0.95rem; margin: 0 0 8px; max-width: 640px; }
+
+    /* sketchbook figure base (matches the article) */
+    .sketch-fig {
+      margin: 20px 0;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.18);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.72);
+      --track: rgba(120,90,50,.42); --wk: #b28a5c;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sketch-fig {
+        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
+        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.7);
+        --track: rgba(210,180,130,.35); --wk: #c99b67;
+      }
+    }
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 22px 20px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    .viz { width: 100%; height: auto; max-width: 560px; display: block; margin: 0 auto; }
+    .viz .hd { font: 700 17px var(--hand); fill: var(--ink-soft); letter-spacing: 1px; }
+    .viz .lbl { font: 700 15px var(--hand); }
+    .viz .lbl.sm { font: 700 14px var(--hand); }
+    .viz .ink { fill: var(--ink); }
+    .viz .sub { font: italic 700 17px var(--hand); }
+    .viz .clab { font-family: var(--hand); font-weight: 700; fill: #fff; }
+    .viz .div { stroke: var(--track); }
+    .viz .con { stroke: var(--ink-soft); fill: none; }
+    .viz .seg { fill: color-mix(in srgb, var(--ink) 6%, transparent); stroke: var(--ink-soft); }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+    <filter id="rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+    <symbol id="person" viewBox="0 0 20 22"><circle cx="10" cy="6.5" r="4.3"/><path d="M2.5 21.5 a7.6 7 0 0 1 15 0 Z"/></symbol>
+  </defs></svg>
+
+  <div class="page-head">
+    <h1>Three ways to draw the "same people" tip</h1>
+    <p>Divergent concepts for the Pro tip: interview the same kind of people you see in your data, so the two line up. Each is drawn in the article's sketchbook style and shows the matched case against the mismatched one.</p>
+  </div>
+
+  <!-- ================= CONCEPT 1: OVERLAP ================= -->
+  <div class="concept">
+    <div class="concept-label">Concept 1 <span>· Inside the segment</span></div>
+    <p class="concept-desc">Set membership. The big circle is your customer segment. The data group and the interview group are smaller circles inside it. Both inside means both really are your customers; one outside means that group is a different crowd.</p>
+    <figure class="sketch-fig">
+      <div class="paper">
+        <svg class="viz" viewBox="0 0 560 315" role="img" aria-label="A big circle is your customer segment, and the two groups inside are drawn as little people. On the left, both the data group and the interview group sit inside the segment, a match. On the right, the interview group is inside but the data group falls outside, a mismatch.">
+          <text class="hd" x="150" y="28" text-anchor="middle">MATCH</text>
+          <circle class="seg" cx="150" cy="152" r="88" stroke-width="2" filter="url(#rough)"/>
+          <text class="lbl sm ink" x="150" y="82" text-anchor="middle">your segment</text>
+          <circle cx="114" cy="166" r="40" fill="#2563eb" stroke="#1d4ed8" stroke-width="2" filter="url(#rough2)"/>
+          <use href="#person" x="89" y="143" width="14" height="15" fill="#fff"/><use href="#person" x="107" y="143" width="14" height="15" fill="#fff"/><use href="#person" x="125" y="143" width="14" height="15" fill="#fff"/>
+          <text class="clab" font-size="16" x="114" y="188" text-anchor="middle">Data</text>
+          <circle cx="194" cy="140" r="40" fill="#16a34a" stroke="#15803d" stroke-width="2" filter="url(#rough2)"/>
+          <use href="#person" x="169" y="117" width="14" height="15" fill="#fff"/><use href="#person" x="187" y="117" width="14" height="15" fill="#fff"/><use href="#person" x="205" y="117" width="14" height="15" fill="#fff"/>
+          <text class="clab" font-size="13" x="194" y="162" text-anchor="middle">Interviews</text>
+          <text class="sub" x="150" y="302" text-anchor="middle" fill="#16a34a">both inside ✓</text>
+
+          <line class="div" x1="280" y1="46" x2="280" y2="272" stroke-dasharray="4 6"/>
+
+          <text class="hd" x="416" y="28" text-anchor="middle">MISMATCH</text>
+          <circle class="seg" cx="416" cy="152" r="88" stroke-width="2" filter="url(#rough)"/>
+          <text class="lbl sm ink" x="416" y="82" text-anchor="middle">your segment</text>
+          <circle cx="400" cy="152" r="40" fill="#16a34a" stroke="#15803d" stroke-width="2" filter="url(#rough2)"/>
+          <use href="#person" x="375" y="129" width="14" height="15" fill="#fff"/><use href="#person" x="393" y="129" width="14" height="15" fill="#fff"/><use href="#person" x="411" y="129" width="14" height="15" fill="#fff"/>
+          <text class="clab" font-size="13" x="400" y="174" text-anchor="middle">Interviews</text>
+          <circle cx="505" cy="246" r="33" fill="#2563eb" stroke="#1d4ed8" stroke-width="2" filter="url(#rough2)"/>
+          <use href="#person" x="485" y="227" width="11" height="12" fill="#fff"/><use href="#person" x="499" y="227" width="11" height="12" fill="#fff"/><use href="#person" x="513" y="227" width="11" height="12" fill="#fff"/>
+          <text class="clab" font-size="13" x="505" y="254" text-anchor="middle">Data</text>
+          <text class="lbl sm" x="505" y="206" text-anchor="middle" fill="#dc2626">outside!</text>
+          <text class="sub" x="416" y="302" text-anchor="middle" fill="#dc2626">one outside ✗</text>
+        </svg>
+      </div>
+      <figcaption>When the data group and the interview group both sit inside your segment, they describe the same customers. If one falls outside, it's a different crowd, and the two won't line up.</figcaption>
+    </figure>
+  </div>
+
+  <!-- ================= CONCEPT 2: ONE PERSON, TWO ANSWERS ================= -->
+  <div class="concept">
+    <div class="concept-label">Concept 2 <span>· One person, two answers</span></div>
+    <p class="concept-desc">The literal version. The same person gives you both the number and the reason, so they fit. Ask two different people and the number and the quote can point opposite ways.</p>
+    <figure class="sketch-fig">
+      <div class="paper">
+        <svg class="viz" viewBox="0 0 460 300" role="img" aria-label="One person's data and quote fit together; two different people's data and quote clash.">
+          <text class="hd" x="230" y="22" text-anchor="middle">SAME PERSON</text>
+          <circle cx="230" cy="56" r="18" fill="#8b93a1" filter="url(#rough2)"/>
+          <path d="M202 104 a28 25 0 0 1 56 0 Z" fill="#8b93a1" filter="url(#rough2)"/>
+          <path class="con" d="M212 92 C 160 96, 150 108, 132 120" stroke-width="2" filter="url(#rough2)"/>
+          <path class="con" d="M248 92 C 300 96, 312 108, 330 120" stroke-width="2" filter="url(#rough2)"/>
+          <rect x="34" y="120" width="150" height="54" rx="8" fill="#2563eb" fill-opacity="0.12" stroke="#2563eb" stroke-width="2" filter="url(#rough2)"/>
+          <text class="lbl sm" x="46" y="140" fill="#2563eb">WHAT · data</text>
+          <text class="lbl sm ink" x="46" y="159">clicked, no return</text>
+          <rect x="276" y="120" width="150" height="54" rx="12" fill="#16a34a" fill-opacity="0.12" stroke="#16a34a" stroke-width="2" filter="url(#rough2)"/>
+          <path d="M298 174 l2 14 l15 -14 Z" fill="#16a34a" fill-opacity="0.5" stroke="#16a34a" stroke-width="1.5"/>
+          <text class="lbl sm" x="288" y="140" fill="#16a34a">WHY · interview</text>
+          <text class="lbl sm ink" x="288" y="159">"score felt unclear"</text>
+          <text class="sub" x="230" y="210" text-anchor="middle" fill="#16a34a">one person → what &amp; why fit ✓</text>
+          <line class="div" x1="50" y1="236" x2="410" y2="236" stroke-dasharray="4 6"/>
+          <text class="hd" x="230" y="262" text-anchor="middle">TWO DIFFERENT PEOPLE</text>
+          <circle cx="150" cy="284" r="13" fill="#8b93a1" filter="url(#rough2)"/>
+          <circle cx="310" cy="284" r="13" fill="#8b93a1" filter="url(#rough2)"/>
+          <text class="lbl" x="230" y="290" text-anchor="middle" fill="#dc2626">✗</text>
+          <text class="lbl sm" x="176" y="270" text-anchor="middle" fill="#2563eb">"no return"</text>
+          <text class="lbl sm" x="310" y="270" text-anchor="middle" fill="#16a34a">"loved it!"</text>
+        </svg>
+      </div>
+      <figcaption>When the number and the reason come from the same person, they fit. From two different people, they can clash and you cannot trust either.</figcaption>
+    </figure>
+  </div>
+
+  <!-- ================= CONCEPT 3: THE BRIDGE ================= -->
+  <div class="concept">
+    <div class="concept-label">Concept 3 <span>· The bridge</span></div>
+    <p class="concept-desc">A journey metaphor. The "what" and the "why" sit on two banks; the same people are the bridge that lets you cross from one to the other. Different people leave a gap.</p>
+    <figure class="sketch-fig">
+      <div class="paper">
+        <svg class="viz" viewBox="0 0 460 300" role="img" aria-label="A bridge of the same people connects the what and the why; with different people the bridge is broken.">
+          <text class="hd" x="230" y="22" text-anchor="middle">SAME PEOPLE</text>
+          <path d="M140 118 Q230 58 320 118" fill="none" stroke="#16a34a" stroke-width="4" filter="url(#rough)"/>
+          <text class="lbl sm ink" x="230" y="80" text-anchor="middle">same people</text>
+          <rect x="30" y="118" width="112" height="52" rx="6" fill="#2563eb" fill-opacity="0.15" stroke="#2563eb" stroke-width="2.5" filter="url(#rough)"/>
+          <text class="lbl" x="86" y="142" text-anchor="middle" fill="#2563eb">WHAT</text>
+          <text class="lbl sm" x="86" y="159" text-anchor="middle" fill="#2563eb">the data</text>
+          <rect x="318" y="118" width="112" height="52" rx="6" fill="#16a34a" fill-opacity="0.15" stroke="#16a34a" stroke-width="2.5" filter="url(#rough)"/>
+          <text class="lbl" x="374" y="142" text-anchor="middle" fill="#16a34a">WHY</text>
+          <text class="lbl sm" x="374" y="159" text-anchor="middle" fill="#16a34a">the interviews</text>
+          <text class="sub" x="230" y="204" text-anchor="middle" fill="#16a34a">a bridge you can cross ✓</text>
+          <line class="div" x1="50" y1="232" x2="410" y2="232" stroke-dasharray="4 6"/>
+          <text class="hd" x="230" y="258" text-anchor="middle">DIFFERENT PEOPLE</text>
+          <rect x="120" y="276" width="46" height="20" rx="4" fill="#2563eb" fill-opacity="0.12" stroke="#2563eb" stroke-width="2" filter="url(#rough2)"/>
+          <rect x="294" y="276" width="46" height="20" rx="4" fill="#16a34a" fill-opacity="0.12" stroke="#16a34a" stroke-width="2" filter="url(#rough2)"/>
+          <path d="M166 276 Q186 262 202 272" fill="none" stroke="#dc2626" stroke-width="3" filter="url(#rough2)"/>
+          <path d="M258 272 Q276 262 294 276" fill="none" stroke="#dc2626" stroke-width="3" filter="url(#rough2)"/>
+          <text class="lbl" x="230" y="278" text-anchor="middle" fill="#dc2626">✗</text>
+          <text class="sub" x="230" y="296" text-anchor="middle" fill="#dc2626">a gap you can't cross</text>
+        </svg>
+      </div>
+      <figcaption>Same people build a bridge from the what to the why. Different people leave a gap you cannot cross.</figcaption>
+    </figure>
+  </div>
+
+  <div class="concept" style="padding-bottom:60px"></div>
+</body>
+</html>
