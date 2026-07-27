@@ -7,7 +7,7 @@ A simple static blog — plain HTML and CSS, no build step — designed to be ho
 ```
 index.html            Home page with the list of posts
 style.css             Site styles (light + dark mode)
-posts/
+blog/
   hello-world.html    A blog post
 .nojekyll             Tells GitHub Pages to serve files as-is
 ```
@@ -32,6 +32,6 @@ Then visit http://localhost:8000.
 
 ## Adding a new post
 
-1. Copy `posts/hello-world.html` and rename it (e.g. `posts/my-post.html`).
+1. Copy `blog/hello-world.html` and rename it (e.g. `blog/my-post.html`).
 2. Edit the title, date, and content.
 3. Add a link to it from the post list in `index.html`.
