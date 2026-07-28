@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rise of the Product Engineer: How Lean AI-Native Teams Ship Absurdly Fast</title>
+  <meta name="description" content="Collapsing product, design, and engineering into one role — product engineering — and why the teams that do it ship far faster." />
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    /* Hand-sketched figure — Handoff cost diagram */
+    .sketch-fig {
+      margin: 34px 0;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.20);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.62);
+      --track: rgba(120,90,50,.42); --wk: #b28a5c;
+      --blue: #2563eb; --loss: #cf4f2e;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sketch-fig {
+        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
+        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.58);
+        --track: rgba(210,180,130,.35); --wk: #c99b67;
+        --blue: #6f9bff; --loss: #f0795a;
+      }
+    }
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 20px 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    .sketch-fig .fig-svg { width: 100%; height: auto; display: block; max-width: 560px; margin: 0 auto; }
+    .sketch-fig .legend {
+      display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+      margin: 2px 0 14px; font-size: 0.84rem; color: var(--fg);
+    }
+    .sketch-fig .legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .sketch-fig .legend i { width: 15px; height: 15px; border-radius: 4px; flex: none; }
+    .sketch-fig .legend .w { background: color-mix(in srgb, var(--blue) 22%, var(--paper)); border: 1.5px solid var(--blue); }
+    .sketch-fig .legend .t { background: color-mix(in srgb, var(--loss) 20%, var(--paper)); border: 1.5px solid var(--loss); }
+    .sketch-fig .ink-f { fill: var(--ink); }
+    .sketch-fig .ink-s { stroke: var(--ink); fill: none; }
+    .sketch-fig .soft-s { stroke: var(--ink-soft); fill: none; }
+    .sketch-fig .hlabel { font: 700 17px var(--hand); fill: var(--ink); }
+    .sketch-fig .hlabel.sm { font-size: 15px; }
+    .sketch-fig .hlabel.lg { font-size: 19px; }
+    .sketch-fig .hlabel.blue { fill: var(--blue); }
+    .sketch-fig .hlabel.loss { fill: var(--loss); }
+    .sketch-fig .hlabel.soft { fill: var(--ink-soft); }
+  </style>
+</head>
+<body>
+  <div class="post-layout">
+    <aside class="toc" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <ul>
+        <li><a href="#what-ai-changed">Why now</a></li>
+        <li><a href="#the-five-taxes">The five taxes</a></li>
+        <li class="sub"><a href="#tax-handoff">1 · Handoff cost</a></li>
+        <li class="sub"><a href="#tax-queue">2 · Queue time</a></li>
+        <li class="sub"><a href="#tax-back-and-forth">3 · Back and forth</a></li>
+        <li class="sub"><a href="#tax-throughput">4 · Idle capacity</a></li>
+        <li class="sub"><a href="#tax-split-context">5 · Split-context</a></li>
+        <li><a href="#enter-the-product-engineer">Enter the product engineer</a></li>
+        <li><a href="#in-practice">In practice</a></li>
+        <li><a href="#objection-specialization">Objection: specialization</a></li>
+        <li><a href="#objection-check">Objection: the check</a></li>
+        <li><a href="#objection-people">Objection: the people</a></li>
+        <li><a href="#the-edge">The competitive edge</a></li>
+      </ul>
+    </aside>
+
+    <main class="post-main">
+      <article class="post">
+        <p class="post-eyebrow">Essay &middot; <time datetime="2026-07-27">July 27, 2026</time> &middot; 9 min read</p>
+        <h1 class="post-title">Rise of the Product Engineer: How AI-Native Teams Ship Absurdly Fast</h1>
+
+        <p>
+          A product engineer is one person who does three jobs. They figure out what users need,
+          design the solution, and build it. Product management, design, and engineering collapsed
+          into a single role.
+        </p>
+        <p>
+          Teams built this way ship dramatically faster than traditional ones. A handful of companies
+          are organizing around product engineers, including my startup <a href="https://meetlira.ai" target="_blank">Lira</a>, and the
+          difference in speed is not subtle.
+        </p>
+        <p>
+          Almost everyone still works the old way. You have a product manager, a few engineers, and a
+          designer if the work touches users. The PM decides what to build, the designer makes it specific, 
+          an engineer builds it. Each person owns their station and passes the work along.
+        </p>
+        <p>
+          Every handoff between those stations costs something. Context gets compiled, transferred, and lost.
+          Work sits in queues. Decisions get made with half the picture. Nobody even thinks of these as costs. 
+          They've been there so long they just look like work. But they were always the price of specialization, 
+          paid because there was no way around it. No single person could do quality work across all three jobs.
+        </p>
+
+        <p>
+          That just changed.
+        </p>
+
+        <h2 id="what-ai-changed">Why now</h2>
+        <p>
+          AI is opening the door to the product engineer role by elevating each team member's adjacent skills. An engineer with
+          mediocre design taste is now a pretty good designer. A designer who could sort of code now writes
+          real code. Someone who has never run a user interview can prep one, structure it, and pull
+          the themes out of the transcript.
+        </p>
+        <p>
+          The skill gap is closing. The cost of splitting the work is not.
+        </p>
+        <p>
+          Here's what it costs.
+        </p>
+
+        <h2 id="the-five-taxes">The five taxes of specialized roles</h2>
+
+        <h3 id="tax-handoff">1. Handoff cost</h3>
+        <p>
+          Every boundary between two people is a context transfer, and both ends pay. The sender
+          writes a PRD or spec, which takes days and none of which ships. The receiver reads it, sits
+          through a walkthrough, and absorbs it before any real work starts.
+        </p>
+
+        <figure class="sketch-fig">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 580 202" role="img" aria-label="Two stacked lanes. Top, the sender: a blue work block, then a red handoff block with subtext write the spec. Bottom, the receiver: a red handoff block stacked below the sender's, with subtext read and absorb, then a blue build block. Real work sits at the left and right ends; the handoff is the red middle.">
+              <defs>
+                <filter id="ho-rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <symbol id="ho-person" viewBox="0 0 40 58">
+                  <circle cx="20" cy="12" r="11"/>
+                  <path d="M3 56 Q3 30 20 30 Q37 30 37 56 Z"/>
+                </symbol>
+              </defs>
+
+              <!-- people -->
+              <g class="ink-f" filter="url(#ho-rough2)"><use href="#ho-person" x="20" y="16" width="44" height="56"/></g>
+              <g class="ink-f" filter="url(#ho-rough2)"><use href="#ho-person" x="20" y="120" width="44" height="56"/></g>
+              <text x="42" y="90" text-anchor="middle" class="hlabel sm">sender</text>
+              <text x="42" y="194" text-anchor="middle" class="hlabel sm">receiver</text>
+
+              <!-- sender lane (top): work + handoff -->
+              <g filter="url(#ho-rough2)">
+                <rect x="96" y="20" width="154" height="48" rx="7" fill="color-mix(in srgb, var(--blue) 16%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="250" y="20" width="180" height="48" rx="7" fill="color-mix(in srgb, var(--loss) 18%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+              </g>
+              <text x="173" y="49" text-anchor="middle" class="hlabel blue">work</text>
+              <text x="340" y="50" text-anchor="middle" class="hlabel lg loss">handoff</text>
+              <text x="340" y="84" text-anchor="middle" class="hlabel sm soft">write the spec</text>
+
+              <!-- receiver lane (bottom): handoff + build -->
+              <g filter="url(#ho-rough2)">
+                <rect x="250" y="124" width="180" height="48" rx="7" fill="color-mix(in srgb, var(--loss) 18%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="430" y="124" width="126" height="48" rx="7" fill="color-mix(in srgb, var(--blue) 16%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+              </g>
+              <text x="340" y="154" text-anchor="middle" class="hlabel lg loss">handoff</text>
+              <text x="340" y="188" text-anchor="middle" class="hlabel sm soft">read + absorb</text>
+              <text x="493" y="153" text-anchor="middle" class="hlabel blue">build</text>
+            </svg>
+          </div>
+          <figcaption>
+            Real work happens at both ends. The whole middle is handoff, and none of it ships.
+          </figcaption>
+        </figure>
+
+        <h3 id="tax-queue">2. Queue time</h3>
+        <p>
+          Work spends most of its life waiting. A design sits three days waiting on review, a ticket
+          sits in the backlog until next sprint, a question sits in Slack until someone gets out of
+          meetings. Compare a feature's calendar time against the hours anyone actually spent on it,
+          and the gap is almost all queue. And it's invisible, because everyone's calendar is full
+          and nobody owns the waiting.
+        </p>
+
+        <figure class="sketch-fig">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 580 144" role="img" aria-label="One unit of work moves left to right along a timeline. A hand-drawn person sits on top of each small blue work block. Solid arrows show the work flowing out of each work block down into the queue, then out of the queue down into the next work block. The two large red blocks, each about three times the size, are labelled queue, with the specific queue in subtext below: in the backlog, then in Slack. After the last work block a flag reads ships.">
+              <defs>
+                <filter id="qu-rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <symbol id="qu-person" viewBox="0 0 40 58">
+                  <circle cx="20" cy="12" r="11"/>
+                  <path d="M3 56 Q3 30 20 30 Q37 30 37 56 Z"/>
+                </symbol>
+              </defs>
+
+              <!-- people, sitting on their work blocks -->
+              <g class="ink-f" filter="url(#qu-rough2)">
+                <use href="#qu-person" x="60" y="20" width="32" height="46"/>
+                <use href="#qu-person" x="254" y="20" width="32" height="46"/>
+                <use href="#qu-person" x="448" y="20" width="32" height="46"/>
+              </g>
+
+              <!-- flow: work into the queue, then queue into work -->
+              <g filter="url(#qu-rough2)">
+                <path d="M96 60 Q114 44 134 66" class="ink-s" stroke-width="2" stroke-linecap="round"/>
+                <path d="M134 66 l-2 -9 M134 66 l-9 -3" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M212 66 Q230 46 248 66" class="ink-s" stroke-width="2" stroke-linecap="round"/>
+                <path d="M248 66 l-2 -9 M248 66 l-9 -3" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M290 60 Q308 44 328 66" class="ink-s" stroke-width="2" stroke-linecap="round"/>
+                <path d="M328 66 l-2 -9 M328 66 l-9 -3" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M406 66 Q424 46 442 66" class="ink-s" stroke-width="2" stroke-linecap="round"/>
+                <path d="M442 66 l-2 -9 M442 66 l-9 -3" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+              </g>
+
+              <!-- one unit of work: work / queue / work / queue / work -->
+              <g filter="url(#qu-rough2)">
+                <rect x="54" y="66" width="44" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.9"/>
+                <rect x="98" y="66" width="150" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="248" y="66" width="44" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.9"/>
+                <rect x="292" y="66" width="150" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="442" y="66" width="44" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.9"/>
+              </g>
+              <text x="76" y="93" text-anchor="middle" class="hlabel sm blue">work</text>
+              <text x="173" y="93" text-anchor="middle" class="hlabel sm loss">queue</text>
+              <text x="270" y="93" text-anchor="middle" class="hlabel sm blue">work</text>
+              <text x="367" y="93" text-anchor="middle" class="hlabel sm loss">queue</text>
+              <text x="464" y="93" text-anchor="middle" class="hlabel sm blue">work</text>
+              <text x="173" y="130" text-anchor="middle" class="hlabel sm soft">in the backlog</text>
+              <text x="367" y="130" text-anchor="middle" class="hlabel sm soft">in Slack</text>
+
+              <!-- ships -->
+              <g filter="url(#qu-rough2)">
+                <path d="M500 64 V112" class="ink-s" stroke="var(--blue)" stroke-width="2.2"/>
+                <path d="M500 66 L520 73 L500 80 Z" fill="color-mix(in srgb, var(--blue) 40%, var(--paper))" stroke="var(--blue)" stroke-width="1.6"/>
+              </g>
+              <text x="504" y="130" text-anchor="middle" class="hlabel sm blue">ships</text>
+            </svg>
+          </div>
+          <figcaption>
+            One unit of work, stuck in a queue between each handoff.
+          </figcaption>
+        </figure>
+
+        <h3 id="tax-back-and-forth">3. Back and forth</h3>
+        <p>
+          No document survives contact with the work. The questions that matter only come up once the
+          receiver is deep in the details, and each one starts a round trip: ask, wait for the PM or
+          designer to be free, get an answer, discover the answer raises another question. Each round
+          costs hours or days, and while it's open, the work is blocked.
+        </p>
+
+        <figure class="sketch-fig">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 580 252" role="img" aria-label="Two horizontal timelines. Top, the builder: blue work blocks interrupted by red blocked blocks, ending in a flag marked ships. Bottom, the PM or designer: only two small grey blocks labelled answers. Arrows run down from the builder to the PM to ask, and back up to answer. The build stalls at every question until the answer comes back.">
+              <defs>
+                <filter id="bf-rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <symbol id="bf-person" viewBox="0 0 40 58">
+                  <circle cx="20" cy="12" r="11"/>
+                  <path d="M3 56 Q3 30 20 30 Q37 30 37 56 Z"/>
+                </symbol>
+              </defs>
+
+              <!-- people -->
+              <g class="ink-f" filter="url(#bf-rough2)">
+                <use href="#bf-person" x="56" y="62" width="34" height="46"/>
+                <use href="#bf-person" x="56" y="178" width="34" height="46"/>
+              </g>
+              <text x="73" y="126" text-anchor="middle" class="hlabel sm soft">builder</text>
+              <text x="73" y="244" text-anchor="middle" class="hlabel sm soft">PM / designer</text>
+
+              <!-- builder lane: work (blue) + blocked (red) -->
+              <g filter="url(#bf-rough2)">
+                <rect x="96" y="64" width="100" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.9"/>
+                <rect x="196" y="64" width="60" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="256" y="64" width="100" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.9"/>
+                <rect x="356" y="64" width="60" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="416" y="64" width="102" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.9"/>
+              </g>
+              <text x="146" y="91" text-anchor="middle" class="hlabel sm blue">work</text>
+              <text x="226" y="91" text-anchor="middle" class="hlabel sm loss">blocked</text>
+              <text x="306" y="91" text-anchor="middle" class="hlabel sm blue">work</text>
+              <text x="386" y="91" text-anchor="middle" class="hlabel sm loss">blocked</text>
+              <text x="467" y="91" text-anchor="middle" class="hlabel sm blue">work</text>
+
+              <!-- PM lane: grey answer blocks only -->
+              <g filter="url(#bf-rough2)">
+                <rect x="193" y="180" width="66" height="44" rx="6" fill="color-mix(in srgb, var(--ink) 9%, var(--paper))" stroke="color-mix(in srgb, var(--ink) 42%, var(--paper))" stroke-width="1.9"/>
+                <rect x="353" y="180" width="66" height="44" rx="6" fill="color-mix(in srgb, var(--ink) 9%, var(--paper))" stroke="color-mix(in srgb, var(--ink) 42%, var(--paper))" stroke-width="1.9"/>
+              </g>
+              <text x="226" y="207" text-anchor="middle" class="hlabel sm soft">answers</text>
+              <text x="386" y="207" text-anchor="middle" class="hlabel sm soft">answers</text>
+
+              <!-- volley: ask down, answer up -->
+              <g filter="url(#bf-rough2)">
+                <path d="M196 108 L202 180" class="ink-s" stroke-width="2"/>
+                <path d="M202 180 l4 -9 M202 180 l-6 -8" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M250 180 L256 108" class="ink-s" stroke-width="2"/>
+                <path d="M256 108 l-6 8 M256 108 l4 9" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M356 108 L362 180" class="ink-s" stroke-width="2"/>
+                <path d="M362 180 l4 -9 M362 180 l-6 -8" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M410 180 L416 108" class="ink-s" stroke-width="2"/>
+                <path d="M416 108 l-6 8 M416 108 l4 9" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+              </g>
+              <text x="176" y="150" text-anchor="middle" class="hlabel sm">ask</text>
+              <text x="282" y="150" text-anchor="middle" class="hlabel sm">answer</text>
+
+              <!-- ships -->
+              <g filter="url(#bf-rough2)">
+                <path d="M532 62 V110" class="ink-s" stroke="var(--blue)" stroke-width="2.2"/>
+                <path d="M532 64 L552 71 L532 78 Z" fill="color-mix(in srgb, var(--blue) 40%, var(--paper))" stroke="var(--blue)" stroke-width="1.6"/>
+              </g>
+              <text x="536" y="126" text-anchor="middle" class="hlabel sm blue">ships</text>
+            </svg>
+          </div>
+          <figcaption>
+            Product questions the builder can't resolve independently may stall the build until the answer arrives.
+          </figcaption>
+        </figure>
+
+        <h3 id="tax-throughput">4. Idle capacity</h3>
+        <p>
+          The throughput of a system is limited by its slowest resource. So unless your system 
+          is kept perfectly balanced, you'll pay a tax in the form of idle capacity. In practice, 
+          this means some team members will feel underutilized and others will feel overwhelmed.
+        </p>
+        <figure class="sketch-fig">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 580 250" role="img" aria-label="Four column headers — PM, Design (current bottleneck), Engineering, Shipped with a flag — over a chart. PM, Design and Engineering each have a capacity bar showing throughput per week: 4, 2 and 6 units. A red dashed line at Design's level caps the flow; the empty top of each taller bar is idle capacity. Arrows connect the stations to a Shipped bar equal to the cap: 2 units a week.">
+              <defs>
+                <filter id="tp-rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <symbol id="tp-person" viewBox="0 0 40 58">
+                  <circle cx="20" cy="12" r="11"/>
+                  <path d="M3 56 Q3 30 20 30 Q37 30 37 56 Z"/>
+                </symbol>
+              </defs>
+
+              <!-- icons -->
+              <g class="ink-f" filter="url(#tp-rough2)"><use href="#tp-person" x="94" y="18" width="32" height="46"/></g>
+              <g class="ink-f" filter="url(#tp-rough2)"><use href="#tp-person" x="234" y="18" width="32" height="46"/></g>
+              <g class="ink-f" filter="url(#tp-rough2)">
+                <use href="#tp-person" x="350" y="22" width="27" height="40"/>
+                <use href="#tp-person" x="377" y="22" width="27" height="40"/>
+                <use href="#tp-person" x="404" y="22" width="27" height="40"/>
+              </g>
+
+              <!-- names -->
+              <text x="110" y="80" text-anchor="middle" class="hlabel sm">PM</text>
+              <text x="250" y="80" text-anchor="middle" class="hlabel sm">Design</text>
+              <text x="390" y="80" text-anchor="middle" class="hlabel sm">Engineering</text>
+              <text x="250" y="99" text-anchor="middle" class="hlabel sm">(current bottleneck)</text>
+              <!-- Shipped header with flag -->
+              <g filter="url(#tp-rough2)">
+                <path d="M474 62 V84" class="ink-s" stroke="var(--blue)" stroke-width="2.2"/>
+                <path d="M474 64 L490 69 L474 74 Z" fill="color-mix(in srgb, var(--blue) 40%, var(--paper))" stroke="var(--blue)" stroke-width="1.6"/>
+              </g>
+              <text x="496" y="80" text-anchor="start" class="hlabel sm">Shipped</text>
+
+              <!-- capacity numbers -->
+              <text x="110" y="156" text-anchor="middle" class="hlabel sm">4 units/wk</text>
+              <text x="390" y="120" text-anchor="middle" class="hlabel sm">6 units/wk</text>
+              <text x="250" y="192" text-anchor="middle" class="hlabel sm">2 units/wk</text>
+
+              <!-- baseline -->
+              <path d="M74 234 H548" class="soft-s" stroke-width="1.5" filter="url(#tp-rough2)"/>
+
+              <!-- capacity containers: idle capacity shows red at the top -->
+              <g filter="url(#tp-rough2)">
+                <rect x="81" y="162" width="58" height="72" rx="5" fill="color-mix(in srgb, var(--loss) 16%, var(--paper))" stroke="var(--loss)" stroke-width="1.6"/>
+                <rect x="361" y="126" width="58" height="108" rx="5" fill="color-mix(in srgb, var(--loss) 16%, var(--paper))" stroke="var(--loss)" stroke-width="1.6"/>
+              </g>
+              <!-- throughput that flows (blue), incl. the bottleneck -->
+              <g filter="url(#tp-rough2)">
+                <rect x="81" y="198" width="58" height="36" rx="4" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.7"/>
+                <rect x="221" y="198" width="58" height="36" rx="4" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.7"/>
+                <rect x="361" y="198" width="58" height="36" rx="4" fill="color-mix(in srgb, var(--blue) 26%, var(--paper))" stroke="var(--blue)" stroke-width="1.7"/>
+              </g>
+              <text x="110" y="185" text-anchor="middle" class="hlabel sm loss">idle</text>
+              <text x="390" y="168" text-anchor="middle" class="hlabel sm loss">idle</text>
+
+              <!-- ceiling line -->
+              <path d="M74 198 H548" class="ink-s" stroke="var(--loss)" stroke-width="2" stroke-dasharray="6 6" filter="url(#tp-rough2)"/>
+
+              <!-- flow arrows between stations and to Shipped -->
+              <g filter="url(#tp-rough2)">
+                <path d="M146 216 H214" class="ink-s" stroke-width="2"/><path d="M214 216 l-9 -4 M214 216 l-9 4" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M286 216 H354" class="ink-s" stroke-width="2"/><path d="M354 216 l-9 -4 M354 216 l-9 4" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M426 216 H482" class="ink-s" stroke-width="2"/><path d="M482 216 l-9 -4 M482 216 l-9 4" class="ink-s" stroke-width="2.2" stroke-linecap="round"/>
+              </g>
+
+              <!-- Shipped bar -->
+              <g filter="url(#tp-rough2)">
+                <rect x="489" y="198" width="54" height="36" rx="4" fill="color-mix(in srgb, var(--blue) 34%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+              </g>
+              <text x="516" y="192" text-anchor="middle" class="hlabel sm">2 units/wk</text>
+            </svg>
+          </div>
+          <figcaption>
+            Each station has its own throughput, but the system ships at the pace of the slowest.
+          </figcaption>
+        </figure>
+
+        <h3 id="tax-split-context">5. Split-context decisions</h3>
+        <p>The taxes above cost time. This one costs decision quality.</p>
+        <p>
+          Options come from context. Product knows the user and the business case. Engineering knows
+          what things cost to build. Split those across two heads, and each side can only propose
+          options from their half of the picture.
+        </p>
+        <p>
+          The problem is that the best option often sits in the
+          overlap, cheap to build and good for users, and neither side can see it. The team debates
+          option A against option B when the right answer was option C, which nobody ever said out loud.
+        </p>
+
+        <figure class="sketch-fig">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 580 250" role="img" aria-label="Two overlapping ovals of options. The left oval is good for users, the right is cheap to build. The non-overlap crescents are red, bad options that satisfy only one criterion. The PM proposes an auto-mapper, in the left crescent; the Engineer proposes a raw CSV upload, in the right. The overlap is blue and holds a CSV upload with a preview step, the option that is both good for users and cheap to build, which neither proposes.">
+              <defs>
+                <filter id="sc-rough"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter>
+                <filter id="sc-rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <symbol id="sc-person" viewBox="0 0 40 58">
+                  <circle cx="20" cy="12" r="11"/>
+                  <path d="M3 56 Q3 30 20 30 Q37 30 37 56 Z"/>
+                </symbol>
+                <clipPath id="sc-lens"><ellipse cx="344" cy="150" rx="96" ry="64"/></clipPath>
+              </defs>
+
+              <!-- the two voiced (bad) options -->
+              <g filter="url(#sc-rough2)">
+                <rect x="10" y="30" width="140" height="38" rx="11" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.8"/>
+                <path d="M46 67 L42 88 L64 67 Z" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.8"/>
+              </g>
+              <text x="80" y="55" text-anchor="middle" class="hlabel sm">auto-mapper</text>
+              <g filter="url(#sc-rough2)">
+                <rect x="430" y="30" width="140" height="38" rx="11" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.8"/>
+                <path d="M534 67 L538 88 L516 67 Z" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.8"/>
+              </g>
+              <text x="500" y="55" text-anchor="middle" class="hlabel sm">raw CSV upload</text>
+
+              <!-- people -->
+              <g class="ink-f" filter="url(#sc-rough2)"><use href="#sc-person" x="24" y="96" width="38" height="54"/></g>
+              <g class="ink-f" filter="url(#sc-rough2)"><use href="#sc-person" x="518" y="96" width="38" height="54"/></g>
+              <text x="43" y="172" text-anchor="middle" class="hlabel sm">PM</text>
+              <text x="537" y="172" text-anchor="middle" class="hlabel sm">Engineer</text>
+
+              <!-- criteria labels -->
+              <text x="198" y="82" text-anchor="middle" class="hlabel sm">good for users</text>
+              <text x="392" y="82" text-anchor="middle" class="hlabel sm">cheap to build</text>
+
+              <!-- oval fills: non-overlap red -->
+              <g filter="url(#sc-rough)">
+                <ellipse cx="246" cy="150" rx="96" ry="64" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="none"/>
+                <ellipse cx="344" cy="150" rx="96" ry="64" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="none"/>
+              </g>
+              <!-- overlap fill: blue (good option) -->
+              <g clip-path="url(#sc-lens)">
+                <ellipse cx="246" cy="150" rx="96" ry="64" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="none"/>
+              </g>
+              <!-- outlines on top -->
+              <g fill="none" filter="url(#sc-rough)">
+                <ellipse cx="246" cy="150" rx="96" ry="64" stroke="var(--ink)" stroke-width="1.7"/>
+                <ellipse cx="344" cy="150" rx="96" ry="64" stroke="var(--ink)" stroke-width="1.7"/>
+              </g>
+
+              <!-- the two bad options, in their red crescents -->
+              <text x="186" y="146" text-anchor="middle" class="hlabel sm loss">auto-</text>
+              <text x="186" y="164" text-anchor="middle" class="hlabel sm loss">mapper</text>
+              <text x="400" y="146" text-anchor="middle" class="hlabel sm loss">raw CSV</text>
+              <text x="400" y="164" text-anchor="middle" class="hlabel sm loss">upload</text>
+
+              <!-- the winning option, in the overlap, unvoiced -->
+              <text x="295" y="150" text-anchor="middle" class="hlabel sm blue">CSV +</text>
+              <text x="295" y="168" text-anchor="middle" class="hlabel sm blue">preview</text>
+            </svg>
+          </div>
+          <figcaption>
+            Neither person can see the option that is both good for users and cheap to build.
+          </figcaption>
+        </figure>
+
+        <h2 id="enter-the-product-engineer">Enter the product engineer</h2>
+        <p>
+          Product engineers minimize these taxes. Collapse the roles into one and the boundaries
+          those taxes live on simply aren't there anymore.
+        </p>
+        <p>
+          <strong>No handoffs.</strong> Work goes from user problem to design to implementation
+          without changing hands. There's no context to transfer because it never leaves the person
+          who has it.
+        </p>
+        <p>
+          <strong>No queue.</strong> The next step starts when the last one finishes, because the
+          same person does both. Work stays out of the backlog.
+        </p>
+        <p>
+          <strong>No back and forth.</strong> The questions that come up during implementation can be answered
+          by the person they occur to. Work doesn't block waiting on a clarification.
+        </p>
+        <p>
+          <strong>No idle capacity.</strong> Every product engineer is a complete unit, so the system is balanced 
+          by construction. Add one and you ship faster. Nobody sits idle waiting for another role to catch up.
+        </p>
+        <p>
+          <strong>No split context.</strong> Every decision gets made with the full picture in one head. Technical 
+          risks get flagged when they're cheapest to route around, and the spec can change mid-build, because the 
+          person who built it owns the reasoning behind it. Best of all, the option C gets found: the person weighing 
+          what users need is the same person who knows what's cheap to build.
+        </p>
+
+        <h2 id="in-practice">What this looks like in practice</h2>
+        <p>Here's a real example, start to finish.</p>
+        <p>
+          Lira builds interview prep guides for job seekers, and they're only useful if they're
+          about the actual job you're interviewing for. Originally we took a job
+          title and a company name and searched for the posting in the background.
+          It mostly worked.
+        </p>
+        <p>
+          <strong>1. Problem discovered in user interviews.</strong> Some people didn't
+          trust it. They had no way to know we'd found the right posting, and a
+          guide you don't trust is a guide you don't use.
+        </p>
+        <p>
+          <strong>2. Started with the obvious solution.</strong> Let people paste
+          a job URL. Users know exactly which posting they mean, we fetch it,
+          trust problem solved.
+        </p>
+        <p>
+          <strong>3. Technical spike revealed a gotcha.</strong> We learned that job boards block
+          scrapers. LinkedIn and Indeed simply don't let you fetch a posting from
+          a URL.
+        </p>
+        <p>
+          <strong>4. Second spike looked at third-party job data vendors.</strong>
+          I evaluated three, and all three shared the same problems. Postings
+          refreshed too slowly and went stale. Pricing that impacted our bottom line. 
+          And no vendor can fix the failure I kept seeing in testing, where users paste 
+          the wrong URL.
+        </p>
+        <p>
+          <strong>5. Realized the URL is not the key.</strong> An engineer handed a
+          spec is thinking that their job is to fetch a job posting from a URL.
+          The spike results mean the job is blocked, so they escalate and wait.
+          I was working from a different definition of the job, which was to help
+          users get a prep guide for their actual job. The URL was never the job.
+          It was one candidate mechanism, and the spikes had just eliminated it.
+        </p>
+        <p>
+          <strong>6. Redesigned around the real job.</strong> Skip the URL
+          entirely. Let people paste the job description text itself. No scraper,
+          no vendor, no wrong URL problem, and it took under half a day to build.
+        </p>
+        <p>
+          <strong>7. Users voted with their actions.</strong> We shipped it alongside the
+          original company and title option, and about 70% of people chose to
+          paste the description.
+        </p>
+        <p>
+          Every step of that loop happened inside one mind, and shipped in less than one day.
+        </p>
+        <figure class="sketch-fig">
+          <div class="paper">
+            <svg class="fig-svg" style="max-width:100%" viewBox="-52 0 792 430" role="img" aria-label="The same feature built two ways. Top, the product engineer: one unbroken lane of blue work — discover, design, tech spikes, redesign, build — ending in a flag marked ships, under one day, then free for the next feature. Below, the traditional team split into three swimlanes with avatars, PM, Design and Engineering. Each real step is bracketed by red tax blocks: after PM discovers the problem a red handoff block, then a red queue block before Design builds the flow, another handoff, another queue before Engineering builds. Engineering runs a spike and hits a blocker, and all three lanes stop in a red column to discuss — Engineering blocked, PM and Design pulled in — with red escalate and back-and-forth arrows between the lanes. Only then does work resume as a staggered staircase where reframe finishes before redesign starts and redesign before rebuild, shipping weeks later.">
+              <defs>
+                <filter id="pf-rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <symbol id="pf-person" viewBox="0 0 40 58">
+                  <circle cx="20" cy="12" r="11"/>
+                  <path d="M3 56 Q3 30 20 30 Q37 30 37 56 Z"/>
+                </symbol>
+                <marker id="pf-red-head" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="var(--loss)"/>
+                </marker>
+                <pattern id="pf-hatch" width="9" height="9" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+                  <rect width="9" height="9" fill="color-mix(in srgb, var(--loss) 13%, var(--paper))"/>
+                  <line x1="0" y1="0" x2="0" y2="9" stroke="var(--loss)" stroke-width="2.4" opacity="0.55"/>
+                </pattern>
+              </defs>
+
+              <!-- ============ TOP: PRODUCT ENGINEER (one head) — what I actually did ============ -->
+              <!-- enclosure: solid = this really happened -->
+              <rect x="-48" y="40" width="576" height="62" rx="12" fill="transparent" stroke="color-mix(in srgb, var(--blue) 45%, var(--paper))" stroke-width="1.5"/>
+              <!-- header -->
+              <g fill="none" stroke="var(--blue)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M-44 23 l5 7 l11 -14"/>
+              </g>
+              <text x="-24" y="31" text-anchor="start" class="hlabel blue">What I actually did</text>
+              <!-- the one head -->
+              <g class="ink-f" filter="url(#pf-rough2)"><use href="#pf-person" x="18" y="44" width="36" height="50"/></g>
+
+              <g filter="url(#pf-rough2)">
+                <rect x="88" y="44" width="72" height="46" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="160" y="44" width="56" height="46" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="216" y="44" width="72" height="46" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="288" y="44" width="74" height="46" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="2.2"/>
+                <rect x="362" y="44" width="84" height="46" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+              </g>
+              <text x="124" y="73" text-anchor="middle" class="hlabel sm blue">discover</text>
+              <text x="188" y="73" text-anchor="middle" class="hlabel sm blue">design</text>
+              <text x="252" y="73" text-anchor="middle" class="hlabel sm blue">tech spikes</text>
+              <text x="325" y="73" text-anchor="middle" class="hlabel sm blue">redesign</text>
+              <text x="404" y="73" text-anchor="middle" class="hlabel sm blue">build</text>
+
+              <g filter="url(#pf-rough2)">
+                <path d="M456 42 V92" class="ink-s" stroke="var(--blue)" stroke-width="2.2"/>
+                <path d="M456 44 L476 51 L456 58 Z" fill="color-mix(in srgb, var(--blue) 40%, var(--paper))" stroke="var(--blue)" stroke-width="1.6"/>
+              </g>
+              <text x="470" y="76" text-anchor="start" class="hlabel sm blue">ships</text>
+              <text x="470" y="93" text-anchor="start" class="hlabel sm">&lt; 1 day</text>
+
+              <!-- ============ BOTTOM: TRADITIONAL TEAM (three swimlanes) — hypothetical ============ -->
+              <!-- header -->
+              <text x="-44" y="138" text-anchor="start" class="hlabel">What a traditional team would do</text>
+              <!-- enclosure: dashed = hypothetical / what-if -->
+              <rect x="-48" y="150" width="784" height="236" rx="14" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" stroke-dasharray="7 6"/>
+              <!-- lane bands -->
+              <g fill="color-mix(in srgb, var(--ink) 4%, transparent)">
+                <rect x="84" y="158" width="636" height="52" rx="8"/>
+                <rect x="84" y="242" width="636" height="52" rx="8"/>
+                <rect x="84" y="326" width="636" height="52" rx="8"/>
+              </g>
+              <!-- lane avatars + role labels -->
+              <g class="ink-f" filter="url(#pf-rough2)">
+                <use href="#pf-person" x="8" y="168" width="22" height="32"/>
+                <use href="#pf-person" x="8" y="252" width="22" height="32"/>
+                <use href="#pf-person" x="8" y="336" width="22" height="32"/>
+              </g>
+              <text x="36" y="190" text-anchor="start" class="hlabel sm">PM</text>
+              <text x="36" y="274" text-anchor="start" class="hlabel sm">Design</text>
+              <text x="36" y="358" text-anchor="start" class="hlabel sm">Eng</text>
+
+              <!-- ---- work (blue) + tax (red) blocks ---- -->
+              <g filter="url(#pf-rough2)">
+                <!-- PM lane: discover -> handoff ......... discuss -> reframe -->
+                <rect x="92" y="162" width="72" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="164" y="162" width="54" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="446" y="162" width="66" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 22%, var(--paper))" stroke="var(--loss)" stroke-width="2"/>
+                <rect x="512" y="162" width="62" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 30%, var(--paper))" stroke="var(--blue)" stroke-width="2.2"/>
+                <!-- Design lane: queue -> design flow -> handoff ... discuss ... redesign -->
+                <rect x="172" y="246" width="42" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="214" y="246" width="78" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="292" y="246" width="54" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="446" y="246" width="66" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 22%, var(--paper))" stroke="var(--loss)" stroke-width="2"/>
+                <rect x="574" y="246" width="68" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <!-- Eng lane: queue -> build -> spike -> blocked ......... rebuild -->
+                <rect x="300" y="330" width="42" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 15%, var(--paper))" stroke="var(--loss)" stroke-width="1.9"/>
+                <rect x="342" y="330" width="50" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="392" y="330" width="54" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+                <rect x="446" y="330" width="66" height="44" rx="6" fill="color-mix(in srgb, var(--loss) 22%, var(--paper))" stroke="var(--loss)" stroke-width="2"/>
+                <rect x="642" y="330" width="62" height="44" rx="6" fill="color-mix(in srgb, var(--blue) 22%, var(--paper))" stroke="var(--blue)" stroke-width="1.8"/>
+              </g>
+              <!-- block labels -->
+              <text x="128" y="189" text-anchor="middle" class="hlabel sm blue">discover</text>
+              <text x="191" y="189" text-anchor="middle" class="hlabel sm loss">handoff</text>
+              <text x="479" y="189" text-anchor="middle" class="hlabel sm loss">discuss</text>
+              <text x="543" y="189" text-anchor="middle" class="hlabel sm blue">reframe</text>
+
+              <text x="193" y="273" text-anchor="middle" class="hlabel sm loss">queue</text>
+              <text x="253" y="273" text-anchor="middle" class="hlabel sm blue">design flow</text>
+              <text x="319" y="273" text-anchor="middle" class="hlabel sm loss">handoff</text>
+              <text x="479" y="273" text-anchor="middle" class="hlabel sm loss">discuss</text>
+              <text x="608" y="273" text-anchor="middle" class="hlabel sm blue">redesign</text>
+
+              <text x="321" y="357" text-anchor="middle" class="hlabel sm loss">queue</text>
+              <text x="367" y="357" text-anchor="middle" class="hlabel sm blue">build</text>
+              <text x="419" y="357" text-anchor="middle" class="hlabel sm blue">spike</text>
+              <text x="479" y="357" text-anchor="middle" class="hlabel sm loss">blocked</text>
+              <text x="673" y="357" text-anchor="middle" class="hlabel sm blue">rebuild</text>
+
+              <!-- ---- flow + back-and-forth arrows (red = tax) ---- -->
+              <g fill="none" stroke="var(--loss)" stroke-width="2.1" marker-end="url(#pf-red-head)">
+                <!-- handoff PM -> Design queue -->
+                <path d="M191 206 Q189 226 199 244"/>
+                <!-- handoff Design -> Eng queue -->
+                <path d="M319 290 Q321 310 327 328"/>
+                <!-- spike blocker escalates Eng -> PM -->
+                <path d="M450 330 Q432 268 450 208"/>
+                <!-- reframe hands down -> redesign -->
+                <path d="M552 206 Q572 226 592 244"/>
+                <!-- redesign hands down -> rebuild -->
+                <path d="M612 290 Q636 310 662 328"/>
+              </g>
+              <!-- back-and-forth: volleys between the stacked discuss blocks -->
+              <g fill="none" stroke="var(--loss)" stroke-width="2.1" marker-start="url(#pf-red-head)" marker-end="url(#pf-red-head)">
+                <path d="M486 208 V244"/>
+                <path d="M486 292 V328"/>
+              </g>
+
+              <!-- tags -->
+              <text x="410" y="250" text-anchor="middle" class="hlabel sm loss">escalate!</text>
+              <text x="548" y="228" text-anchor="middle" class="hlabel sm loss">back &amp; forth</text>
+
+              <!-- team ships flag, weeks later -->
+              <g filter="url(#pf-rough2)">
+                <path d="M710 328 V378" class="ink-s" stroke="var(--blue)" stroke-width="2.2"/>
+                <path d="M710 330 L730 337 L710 344 Z" fill="color-mix(in srgb, var(--blue) 40%, var(--paper))" stroke="var(--blue)" stroke-width="1.6"/>
+              </g>
+              <text x="708" y="322" text-anchor="end" class="hlabel sm blue">ships</text>
+            </svg>
+          </div>
+          <figcaption>
+            The same feature, delivered two ways. One product eng ships in a day. The traditional team pays a tax at every boundary.
+          </figcaption>
+        </figure>
+
+        <h2 id="objection-specialization">Objection #1: specialization beats generalization</h2>
+        <p>
+          Jack of all trades, master of none. This is the argument most people
+          will reach for, and it's a fair one. A dedicated designer produces better 
+          designs than an engineer. A dedicated PM does deeper research.
+        </p>
+        <p>
+          But specialists were never free. You pay for the depth with all the
+          taxes the last few sections described. For years that price
+          was worth paying, because the gap between a specialist and a generalist
+          was enormous. AI shrank the gap. The coordination costs stayed exactly
+          the same. So the trade that made sense for decades quietly stopped
+          making sense. You're no longer giving up a great design to get a
+          mediocre one. You're giving up a great design to get a good one, plus
+          everything that comes with speed.
+        </p>
+        <p>
+          And there's a deeper problem with paying for depth. Depth is only worth
+          a lot when you already know what to build. Early on, you usually don't.
+          A perfectly built version of the wrong idea loses to three quick
+          attempts at finding the right one.
+        </p>
+
+        <h2 id="objection-check">Objection #2: you removed the check</h2>
+        <p>
+          In the traditional model, the friction between product and engineering is
+          also a check. The PM stops the engineer from quietly cutting the thing
+          users needed. The engineer stops the PM from committing to six weeks
+          of work. Collapse the roles and nobody is there to say no. The product
+          engineer is grading their own homework.
+        </p>
+        <p>
+          The check doesn't disappear. It moves outside the team. We run a
+          <a href="weekly-sprint-playbook.html">fixed sprint cadence</a> where
+          something goes in front of real users every cycle, no exceptions, and
+          the results get measured. A product engineer has a lot of
+          freedom inside a sprint, but they are held accountable for the results.
+        </p>
+        <p>
+          That's what the 70% was in the last story. Nobody approved the option to paste the job post. 
+          Users approved it by using it.
+        </p>
+        <p>
+          And that's a better check. An internal debate gets settled by who
+          is more persuasive. Users settle it with behavior. The old check told you
+          what the team believed. The new one tells you whether you were right.
+        </p>
+
+        <h2 id="objection-people">Objection #3: these people are hard to find</h2>
+        <p>
+          I agree with this one, and it's why adoption of this model will be slow.
+        </p>
+        <p>
+          I've worked with a few hundred engineers, and I can't think of too many
+          who would obviously enjoy this role. Most people became engineers
+          because they like technical problems. They didn't sign up to sit with
+          users and design interfaces. And even among those who want it, doing all three jobs well is a
+          different question. Great engineers aren't usually great designers,
+          and AI tools won't always close that gap.
+        </p>
+
+        <h2 id="the-edge">The competitive edge</h2>
+        <p>
+          Most product teams are still set up the traditional way, and I predict most will 
+          stay that way for the foreseeable future. So the companies that do find 
+          these people, and hand them real ownership, will ship meaningfully faster 
+          than their competitors. To the outside world, and to the competitors, the product 
+          will improve faster than anyone can explain.
+        </p>
+        <p>
+          It's not because anyone is working harder. They just stopped paying the taxes of coordination.
+        </p>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
