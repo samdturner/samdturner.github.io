@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Size Your Bets by Your Level of Conviction</title>
+  <meta name="description" content="Prioritize many small, high-conviction bets over large bets based on guesses — the four problems with big speculative bets, and how we built a feedback feature as five small ones." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ---- Sketchbook figures ---- */
+    .sketch-fig {
+      margin: 36px 0;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.20);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.62);
+      --track: rgba(120,90,50,.42); --wk: #b28a5c;
+      --blue: #2563eb; --loss: #cf4f2e; --good: #2f8f4e;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sketch-fig {
+        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
+        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.58);
+        --track: rgba(210,180,130,.35); --wk: #c99b67;
+        --blue: #6f9bff; --loss: #f0795a; --good: #6ecf95;
+      }
+    }
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 20px 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    .sketch-fig .fig-svg { width: 100%; height: auto; display: block; max-width: 560px; margin: 0 auto; }
+    /* wide variant: fill the paper, and break out of the text column on large screens */
+    .sketch-fig.wide .fig-svg { max-width: 100%; }
+    @media (min-width: 1180px) {
+      .sketch-fig.wide { margin-left: -36px; margin-right: -36px; }
+    }
+    .sketch-fig .ink-f { fill: var(--ink); }
+    .sketch-fig .ink-s { stroke: var(--ink); fill: none; }
+    .sketch-fig .soft-s { stroke: var(--ink-soft); fill: none; }
+    .sketch-fig .hlabel { font: 700 17px var(--hand); fill: var(--ink); }
+    .sketch-fig .hlabel.xs { font-size: 13px; }
+    .sketch-fig .hlabel.step { font-size: 13.5px; }
+    .sketch-fig .hlabel.sm { font-size: 15px; }
+    .sketch-fig .hlabel.lg { font-size: 19px; }
+    .sketch-fig .hlabel.blue { fill: var(--blue); }
+    .sketch-fig .hlabel.loss { fill: var(--loss); }
+    .sketch-fig .hlabel.good { fill: var(--good); }
+    .sketch-fig .hlabel.soft { fill: var(--ink-soft); }
+    .sketch-fig .hlabel.quote { font-style: italic; fill: var(--ink-soft); }
+
+    /* ---- open-question list ---- */
+    .q-list { margin: 18px 0 26px; padding-left: 1.15em; }
+    .q-list li { margin: 7px 0; padding-left: 4px; }
+    .q-list li::marker { color: var(--muted); }
+
+    /* ---- verbatim user quotes ---- */
+    .user-quote {
+      margin: 16px 0; padding: 3px 0 3px 22px;
+      border-left: 3px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    }
+    .user-quote + .user-quote { margin-top: 12px; }
+    .user-quote p {
+      margin: 0; font-size: 1.02rem; line-height: 1.6;
+      font-style: italic; color: var(--fg);
+    }
+    .user-quote:first-of-type { margin-top: 22px; }
+    .user-quote:last-of-type { margin-bottom: 26px; }
+
+    /* ---- the open questions, bet by bet (scrollable matrix) ---- */
+    .unk-hint {
+      margin: 0 0 8px; text-align: right; font-family: var(--hand);
+      font-size: 0.8rem; color: var(--ink-soft);
+    }
+    .unk-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .unk-table {
+      border-collapse: collapse; min-width: 1090px; font-size: 0.84rem; line-height: 1.4;
+    }
+    .unk-table th, .unk-table td {
+      text-align: left; vertical-align: top; padding: 10px 13px;
+      border-bottom: 1px dashed color-mix(in srgb, var(--wk) 45%, transparent);
+    }
+    .unk-table thead th {
+      font-family: var(--hand); font-weight: 700; font-size: 0.95rem; color: var(--ink);
+      white-space: nowrap; border-bottom: 1.8px solid color-mix(in srgb, var(--wk) 62%, transparent);
+    }
+    .unk-table tbody th {
+      position: sticky; left: 0; z-index: 1;
+      background: var(--paper); color: var(--ink); font-weight: 400;
+      min-width: 210px; max-width: 230px;
+      border-right: 1px solid color-mix(in srgb, var(--wk) 40%, transparent);
+    }
+    .unk-table td { width: 152px; color: var(--ink); }
+    .unk-table td.unknown {
+      text-align: center; font-family: var(--hand); font-size: 1.15rem;
+      color: color-mix(in srgb, var(--loss) 85%, var(--ink));
+      background: color-mix(in srgb, var(--loss) 13%, transparent);
+    }
+    .unk-table td.answered {
+      background: color-mix(in srgb, var(--good) 22%, transparent);
+      box-shadow: inset 3px 0 0 var(--good);
+    }
+    .unk-table td.held {
+      text-align: center; font-size: 1rem;
+      color: color-mix(in srgb, var(--good) 80%, var(--ink));
+      background: color-mix(in srgb, var(--good) 8%, transparent);
+    }
+    .unk-table tbody tr:last-child th, .unk-table tbody tr:last-child td { border-bottom: 0; }
+
+    /* ---- design evolution, bet by bet ---- */
+    .evo-row {
+      display: grid; grid-template-columns: minmax(0, 1fr) 268px; gap: 28px;
+      padding: 26px 0; align-items: start;
+      border-top: 1px dashed color-mix(in srgb, var(--wk) 50%, transparent);
+    }
+    .evo-row:first-child { border-top: 0; padding-top: 6px; }
+    .evo-row:last-child { padding-bottom: 6px; }
+    .evo-copy { padding-top: 2px; }
+    .evo-badge { font: inherit; color: var(--loss); flex: none; }
+    /* the time committed, called out inside the sentence */
+    .evo-days { white-space: nowrap; }
+    .evo-days b {
+      font-family: var(--hand); font-weight: 700; font-size: 1.06rem; line-height: 1.2;
+      color: var(--accent); letter-spacing: .01em;
+      text-decoration: underline;
+      text-decoration-color: color-mix(in srgb, var(--accent) 42%, transparent);
+      text-decoration-thickness: 2px; text-underline-offset: 3px;
+    }
+    .evo-copy h4 {
+      display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+      font-family: var(--font-head); font-size: 1.02rem; line-height: 1.25;
+      color: var(--ink); margin: 0 0 12px;
+    }
+    .evo-lbl {
+      font-family: var(--hand); font-weight: 700; font-size: 0.9rem;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--ink); margin: 0 0 5px;
+    }
+    .evo-text { margin: 0 0 15px; font-size: 0.88rem; line-height: 1.55; color: var(--ink); }
+    .evo-text:last-child { margin-bottom: 0; }
+    .evo-key {
+      display: flex; align-items: baseline; gap: 10px; justify-content: center; flex-wrap: wrap;
+      margin: 24px 0 0; padding-top: 22px;
+      border-top: 1px dashed color-mix(in srgb, var(--wk) 50%, transparent);
+    }
+    .evo-total-lbl {
+      font-family: var(--hand); font-weight: 700; font-size: 0.9rem;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--ink);
+    }
+    .evo-total-note { font-size: 0.88rem; color: var(--ink); }
+    .evo-days.total b { font-size: 1.3rem; }
+
+    /* the miniature product screens */
+    .mini {
+      width: 268px; background: #fff; color: #1f2933; font-size: 9.5px; line-height: 1.4;
+      border: 1px solid #e9eaee; border-radius: 10px; padding: 9px 10px 10px;
+      box-shadow: 0 5px 16px rgba(0,0,0,.14);
+    }
+    .mini * { box-sizing: border-box; }
+    /* everything that was already there is drained of colour; only the new part stays in colour */
+    .mini .bw { filter: grayscale(1); opacity: .78; }
+
+    /* selectable questions down the left (bet 2) */
+    .mn-split { display: flex; gap: 9px; align-items: flex-start; }
+    .mn-qnav { width: 74px; flex: none; display: flex; flex-direction: column; gap: 5px; }
+    .mn-qitem {
+      font-size: 7.5px; font-weight: 700; padding: 7px 6px; border-radius: 6px;
+      background: #f4f5f7; color: #737d88; border: 1px solid transparent;
+    }
+    .mn-qitem.on { background: #eaf5f5; color: #2f7d8c; border-color: #b7dcdd; }
+    .mn-panel { flex: 1; min-width: 0; }
+    .mn-head { display: flex; gap: 6px; align-items: center; margin-bottom: 9px; }
+    .mn-mic {
+      width: 17px; height: 17px; border-radius: 50%; background: #f1f2f4; flex: none;
+      display: flex; align-items: center; justify-content: center; font-size: 8px;
+    }
+    .mn-head b { font-size: 9.5px; display: block; }
+    .mn-head span { color: #9aa5ad; font-size: 8px; }
+    .mn-level { font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
+    .mn-pips { display: flex; gap: 4px; margin: 6px 0 2px; }
+    .mn-pips i { height: 4px; width: 21px; border-radius: 3px; background: #e6e7ea; }
+    .mn-pips i.on { background: #d9534f; }
+    .mn-hr { border-top: 1px solid #eef0f2; margin: 9px 0; }
+    .mn-item { margin-bottom: 8px; }
+    .mn-item:last-child { margin-bottom: 0; }
+    .mn-itop { display: flex; gap: 5px; align-items: center; font-weight: 700; font-size: 9.5px; }
+    .mn-dot { width: 8px; height: 8px; border-radius: 50%; background: #f5c542; flex: none; }
+    .mn-dot.ok { background: #63b96b; }
+    .mn-dot.bad { background: #e0563b; }
+    .mn-qtag {
+      background: #eef1f4; color: #66707a; font-weight: 800; font-size: 6.5px;
+      padding: 2px 4px; border-radius: 4px; flex: none;
+    }
+    .mn-txt { color: #5b6672; margin-top: 3px; font-size: 9px; }
+    .mn-quote {
+      border-left: 2px solid #e6e7ea; padding-left: 7px; color: #9aa5ad;
+      font-size: 8.5px; margin-top: 9px;
+    }
+    .mn-quote b { display: block; font-size: 6.5px; letter-spacing: .09em; color: #b0b7bd; }
+    .mn-qhead { background: #eaf5f5; margin: -9px -10px 9px; padding: 8px 10px; display: flex; gap: 7px; }
+    .mn-avatar {
+      width: 20px; height: 20px; border-radius: 50%; flex: none;
+      background: linear-gradient(135deg, #cfe3e0, #9fc3bd);
+    }
+    .mn-qlabel { font-size: 6.5px; font-weight: 800; letter-spacing: .09em; color: #3b8a99; }
+    .mn-qtext { font-weight: 700; font-size: 9.5px; color: #182430; line-height: 1.3; }
+    .mn-scorerow { display: flex; align-items: center; gap: 11px; margin-bottom: 4px; }
+    .mn-level2 { font-size: 12px; font-weight: 800; }
+    .mn-metrics { width: 100%; margin: 6px 0 2px; }
+    .mn-mrow { display: flex; align-items: center; gap: 6px; margin: 5px 0; font-size: 9px; }
+    .mn-mname { flex: 0 0 86px; color: #3a4650; display: flex; align-items: center; gap: 3px; }
+    .mn-qi {
+      width: 10px; height: 10px; border-radius: 50%; border: 1px solid #cfd5da; color: #aab2b8;
+      font-size: 6px; display: inline-flex; align-items: center; justify-content: center; flex: none;
+    }
+    .mn-track { flex: 1; height: 5px; background: #eef0f2; border-radius: 3px; overflow: hidden; }
+    .mn-track i { display: block; height: 100%; }
+    .mn-val { width: 15px; text-align: right; font-weight: 700; flex: none; }
+    .mn-row2 {
+      display: flex; align-items: center; gap: 6px;
+      border-top: 1px solid #eef0f2; padding-top: 6px; margin-top: 6px;
+    }
+    .mn-pill {
+      background: #e7f5e0; color: #4e8a3a; font-weight: 800; font-size: 6.5px;
+      letter-spacing: .03em; padding: 3px 6px; border-radius: 10px; white-space: nowrap; flex: none;
+    }
+    .mn-pill.lo { background: #fbe4d0; color: #bf6626; }
+    .mn-sum { font-weight: 700; font-size: 9px; flex: 1; }
+    .mn-chev { color: #3b8a99; font-size: 8px; flex: none; }
+    .mn-detail { color: #4a555f; font-size: 8.5px; margin-top: 5px; }
+    .mn-link {
+      display: block; color: #2f7d8c; font-weight: 600; font-size: 8.5px;
+      border-top: 1px solid #eef0f2; padding-top: 7px; margin-top: 8px;
+    }
+    .mn-actions { display: flex; gap: 6px; margin-top: 9px; }
+    .mn-btn { flex: 1; text-align: center; padding: 7px 4px; border-radius: 8px; font-weight: 700; font-size: 8.5px; }
+    .mn-btn.ghost { border: 1px solid #dbe0e3; color: #3a4650; }
+    .mn-btn.solid { background: #2f7d8c; color: #fff; }
+
+    @media (max-width: 640px) {
+      .evo-row { grid-template-columns: minmax(0, 1fr); gap: 18px; justify-items: center; }
+      .evo-copy { text-align: left; width: 100%; }
+    }
+
+    /* ---- 2x2 bet matrix ---- */
+    .matrix {
+      display: grid;
+      grid-template-columns: 96px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      max-width: 540px; margin: 0 auto;
+    }
+    .mx-corner { grid-column: 1; }
+    .mx-ch {
+      font-family: var(--hand); font-weight: 700; font-size: 1rem;
+      color: var(--ink); text-align: center; align-self: end; padding-bottom: 3px;
+    }
+    .mx-rh {
+      font-family: var(--hand); font-weight: 700; font-size: 1rem;
+      color: var(--ink); text-align: right; align-self: center; line-height: 1.25;
+    }
+    .mx-rh small { display: block; font-size: 0.78rem; color: var(--ink-soft); font-weight: 400; }
+    .mx-cell {
+      border-radius: 12px; padding: 13px 14px; min-height: 96px;
+      border: 1.6px solid var(--track);
+      background: color-mix(in srgb, var(--ink) 5%, transparent);
+      color: var(--ink); font-size: 0.84rem; line-height: 1.45;
+    }
+    .mx-cell .mx-i { display: block; line-height: 0; }
+    .mx-cell .mx-i svg { width: 22px; height: 22px; display: block; overflow: visible; }
+    .mx-cell .mx-i path, .mx-cell .mx-i circle {
+      fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .mx-cell b { display: block; font-family: var(--hand); font-size: 1rem; margin: 6px 0 3px; }
+    .mx-cell.good { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, transparent); }
+    .mx-cell.good b { color: var(--good); }
+    .mx-cell.bad { border-color: var(--loss); border-width: 2.4px; background: color-mix(in srgb, var(--loss) 15%, transparent); }
+    .mx-cell.bad b { color: var(--loss); }
+    @media (max-width: 560px) {
+      .matrix { grid-template-columns: 74px minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+      .mx-ch, .mx-rh { font-size: 0.86rem; }
+      .mx-cell { padding: 11px; font-size: 0.79rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="post-layout">
+    <aside class="toc" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <ul>
+        <li><a href="#four-problems">Problems with large bets</a></li>
+        <li><a href="#five-bets">An example</a></li>
+        <li><a href="#how-small-bets-solve">Benefits of small bets</a></li>
+        <li><a href="#what-it-takes">What it takes</a></li>
+        <li><a href="#the-point">The point, one more time</a></li>
+      </ul>
+    </aside>
+
+    <main class="post-main">
+      <article class="post">
+        <p class="post-eyebrow">Essay &middot; <time datetime="2026-07-30">July 30, 2026</time> &middot; 7 min read</p>
+        <h1 class="post-title">Size Your Bets by Your Level of Conviction</h1>
+
+        <p>
+          As a founder, your objective is to find the critical path between where your product is today
+          and product-market fit. Every week you're choosing a few things to build from a bottomless
+          list, with a budget that runs out.
+        </p>
+        <p>
+          I choose with one rule. <strong>Prioritize many small, high-conviction bets over large bets
+          based on guesses.</strong>
+        </p>
+        <p>
+          And prioritize the thing that makes small bets work, which is learning in the wild. Talking to users
+          and watching real data beats theorizing in the lab, because that learning is where conviction
+          comes from in the first place.
+        </p>
+        <p>
+          The rest of this post is the argument for why, and what it looks like in practice.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 580 288" role="img" aria-label="Two panels, each showing a route from start to product-market fit. Left, one large bet: a single thick red arrow leaves the start and runs off at the wrong angle, ending far from the product-market fit target, with a faint dashed line showing where you needed to go. Right, many small bets: five short green arrows climb from the start to the target, each one changing angle at a marked stop where you learn and correct course.">
+              <defs>
+                <filter id="pmf-rough2"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="6" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter>
+                <marker id="ah-r" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="var(--loss)"/>
+                </marker>
+                <marker id="ah-g" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="5.6" markerHeight="5.6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="var(--good)"/>
+                </marker>
+                <marker id="ah-s" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/>
+                </marker>
+                <!-- product-market fit target: a proper bullseye -->
+                <symbol id="pmf-target" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="18.6" fill="color-mix(in srgb, var(--ink) 14%, var(--paper))" stroke="var(--ink)" stroke-width="1.6"/>
+                  <circle cx="20" cy="20" r="12.6" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.6"/>
+                  <circle cx="20" cy="20" r="7"    fill="color-mix(in srgb, var(--ink) 14%, var(--paper))" stroke="var(--ink)" stroke-width="1.6"/>
+                  <circle cx="20" cy="20" r="3"    fill="var(--ink)" stroke="none"/>
+                </symbol>
+              </defs>
+
+              <!-- ============ LEFT: one large bet ============ -->
+              <g transform="translate(8,10)">
+                <g filter="url(#pmf-rough2)">
+                  <rect x="0" y="0" width="274" height="268" rx="14" fill="color-mix(in srgb, var(--loss) 6%, transparent)" stroke="var(--loss)" stroke-width="1.8"/>
+                </g>
+                <text x="137" y="30" text-anchor="middle" class="hlabel lg loss">&#10007; one large bet</text>
+
+                <!-- target -->
+                <text x="196" y="60" text-anchor="middle" class="hlabel sm">product-market fit</text>
+                <g filter="url(#pmf-rough2)">
+                  <use href="#pmf-target" x="176" y="76" width="44" height="44"/>
+                </g>
+
+                <!-- the direction you needed -->
+                <line x1="38" y1="222" x2="182" y2="110" class="soft-s" stroke-width="1.6" stroke-dasharray="5 7"/>
+
+                <!-- the big bet, off at the wrong angle -->
+                <path d="M32 228 Q126 216 238 190" fill="none" stroke="var(--loss)" stroke-width="7"
+                      stroke-linecap="round" marker-end="url(#ah-r)" filter="url(#pmf-rough2)"/>
+                <text x="248" y="168" text-anchor="end" class="hlabel step loss">wrong direction</text>
+
+                <!-- start -->
+                <circle cx="30" cy="230" r="6" class="ink-f"/>
+              </g>
+
+              <!-- ============ RIGHT: five small bets ============ -->
+              <g transform="translate(298,10)">
+                <g filter="url(#pmf-rough2)">
+                  <rect x="0" y="0" width="274" height="268" rx="14" fill="color-mix(in srgb, var(--good) 6%, transparent)" stroke="var(--good)" stroke-width="1.8"/>
+                </g>
+                <text x="137" y="30" text-anchor="middle" class="hlabel lg good">&#10003; five small bets</text>
+
+                <!-- target -->
+                <text x="196" y="60" text-anchor="middle" class="hlabel sm">product-market fit</text>
+                <g filter="url(#pmf-rough2)">
+                  <use href="#pmf-target" x="176" y="76" width="44" height="44"/>
+                </g>
+
+                <!-- five bets, each correcting course -->
+                <g fill="none" stroke="var(--good)" stroke-width="3.6" stroke-linecap="round" filter="url(#pmf-rough2)">
+                  <path d="M32 228 L78 214"  marker-end="url(#ah-g)"/>
+                  <path d="M88 209 L96 174"  marker-end="url(#ah-g)"/>
+                  <path d="M104 166 L142 154" marker-end="url(#ah-g)"/>
+                  <path d="M154 150 L164 122" marker-end="url(#ah-g)"/>
+                  <path d="M172 116 L192 102" marker-end="url(#ah-g)"/>
+                </g>
+
+                <!-- the learning between each bet -->
+                <g fill="var(--paper)" stroke="var(--ink-soft)" stroke-width="1.8">
+                  <circle cx="83" cy="212" r="5.5"/>
+                  <circle cx="100" cy="170" r="5.5"/>
+                  <circle cx="148" cy="152" r="5.5"/>
+                  <circle cx="168" cy="119" r="5.5"/>
+                </g>
+                <text x="26" y="66" class="hlabel xs">at every stop</text>
+                <text x="26" y="84" class="hlabel xs">learn, then correct</text>
+                <path d="M100 92 Q120 128 100 162" class="ink-s" stroke-width="1.8" marker-end="url(#ah-s)"/>
+
+                <!-- start -->
+                <circle cx="30" cy="230" r="6" class="ink-f"/>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            One large bet commits to a direction before you know which one is right. Five small bets buy
+            four chances to correct course.
+          </figcaption>
+        </figure>
+
+        <h2 id="four-problems">Problems with large bets based on guesses</h2>
+
+        <p>
+          <strong>1. You'll be wrong and backtrack.</strong> A large bet forces you to answer a lot of
+          questions upfront, before the information to answer them exists. So you fill the gaps with
+          imagination, but ideas that sound great in the office reliably fall apart in front of users.
+          Then comes the rework of unwinding the design, rewriting the code, and re-explaining the plan.
+          The bigger the bet, the more expensive the backtrack.
+        </p>
+
+        <p>
+          <strong>2. You'll overbuild.</strong> A large bet commits you to the full version upfront, so
+          you never find out that a fraction of it would have been enough. You spend a month polishing
+          something that half a day would have satisfied, and every hour past "enough" is budget stolen
+          from the next most important thing.
+        </p>
+        <p>
+          <strong>3. You won't build customer understanding.</strong> With a large bet, all the learning
+          arrives at the end, after the budget is spent. You can work for months and finish knowing no
+          more about your customer than when you started. That's the quietest cost of the three so far,
+          and maybe the biggest. You paid full price and didn't even buy information.
+        </p>
+        <p>
+          <strong>4. You'll waste time debating.</strong> When nobody has real information, decisions come down
+          to who's most persuasive, and persuasiveness has nothing to do with being right. Big
+          speculative bets generate exactly these debates, because there's so much surface area to
+          disagree about and no evidence to settle any of it. The arguments burn time, and worse, they
+          burn morale.
+        </p>
+
+        <h2 id="five-bets">An example: building feedback in five small bets</h2>
+        <p>
+          When we set out to build the feedback feature for our job interview prep product, we had exactly
+          one piece of high conviction. Users needed feedback on their interview answers. It was the 
+          overwhelming request coming out of our user interviews. However, the details of what ideal 
+          feedback looked like were a guess. We started with a long list of unknowns:
+        </p>
+        <ul class="q-list">
+          <li>Should the feedback be written or verbal?</li>
+          <li>Should we show a score, and if so, a number, a letter grade, an emoji, or something else?</li>
+          <li>Should we include metrics? If so, what metrics?</li>
+          <li>How do we know if the feedback is helpful?</li>
+          <li>How do we know if it's accurate?</li>
+          <li>Will users actually trust it?</li>
+          <li>Consolidated feedback for the whole interview, or separate feedback for every answer?</li>
+          <li>Include the transcript of what they said?</li>
+          <li>Track progress across sessions?</li>
+          <li>How much text would anyone actually read?</li>
+          <li>Allow users to ask clarifying questions?</li>
+          <li>....and more.</li>
+        </ul>
+        <p>
+          It would have been tempting to design the perfect version upfront. But a big bet placed on that 
+          many guesses would have meant burning budget and backtracking. So we sized our bet to our 
+          conviction. We shipped the most basic version of feedback we could. It was far from ideal (almost embarassingly so), 
+          but that was fine. It gave users something real to react to, and each reaction informed the next bet.
+        </p>
+
+        <figure class="sketch-fig wide evo-fig">
+          <div class="paper">
+            <div class="evo">
+
+              <!-- ===== Bet 1 ===== -->
+              <div class="evo-row">
+                <div class="evo-copy">
+                  <h4><span class="evo-badge">Bet 1</span>&mdash;&nbsp;A score and written feedback</h4>
+                  <p class="evo-lbl">What we knew</p>
+                  <p class="evo-text">Users consistently asked for feedback on their answers.</p>
+                  <p class="evo-lbl">So we&hellip;</p>
+                  <p class="evo-text">Spent <span class="evo-days"><b>0.5 days</b></span> building the smallest version we were certain of. A level, and a short written note underneath it.</p>
+                </div>
+                <div class="mini" role="img" aria-label="Feedback screen, version one. A header reading Mock Interview Results, a level of Beginner shown as five segments with the first filled, one written feedback point with an explanation, and a greyed preview of the user's answer.">
+                  <div class="mn-head">
+                    <span class="mn-mic">&#127908;</span>
+                    <div><b>Mock Interview Results</b><span>Completed 4 weeks ago</span></div>
+                  </div>
+                  <div class="mn-level">Beginner</div>
+                  <div class="mn-pips"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+                  <div class="mn-hr"></div>
+                  <div class="mn-item">
+                    <div class="mn-itop"><span class="mn-dot"></span>Connect passion to the mission</div>
+                    <div class="mn-txt">Your answer is too brief. Connect your desire to lead with the specific challenges at OpenAI.</div>
+                  </div>
+                  <div class="mn-quote"><b>YOUR ANSWER</b>AI: Why the transition to management? User: Well, I'm excited by the opportunity to&hellip;</div>
+                </div>
+              </div>
+
+              <!-- ===== Bet 2 ===== -->
+              <div class="evo-row">
+                <div class="evo-copy">
+                  <h4><span class="evo-badge">Bet 2</span>&mdash;&nbsp;One feedback per question</h4>
+                  <p class="evo-lbl">What we knew</p>
+                  <p class="evo-text">Users wanted feedback broken down by question.</p>
+                  <p class="evo-lbl">So we&hellip;</p>
+                  <p class="evo-text">Spent <span class="evo-days"><b>1 day</b></span> adding a question list beside the component, keeping the component itself exactly as it was.</p>
+                </div>
+                <div class="mini" role="img" aria-label="Feedback screen, version two. A list of selectable questions runs down the left, with question one selected. The panel on the right is the same feedback component as version one, now showing the feedback for the selected question.">
+                  <div class="mn-split">
+                    <div class="mn-qnav">
+                      <div class="mn-qitem on">Question 1</div>
+                      <div class="mn-qitem">Question 2</div>
+                      <div class="mn-qitem">Question 3</div>
+                    </div>
+                    <div class="mn-panel bw">
+                      <div class="mn-head">
+                        <span class="mn-mic">&#127908;</span>
+                        <div><b>Question 1</b><span>Completed 1 day ago</span></div>
+                      </div>
+                      <div class="mn-level">Beginner</div>
+                      <div class="mn-pips"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+                      <div class="mn-hr"></div>
+                      <div class="mn-item">
+                        <div class="mn-itop"><span class="mn-dot"></span>Connect passion to the mission</div>
+                        <div class="mn-txt">Too brief. Tie your answer to their specific challenges.</div>
+                      </div>
+                      <div class="mn-quote"><b>YOUR ANSWER</b>Well, I'm excited by the opportunity to&hellip;</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ===== Bet 3 ===== -->
+              <div class="evo-row">
+                <div class="evo-copy">
+                  <h4><span class="evo-badge">Bet 3</span>&mdash;&nbsp;Scored metrics</h4>
+                  <p class="evo-lbl">What we knew</p>
+                  <p class="evo-text">Users wanted quantified feedback based on key metrics.</p>
+                  <p class="evo-lbl">So we&hellip;</p>
+                  <p class="evo-text">Spent <span class="evo-days"><b>2 days</b></span> adding a 0&ndash;100 score and four scored metrics above the written notes.</p>
+                </div>
+                <div class="mini" role="img" aria-label="Feedback screen, version three. A score of 67 out of 100 in a ring beside the word Intermediate, with four scored metric bars underneath — Substance 94, Structure 22, Conciseness 85, Delivery 65 — above the written feedback point and a view transcript link.">
+                  <div class="mn-head bw">
+                    <span class="mn-mic">&#127908;</span>
+                    <div><b>Question 1</b><span>Completed 1 hour ago</span></div>
+                  </div>
+                  <div>
+                    <div class="mn-scorerow">
+                      <svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true">
+                        <circle cx="24" cy="24" r="19" fill="none" stroke="#eef0f2" stroke-width="5"/>
+                        <circle cx="24" cy="24" r="19" fill="none" stroke="#e6a52e" stroke-width="5" stroke-linecap="round" stroke-dasharray="80 119" transform="rotate(-90 24 24)"/>
+                        <text x="24" y="24" text-anchor="middle" font-weight="800" font-size="13" fill="#1f2933">67</text>
+                        <text x="24" y="33" text-anchor="middle" font-size="6" fill="#9aa5ad">/ 100</text>
+                      </svg>
+                      <div class="mn-level2">Intermediate</div>
+                    </div>
+                    <div class="mn-metrics">
+                      <div class="mn-mrow"><span class="mn-mname">Substance</span><span class="mn-track"><i style="width:94%;background:#4aa96c"></i></span><span class="mn-val">94</span></div>
+                      <div class="mn-mrow"><span class="mn-mname">Structure</span><span class="mn-track"><i style="width:22%;background:#d9534f"></i></span><span class="mn-val">22</span></div>
+                      <div class="mn-mrow"><span class="mn-mname">Conciseness</span><span class="mn-track"><i style="width:85%;background:#8bc53f"></i></span><span class="mn-val">85</span></div>
+                      <div class="mn-mrow"><span class="mn-mname">Delivery</span><span class="mn-track"><i style="width:65%;background:#e6a52e"></i></span><span class="mn-val">65</span></div>
+                    </div>
+                  </div>
+                  <div class="bw">
+                    <div class="mn-hr"></div>
+                    <div class="mn-item">
+                      <div class="mn-itop"><span class="mn-dot"></span>Go beyond surface-level keywords</div>
+                      <div class="mn-txt">You mention psychological safety but never tie it to how the team actually works.</div>
+                    </div>
+                    <a class="mn-link">&#128196; View transcript</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ===== Bet 4 ===== -->
+              <div class="evo-row">
+                <div class="evo-copy">
+                  <h4><span class="evo-badge">Bet 4</span>&mdash;&nbsp;Metrics that explain themselves</h4>
+                  <p class="evo-lbl">What we knew</p>
+                  <p class="evo-text">Users wanted to know what each metric meant, why the got that score, and how to improve.</p>
+                  <p class="evo-lbl">So we&hellip;</p>
+                  <p class="evo-text">Spent <span class="evo-days"><b>2 days</b></span> giving every metric an explanation. What it measures, why this score, and what to change.</p>
+                </div>
+                <div class="mini" role="img" aria-label="Feedback screen, version four. The question sits at the top, then the score and four metric bars each carrying a question-mark icon. Below, there is one feedback row per metric, tagged with the metric and its score, and one row is expanded to explain why the score was given and how to fix it.">
+                  <div class="mn-qhead bw">
+                    <span class="mn-avatar"></span>
+                    <div>
+                      <div class="mn-qlabel">INTERVIEW QUESTION</div>
+                      <div class="mn-qtext">&ldquo;Describe your hiring philosophy. What do you look for when adding to your team?&rdquo;</div>
+                    </div>
+                  </div>
+                  <div class="bw">
+                    <div class="mn-scorerow">
+                      <svg width="42" height="42" viewBox="0 0 48 48" aria-hidden="true">
+                        <circle cx="24" cy="24" r="19" fill="none" stroke="#eef0f2" stroke-width="5"/>
+                        <circle cx="24" cy="24" r="19" fill="none" stroke="#e6a52e" stroke-width="5" stroke-linecap="round" stroke-dasharray="74 119" transform="rotate(-90 24 24)"/>
+                        <text x="24" y="24" text-anchor="middle" font-weight="800" font-size="13" fill="#1f2933">62</text>
+                        <text x="24" y="33" text-anchor="middle" font-size="6" fill="#9aa5ad">/ 100</text>
+                      </svg>
+                      <div class="mn-level2">Intermediate</div>
+                    </div>
+                    <div class="mn-metrics">
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Structure</span><span class="mn-track"><i style="width:85%;background:#8bc53f"></i></span><span class="mn-val">85</span></div>
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Content Depth</span><span class="mn-track"><i style="width:40%;background:#e07d39"></i></span><span class="mn-val">40</span></div>
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Role Fit</span><span class="mn-track"><i style="width:35%;background:#e07d39"></i></span><span class="mn-val">35</span></div>
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Conciseness</span><span class="mn-track"><i style="width:88%;background:#8bc53f"></i></span><span class="mn-val">88</span></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mn-row2"><span class="mn-pill">STRUCTURE &middot; 85</span><span class="mn-sum">Clear, logical framework.</span><span class="mn-chev">&#9662;</span></div>
+                    <div class="mn-row2"><span class="mn-pill lo">CONTENT DEPTH &middot; 40</span><span class="mn-sum">Lacks specific examples.</span><span class="mn-chev">&#9652;</span></div>
+                    <div class="mn-detail">You list good qualities but never explain <em>how</em> you assess them. Which question tells you someone has a growth mindset?</div>
+                    <div class="mn-row2"><span class="mn-pill lo">ROLE FIT &middot; 35</span><span class="mn-sum">Generic, not tailored.</span><span class="mn-chev">&#9662;</span></div>
+                    <div class="mn-row2"><span class="mn-pill">CONCISENESS &middot; 88</span><span class="mn-sum">Clear and to the point.</span><span class="mn-chev">&#9662;</span></div>
+                  </div>
+                  <a class="mn-link bw">&#128196; View transcript</a>
+                </div>
+              </div>
+
+              <!-- ===== Bet 5 ===== -->
+              <div class="evo-row">
+                <div class="evo-copy">
+                  <h4><span class="evo-badge">Bet 5</span>&mdash;&nbsp;One-click improvement</h4>
+                  <p class="evo-lbl">What we knew</p>
+                  <p class="evo-text">Users wanted a simple way to get to an improved answer.</p>
+                  <p class="evo-lbl">So we&hellip;</p>
+                  <p class="evo-text">Spent <span class="evo-days"><b>1 day</b></span> adding a single button that rewrites the answer with them.</p>
+                </div>
+                <div class="mini" role="img" aria-label="Feedback screen, version five. Identical to version four, with two buttons added at the bottom: practice again, and a primary button reading help me improve.">
+                  <div class="mn-qhead bw">
+                    <span class="mn-avatar"></span>
+                    <div>
+                      <div class="mn-qlabel">INTERVIEW QUESTION</div>
+                      <div class="mn-qtext">&ldquo;Describe your hiring philosophy. What do you look for when adding to your team?&rdquo;</div>
+                    </div>
+                  </div>
+                  <div class="bw">
+                    <div class="mn-scorerow">
+                      <svg width="42" height="42" viewBox="0 0 48 48" aria-hidden="true">
+                        <circle cx="24" cy="24" r="19" fill="none" stroke="#eef0f2" stroke-width="5"/>
+                        <circle cx="24" cy="24" r="19" fill="none" stroke="#e6a52e" stroke-width="5" stroke-linecap="round" stroke-dasharray="74 119" transform="rotate(-90 24 24)"/>
+                        <text x="24" y="24" text-anchor="middle" font-weight="800" font-size="13" fill="#1f2933">62</text>
+                        <text x="24" y="33" text-anchor="middle" font-size="6" fill="#9aa5ad">/ 100</text>
+                      </svg>
+                      <div class="mn-level2">Intermediate</div>
+                    </div>
+                    <div class="mn-metrics">
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Structure</span><span class="mn-track"><i style="width:85%;background:#8bc53f"></i></span><span class="mn-val">85</span></div>
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Content Depth</span><span class="mn-track"><i style="width:40%;background:#e07d39"></i></span><span class="mn-val">40</span></div>
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Role Fit</span><span class="mn-track"><i style="width:35%;background:#e07d39"></i></span><span class="mn-val">35</span></div>
+                      <div class="mn-mrow"><span class="mn-mname"><span class="mn-qi">?</span>Conciseness</span><span class="mn-track"><i style="width:88%;background:#8bc53f"></i></span><span class="mn-val">88</span></div>
+                    </div>
+                    <div class="mn-row2"><span class="mn-pill">STRUCTURE &middot; 85</span><span class="mn-sum">Clear, logical framework.</span><span class="mn-chev">&#9662;</span></div>
+                    <div class="mn-row2"><span class="mn-pill lo">CONTENT DEPTH &middot; 40</span><span class="mn-sum">Lacks specific examples.</span><span class="mn-chev">&#9652;</span></div>
+                    <div class="mn-detail">You list good qualities but never explain <em>how</em> you assess them.</div>
+                    <div class="mn-row2"><span class="mn-pill lo">ROLE FIT &middot; 35</span><span class="mn-sum">Generic, not tailored.</span><span class="mn-chev">&#9662;</span></div>
+                    <div class="mn-row2"><span class="mn-pill">CONCISENESS &middot; 88</span><span class="mn-sum">Clear and to the point.</span><span class="mn-chev">&#9662;</span></div>
+                    <a class="mn-link">&#128196; View transcript</a>
+                  </div>
+                  <div class="mn-actions">
+                    <div class="mn-btn ghost">&#127908; Practice again</div>
+                    <div class="mn-btn solid">Help me improve</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <p class="evo-key"><span class="evo-total-lbl">Total</span><span class="evo-days total"><b>6.5 cumulative days</b></span><span class="evo-total-note">to go from zero to a shipped, validated solution.</span></p>
+          </div>
+          <figcaption>
+            Nobody designed the last screen. Every version is the one above it plus the single thing
+            users asked for next.
+          </figcaption>
+        </figure>
+        <p>
+          Six and a half days. That's the entire budget this feature consumed, from first design
+          to final QA, spread across five weekly sprints. And it was never our sole focus. Each of
+          those sprints also carried bets in other areas of the business, so this feature came to
+          life in the margins of a normal roadmap.
+        </p>
+        <p>
+          And how do we know the feedback actually works, and that we're done? Our users told us.
+        </p>
+        <blockquote class="user-quote">
+          <p>&ldquo;I like how in depth it goes. I agree with the feedback, and it's very useful.&rdquo;</p>
+        </blockquote>
+        <blockquote class="user-quote">
+          <p>&ldquo;I like that it gives you a rating on different areas so you can see where you're strong.&rdquo;</p>
+        </blockquote>
+        <blockquote class="user-quote">
+          <p>&ldquo;I really like the visual cues. I think it's really great feedback.&rdquo;</p>
+        </blockquote>
+        <blockquote class="user-quote">
+          <p>&ldquo;I like this better than ChatGPT. Chat always agrees with you.&rdquo;</p>
+        </blockquote>
+        <p>
+          We asked these same questions about Bet 1, and the feedback was entirely negative. Five
+          bets later, the negatives had dried up to a few minor nice-to-haves, even when we pressed
+          for criticism. That's the signal to stop. The next bet belonged somewhere else in the
+          product.
+        </p>
+        
+        <p>
+          There's one more way to look at those five bets. Each one was a step toward clarity,
+          answering questions from our original list and driving down the number of unknowns until
+          the guesses were gone and only conviction remained.
+        </p>
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <p class="unk-hint">scroll for later bets &rarr;</p>
+            <div class="unk-scroll">
+              <table class="unk-table">
+                <thead>
+                  <tr><th scope="col">The open question</th><th scope="col">Start</th><th scope="col">Bet 1</th><th scope="col">Bet 2</th><th scope="col">Bet 3</th><th scope="col">Bet 4</th><th scope="col">Bet 5</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row">Written or verbal?</th><td class="unknown">?</td><td class="answered">Written, in short notes</td><td class="held">&#10003;</td><td class="held">&#10003;</td><td class="held">&#10003;</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">Show a score, and in what form?</th><td class="unknown">?</td><td class="answered">Yes. A level, no number yet</td><td class="held">&#10003;</td><td class="held">&#10003;</td><td class="held">&#10003;</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">One verdict for the interview, or feedback per answer?</th><td class="unknown">?</td><td class="unknown">?</td><td class="answered">Per answer. Nobody wanted one blob</td><td class="held">&#10003;</td><td class="held">&#10003;</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">Include metrics, and which ones?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">Yes. Four, each scored out of 100</td><td class="held">&#10003;</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">Include the transcript of what they said?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">Yes, but behind a link</td><td class="held">&#10003;</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">Track progress across sessions?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">Yes. Scores make sessions comparable</td><td class="held">&#10003;</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">How much text would anyone actually read?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">One line each, expanded on demand</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">Allow users to ask clarifying questions?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">Not needed once each metric explains itself</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">Will users actually trust it?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">Yes, once every score is justified</td><td class="held">&#10003;</td></tr>
+                  <tr><th scope="row">How do we know the feedback is helpful?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">They use it to rewrite the answer</td></tr>
+                  <tr><th scope="row">How do we know it's accurate?</th><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="unknown">?</td><td class="answered">Users agreed with it, unprompted</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <figcaption>
+            Every row is a question we could not answer in the office. A question mark is a guess we
+            refused to build on. Each bet turned a few of them into something we knew.
+          </figcaption>
+        </figure>
+        
+
+        <h2 id="how-small-bets-solve">Benefits of small bets</h2>
+
+        <p>
+          <strong>1. Backtracking disappears.</strong> Every bet is placed on conviction you've already
+          earned, so there's minimul throwaway work. There's a simple way to see why. Put every feature
+          decision on a 2x2. Did users need it, and did you build it?
+        </p>
+
+        <figure class="sketch-fig">
+          <div class="paper">
+            <div class="matrix">
+              <div class="mx-corner"></div>
+              <div class="mx-ch">Users needed it</div>
+              <div class="mx-ch">Users didn't need it</div>
+
+              <div class="mx-rh">You built it</div>
+              <div class="mx-cell good">
+                <span class="mx-i"><svg viewBox="0 0 22 22" aria-hidden="true" stroke="var(--good)"><path d="M3.4 11.2 Q6.2 12.6 8.6 16.6 Q12.4 9.2 18.6 4.2"/></svg></span>
+                <b>The goal</b>
+                You spent the budget on something worthwhile.
+              </div>
+              <div class="mx-cell bad">
+                <span class="mx-i"><svg viewBox="0 0 22 22" aria-hidden="true" stroke="var(--loss)"><path d="M4.6 4.8 Q11.4 11.2 17.4 17.4"/><path d="M17.4 4.6 Q10.8 11 4.6 17.2"/></svg></span>
+                <b>Budget burned</b>
+                And you'll never get it back.
+              </div>
+
+              <div class="mx-rh">You didn't build it <small>(yet)</small></div>
+              <div class="mx-cell">
+                <span class="mx-i"><svg viewBox="0 0 22 22" aria-hidden="true" stroke="var(--ink-soft)"><circle cx="11" cy="11.4" r="7.6"/><path d="M11 6.4 Q11.2 9.4 11 11.6 Q13 12.6 14.6 13.6"/></svg></span>
+                <b>Fine, you can wait</b>
+                A few weeks later won't kill the business.
+              </div>
+              <div class="mx-cell good">
+                <span class="mx-i"><svg viewBox="0 0 22 22" aria-hidden="true" stroke="var(--good)"><path d="M3.4 11.2 Q6.2 12.6 8.6 16.6 Q12.4 9.2 18.6 4.2"/></svg></span>
+                <b>Dodged a bullet</b>
+                You still have the budget to spend what really matters.
+              </div>
+            </div>
+          </div>
+          <figcaption>
+            Three of the four quadrants are fine. Only one costs you, and small bets keep it cheap.
+          </figcaption>
+        </figure>
+
+        <p>
+          Three of these quadrants are fine. Even the one that surprises people, <em>they needed it and
+          you haven't built it yet</em>, is fine. Shipping something a few weeks later is not going to
+          change the trajectory of your startup. You can afford to wait a few sprints until you've
+          earned the conviction to place the bet.
+        </p>
+        <p>
+          The only fatal quadrant is <em>you built it and they didn't need it</em>, and it's fatal in
+          proportion to what you spent. Half a day? That's a cheap price for the learning. Three months?
+          Enough of these failures and it will kill the business.
+        </p>
+        <p>
+          <strong>2. Overbuilding disappears too.</strong> Sometimes you ship the most basic version and
+          discover it's enough. The user is satisfied, the box is checked, and you can stop and redirect
+          that budget to something more important. The basic version isn't just a test of what to build
+          next. It's a test of whether you need to build anything more at all, and "no" is one of the
+          most valuable answers you can get.
+        </p>
+        <p>
+          <strong>3. Customer understanding compounds.</strong> Every bet returns two things, the
+          feature and the learning. And those learnings directly inform your future bets, where to place
+          them, how to size them, and which ones to skip entirely. Five sprints into our feedback
+          feature, we didn't just have a better product. We had a better mental model of our customer.
+        </p>
+        <p>
+          <strong>4. The need for debate fades.</strong> This happens for two reasons. First, you're
+          constantly gathering evidence, and it's much easier to agree on evidence than on opinions.
+          With enough evidence, the answers usually become obvious.
+        </p>
+        <p>
+          Second, the team doesn't need to get it perfect in any single sprint. Real feedback is a week away,
+          so if you're wrong in sprint one, you'll fix it in sprint two. That takes the pressure off,
+          and there's no reason to spend hours debating the perfect version.
+        </p>
+
+        <h2 id="what-it-takes">What it takes to run this way</h2>
+        <p>
+          There's one hard requirement. Weekly sprints with real user contact. Small bets only work
+          if the learning loop is fast. If you ship a small bet and then wait a month for feedback,
+          you get all the slowness of small steps with none of the payoff.
+        </p>
+
+        <p>
+          (I wrote about how we run ours in the
+          <a href="/weekly-sprint-playbook.html">Weekly Sprint Playbook</a>.)
+        </p>
+
+        <h2 id="the-point">The point, one more time</h2>
+
+        <p>
+          You have a bottomless list of things you could build and a finite budget. Spend it in
+          small pieces, sized to your conviction, and let your users tell you what deserves more.
+        </p>
+
+        <p>
+          A large bet is just a guess with a plan attached. The fastest way to build the right
+          thing is to never bet big on a guess.
+        </p>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
