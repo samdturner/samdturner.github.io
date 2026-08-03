@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mindsets of Winning Product Teams</title>
+  <meta name="description" content="Winning products come from winning mindsets — the nine that shape the hundreds of small decisions behind a product, and the seven anti-patterns that quietly slow a startup down." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ---- numbered mindsets / anti-patterns ---- */
+    .numbered { counter-reset: item; }
+    .numbered h3 {
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .numbered h3::before {
+      counter-increment: item;
+      content: counter(item);
+      flex: none;
+      width: 1.7rem; height: 1.7rem;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--n) 15%, var(--bg));
+      color: var(--n);
+      font-family: var(--font-head); font-weight: 700; font-size: 0.82rem;
+      line-height: 1; letter-spacing: 0;
+      align-self: center;
+    }
+    .numbered.mindsets { --n: var(--accent); }
+    .numbered.antipatterns { --n: var(--tip); }
+
+    /* ---- good / bad example pairs ---- */
+    .gb {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px; margin: 22px 0 30px;
+      --gb-good: #2f8f4e; --gb-bad: #cf4f2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      .gb { --gb-good: #6ecf95; --gb-bad: #f0795a; }
+    }
+    .gb-card {
+      --c: var(--gb-bad);
+      border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+      border-left: 3px solid var(--c);
+      background: color-mix(in srgb, var(--c) 7%, transparent);
+      border-radius: 10px; padding: 13px 16px 15px;
+    }
+    .gb-card.good { --c: var(--gb-good); }
+    .gb-card.wide { grid-column: 1 / -1; }
+    .gb-lbl {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.66rem; letter-spacing: 0.11em; text-transform: uppercase;
+      color: var(--c); margin-bottom: 7px;
+    }
+    .gb-lbl::before { content: "\2717"; font-size: 0.85rem; line-height: 1; }
+    .gb-card.good .gb-lbl::before { content: "\2713"; }
+    .gb-card p {
+      margin: 0; font-size: 0.98rem; line-height: 1.62; color: var(--fg);
+    }
+    @media (max-width: 620px) {
+      .gb { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    }
+
+    /* ---- at-a-glance summary table ---- */
+    .summary {
+      border-collapse: collapse; width: 100%;
+      margin: 22px 0 34px;
+      font-size: 0.98rem; line-height: 1.5;
+      --s-good: #2f8f4e; --s-bad: #cf4f2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      .summary { --s-good: #6ecf95; --s-bad: #f0795a; }
+    }
+    .summary th, .summary td {
+      text-align: left; vertical-align: baseline;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary .grp th {
+      --c: var(--s-good);
+      font-family: var(--font-head); font-weight: 700; font-size: 0.9rem;
+      letter-spacing: -0.01em; color: var(--c);
+      background: color-mix(in srgb, var(--c) 9%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+      padding-top: 13px; padding-bottom: 13px;
+    }
+    .summary .grp.anti th { --c: var(--s-bad); }
+    .summary tbody .num {
+      width: 34px; padding-right: 0;
+      color: var(--muted); font-family: var(--font-head);
+      font-size: 0.82rem; font-weight: 700;
+    }
+    .summary tbody th[scope="row"] {
+      font-weight: 600; color: var(--heading);
+      font-family: var(--font-head); letter-spacing: -0.005em;
+    }
+    .summary tbody th[scope="row"] a { color: inherit; }
+    .summary tbody th[scope="row"] a:hover { color: var(--accent); text-decoration: none; }
+    .summary tbody tr:last-child th, .summary tbody tr:last-child td { border-bottom: 0; }
+
+    /* ---- closing line ---- */
+    .kicker {
+      margin: 30px 0 0; padding-top: 22px;
+      border-top: 1px solid var(--border);
+      font-size: 1.12rem; line-height: 1.6; color: var(--heading);
+      font-family: var(--font-head); font-weight: 600; letter-spacing: -0.01em;
+    }
+  </style>
+</head>
+<body>
+  <div class="post-layout">
+    <aside class="toc" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <ul>
+        <li><a href="#at-a-glance">All sixteen at a glance</a></li>
+        <li><a href="#mindsets">Winning mindsets</a></li>
+        <li class="sub"><a href="#m1">Own the user problem</a></li>
+        <li class="sub"><a href="#m2">Obsess over the customer</a></li>
+        <li class="sub"><a href="#m3">Fit the business model</a></li>
+        <li class="sub"><a href="#m4">A product is a pile of risks</a></li>
+        <li class="sub"><a href="#m5">Small, evidence-backed bets</a></li>
+        <li class="sub"><a href="#m6">Forcing functions</a></li>
+        <li class="sub"><a href="#m7">Plain-spoken language</a></li>
+        <li class="sub"><a href="#m8">Positive energy</a></li>
+        <li class="sub"><a href="#m9">Refine your craft</a></li>
+        <li><a href="#anti-patterns">Anti-patterns</a></li>
+        <li class="sub"><a href="#a1">Solutions-first thinking</a></li>
+        <li class="sub"><a href="#a2">Chasing hype</a></li>
+        <li class="sub"><a href="#a3">Overplanning</a></li>
+        <li class="sub"><a href="#a4">Approval chains</a></li>
+        <li class="sub"><a href="#a5">Perfecting the code</a></li>
+        <li class="sub"><a href="#a6">Blindly copying others</a></li>
+        <li class="sub"><a href="#a7">Technical complexity</a></li>
+        <li><a href="#the-point">The point</a></li>
+      </ul>
+    </aside>
+
+    <main class="post-main">
+      <article class="post">
+        <p class="post-eyebrow">Essay &middot; <time datetime="2026-08-03">August 3, 2026</time> &middot; 8 min read</p>
+        <h1 class="post-title">Mindsets of Winning Product Teams</h1>
+
+        <p>
+          Mindsets shape the hundreds of decisions behind every product, from which feature to build
+          next, to when a release is good enough to ship, to which user complaint to act on, to which
+          metric to trust, to when to move on from an idea.
+        </p>
+        <p>
+          <strong>Winning products come from winning mindsets.</strong> Here are the ones I've found
+          work, along with the anti-patterns to avoid.
+        </p>
+
+        <h2 id="at-a-glance">All sixteen at a glance</h2>
+        <table class="summary">
+          <tbody>
+            <tr class="grp"><th colspan="2" scope="colgroup">Winning mindsets &mdash; do these</th></tr>
+            <tr><td class="num">1</td><th scope="row"><a href="#m1">Own the user problem, not just code</a></th></tr>
+            <tr><td class="num">2</td><th scope="row"><a href="#m2">Obsess over the customer</a></th></tr>
+            <tr><td class="num">3</td><th scope="row"><a href="#m3">Fit the product to the business model</a></th></tr>
+            <tr><td class="num">4</td><th scope="row"><a href="#m4">Think of a product as a pile of risks</a></th></tr>
+            <tr><td class="num">5</td><th scope="row"><a href="#m5">Make small, evidence-backed bets</a></th></tr>
+            <tr><td class="num">6</td><th scope="row"><a href="#m6">Embrace forcing functions</a></th></tr>
+            <tr><td class="num">7</td><th scope="row"><a href="#m7">Use plain-spoken language</a></th></tr>
+            <tr><td class="num">8</td><th scope="row"><a href="#m8">Bring positive energy</a></th></tr>
+            <tr><td class="num">9</td><th scope="row"><a href="#m9">Keep refining your craft</a></th></tr>
+
+            <tr class="grp anti"><th colspan="2" scope="colgroup">Anti-patterns &mdash; avoid these</th></tr>
+            <tr><td class="num">1</td><th scope="row"><a href="#a1">Solutions-first thinking</a></th></tr>
+            <tr><td class="num">2</td><th scope="row"><a href="#a2">Chasing Silicon Valley hype</a></th></tr>
+            <tr><td class="num">3</td><th scope="row"><a href="#a3">Overplanning</a></th></tr>
+            <tr><td class="num">4</td><th scope="row"><a href="#a4">Lengthy discussions and approval chains</a></th></tr>
+            <tr><td class="num">5</td><th scope="row"><a href="#a5">Perfecting the code</a></th></tr>
+            <tr><td class="num">6</td><th scope="row"><a href="#a6">Blindly copying others</a></th></tr>
+            <tr><td class="num">7</td><th scope="row"><a href="#a7">Unnecessary technical complexity</a></th></tr>
+          </tbody>
+        </table>
+
+        <h2 id="mindsets">Winning mindsets</h2>
+
+        <div class="numbered mindsets">
+
+          <h3 id="m1">Own the user problem, not just code</h3>
+          <p>
+            Ownership does not just span product spec to passing tests. It starts with defining the
+            user problem, then designing the solution, implementing it, measuring the impact, and
+            iterating on it. The person who works this way is called a
+            <a href="/product-engineering.html">product engineer</a>.
+          </p>
+          <p>
+            When one person can carry an idea from user interview to shipped feature, there are no
+            handoffs between product, design, and engineering, no meetings to align three functions,
+            and no context lost in translation. The loop from insight to iteration runs in days
+            instead of quarters.
+          </p>
+
+          <h3 id="m2">Obsess over the customer</h3>
+          <p>
+            Writing code is cheap now. An AI coding agent can write it, make the tests pass, and make
+            sure it compiles. Understanding the customer is the part that cannot be delegated.
+            Companies rarely fail because the code was imperfect. They fail because they solved a
+            problem people do not care enough to pay for, or never reached the people who do.
+          </p>
+          <p>
+            So the obsession belongs with the customer. Know who they are, what they struggle with,
+            what words they use to describe it, and where they go looking for solutions. That
+            knowledge compounds, and it is one of the hardest advantages to copy.
+          </p>
+
+          <h3 id="m3">Fit the product to the business model</h3>
+          <p>
+            A great product is not enough. The product is one piece of a larger business model, and
+            every piece has to fit together, from the customer segment and pricing to distribution and
+            unit economics. A product that delights users but cannot reach them, or cannot be priced
+            profitably, still fails as a business.
+          </p>
+          <p>
+            So build the product to fit the model. When the pieces fit, they form one cohesive
+            customer factory, a machine that finds customers, serves them well, and earns money doing
+            it.
+          </p>
+
+          <h3 id="m4">Think of a product as a pile of risks</h3>
+          <p>
+            A new product is an onion made of risks, and it succeeds once they have all been peeled
+            away. Investors call this the onion theory of risk. Can the team build it? Do people need
+            it, and will they pay? Is the market big enough? Can customers be acquired profitably, at
+            scale?
+          </p>
+          <p>
+            Start with the biggest risk you can realistically test. If the test fails, you have failed
+            quickly, with time left to change course. The winners are not the teams that avoid risk.
+            They are the teams that retire it fastest.
+          </p>
+
+          <h3 id="m5">Make small, evidence-backed bets</h3>
+          <p>
+            Most founders know the feeling of falling in love with an idea at the whiteboard,
+            launching it, and discovering nobody cares. The only judge that matters is the user. So
+            get the product into their hands as early as possible, and leave yourself time to course
+            correct from something they ignore to something they cannot live without. Talk to users
+            constantly, ship into the wild, and measure what happens. Each loop is a small bet, and
+            the evidence it returns tells you where to place the next one.
+          </p>
+          <p>
+            (More on how to size those bets in
+            <a href="/size-your-bets-by-your-level-of-conviction.html">Size Your Bets by Your Level of
+            Conviction</a>.)
+          </p>
+
+          <h3 id="m6">Embrace forcing functions</h3>
+          <p>
+            Product development is messy and can run forever, so it needs a time constraint. A forcing
+            function is a commitment that makes the work converge into some improvement the customers
+            can experience. "We ship on Friday, and then we measure whether we actually solved the
+            problem." "We run user interviews on Monday to see how people react to the new feature."
+          </p>
+          <p>
+            A time constraint works because it keeps the team focused on the set of features that
+            matter, and forces them to cut what doesn't.
+          </p>
+
+          <h3 id="m7">Use plain-spoken language</h3>
+          <p>
+            Plain-spoken language means describing the work in words humans can understand.
+          </p>
+          <div class="gb">
+            <div class="gb-card">
+              <span class="gb-lbl">Not this</span>
+              <p>
+                "We're an end-to-end financial operations platform empowering SMBs to unlock cash-flow
+                efficiencies."
+              </p>
+            </div>
+            <div class="gb-card good">
+              <span class="gb-lbl">Say this</span>
+              <p>"We make it easy for freelancers to send invoices and get paid."</p>
+            </div>
+          </div>
+          <p>
+            Complicated language makes the listener work to decode it, which slows the team down and
+            puts people off. Simple words keep everyone in the conversation and help the team solve
+            problems faster.
+          </p>
+
+          <h3 id="m8">Bring positive energy</h3>
+          <p>
+            The best conversations leave you energized, amped up, motivated to go solve the next
+            problem. The worst leave you drained. Everyone knows which kind of person they would
+            rather work with. Be that person.
+          </p>
+
+          <h3 id="m9">Keep refining your craft</h3>
+          <p>
+            Product development is a craft, and part of the joy comes from improving, finding ways to
+            achieve more with less. A few habits make that improvement steady. Give feedback
+            generously and receive it gracefully. Hold team retros to talk about what went well and
+            what could have gone better. Week after week, the improvements add up.
+          </p>
+
+        </div>
+
+        <h2 id="anti-patterns">Anti-patterns</h2>
+        <p>
+          Just as important as the mindsets are the anti-patterns, the habits that quietly slow a
+          startup down.
+        </p>
+
+        <div class="numbered antipatterns">
+
+          <h3 id="a1">Solutions-first thinking</h3>
+          <p>
+            Solutions-first thinking is falling in love with a solution and then hunting for a problem
+            to justify it, like a person with a hammer looking for nails. A technology in search of a
+            problem usually finds a market of nobody.
+          </p>
+          <p>
+            Work in the other direction. Start with the problem and work backwards to the solution.
+          </p>
+          <div class="gb">
+            <div class="gb-card">
+              <span class="gb-lbl">Bad</span>
+              <p>
+                "AI agents are a cool new technology. Let's figure out how to use them to improve the
+                lives of construction workers."
+              </p>
+            </div>
+            <div class="gb-card good">
+              <span class="gb-lbl">Good</span>
+              <p>
+                "Construction supervisors lose hours every week to compliance paperwork. What is the
+                best way to make it disappear? An AI agent might be the answer."
+              </p>
+            </div>
+          </div>
+
+          <h3 id="a2">Chasing Silicon Valley hype</h3>
+          <p>
+            Silicon Valley hype is always with us, from social media apps to blockchain to NFTs to the
+            metaverse to whatever comes next. Chasing it is a poor substitute for thinking. Reason
+            from first principles and build a real business that creates real value for users.
+          </p>
+          <p>
+            Benjamin Graham said it best. "You are neither right nor wrong because the crowd disagrees
+            with you." What makes you right is that your facts and your reasoning are sound. The same
+            holds for products. A technology being hot says nothing about whether it solves your
+            users' problem.
+          </p>
+
+          <h3 id="a3">Overplanning</h3>
+          <p>
+            Plans change the moment real users touch the product. Shipping something small and putting
+            it in their hands will teach you more than months invested in the perfect planning
+            document with everyone's input. Plan just enough to ship the next thing, and let what you
+            learn shape the rest.
+          </p>
+
+          <h3 id="a4">Lengthy discussions and approval chains</h3>
+          <p>
+            Long discussions and approval chains slow teams down, and nothing drains a builder like
+            waiting for permission. Worse, debates on Zoom do not produce learning. Shipped products
+            and real data do.
+          </p>
+          <p>
+            So maximize the time spent shipping product and learning from real users. Most debates can
+            be settled faster by shipping something small and measuring what happens. Decide, ship,
+            measure, repeat.
+          </p>
+
+          <h3 id="a5">Perfecting the code</h3>
+          <p>
+            This is the hardest one for engineers to unlearn, myself included after years of following
+            clean coding practices. Every hour spent polishing the code has an opportunity cost. It is
+            time not spent finding product-market fit. The end goal is not better code. The goal is a
+            better business. The code is a means, not the end.
+          </p>
+          <div class="gb">
+            <div class="gb-card">
+              <span class="gb-lbl">Bad</span>
+              <p>"We can't ship yet. I want to rewrite the backend in Rust first."</p>
+            </div>
+            <div class="gb-card good">
+              <span class="gb-lbl">Good</span>
+              <p>
+                "This is solid enough to put in front of users this week. If the feature takes off,
+                we'll harden it."
+              </p>
+            </div>
+          </div>
+
+          <h3 id="a6">Blindly copying others</h3>
+          <p>
+            Copying what others are doing, without understanding why it worked for them, is a trap.
+            What works in one context will not work in another. Pick the best tool for the job by
+            reasoning up from first principles. Define the goals, lay out the alternatives, and weigh
+            the pros / cons / risks / unknowns of each.
+          </p>
+          <div class="gb">
+            <div class="gb-card">
+              <span class="gb-lbl">Bad</span>
+              <p>"We should switch to Cassandra. That's what Netflix uses."</p>
+            </div>
+            <div class="gb-card good">
+              <span class="gb-lbl">Good</span>
+              <p>
+                "We chose Postgres because our data is relational, the team knows it well, and one
+                database keeps operations simple."
+              </p>
+            </div>
+          </div>
+
+          <h3 id="a7">Unnecessary technical complexity</h3>
+          <p>
+            Complexity slows a team down. It's more expensive to build up front and more expensive to
+            change, and it increases the risk of running out of resources before hitting
+            product-market fit. Strive instead for the simplest design that solves the user's problem
+            and meets the business requirements.
+          </p>
+          <div class="gb">
+            <div class="gb-card">
+              <span class="gb-lbl">Bad</span>
+              <p>
+                "We have a hundred users, so we split the backend into twelve microservices on
+                Kubernetes, with an event bus, a service mesh, and multi-region failover, so we're
+                ready when we hit millions of users."
+              </p>
+            </div>
+            <div class="gb-card good">
+              <span class="gb-lbl">Good</span>
+              <p>
+                "We have a hundred users, so we run one web server, a database, and a background
+                worker, all hosted and managed by Render."
+              </p>
+            </div>
+            <div class="gb-card good wide">
+              <span class="gb-lbl">Justified complexity</span>
+              <p>
+                "We have millions of users and growing, so we added caching, queues, and multi-region
+                infrastructure because the load demands it."
+              </p>
+            </div>
+          </div>
+          <p>
+            Complexity is not bad, but it has to earn its place.
+          </p>
+
+        </div>
+
+        <h2 id="the-point">The point, one more time</h2>
+        <p>
+          None of these mindsets are about working harder or typing faster. They're about where the
+          hours go. Toward the customer and the riskiest unknown, and away from the plan, the debate,
+          and the polish nobody asked for.
+        </p>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
