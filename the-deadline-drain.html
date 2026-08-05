@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deadline Drain: Why Deadlines Slow Teams Down, and What to Do Instead</title>
+  <meta name="description" content="Long deadlines don't speed teams up — effort leaks out through planning, re-planning, and explaining before it ever reaches the product. The four phases of the deadline drain, and the kind of time box that works instead." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ---- phase headings ---- */
+    .phase-num {
+      display: block;
+      font-family: var(--font-head);
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 7px;
+    }
+
+    /* ---- Sketchbook figures ---- */
+    .sketch-fig {
+      margin: 36px 0;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.20);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.62);
+      --track: rgba(120,90,50,.42); --wk: #b28a5c;
+      --blue: #2563eb; --loss: #cf4f2e; --good: #2f8f4e; --warn: #c07818; --plan: #0e8074;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sketch-fig {
+        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
+        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.58);
+        --track: rgba(210,180,130,.35); --wk: #c99b67;
+        --blue: #6f9bff; --loss: #f0795a; --good: #6ecf95; --warn: #e8a24e; --plan: #35b3a4;
+      }
+    }
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 20px 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    .sketch-fig .fig-svg { width: 100%; height: auto; display: block; max-width: 560px; margin: 0 auto; }
+    .sketch-fig.wide .fig-svg { max-width: 100%; }
+    @media (min-width: 1180px) {
+      .sketch-fig.wide { margin-left: -36px; margin-right: -36px; }
+    }
+    .sketch-fig .ink-f { fill: var(--ink); }
+    .sketch-fig .ink-s { stroke: var(--ink); fill: none; }
+    .sketch-fig .soft-s { stroke: var(--ink-soft); fill: none; }
+    .sketch-fig .track-s { stroke: var(--track); fill: none; }
+    .sketch-fig .loss-s { stroke: var(--loss); fill: none; }
+    .sketch-fig .good-s { stroke: var(--good); fill: none; }
+    .sketch-fig .blue-s { stroke: var(--blue); fill: none; }
+    .sketch-fig .warn-s { stroke: var(--warn); fill: none; }
+    .sketch-fig .fill-paper { fill: var(--paper); }
+    .sketch-fig .fill-faint { fill: color-mix(in srgb, var(--ink) 6%, transparent); }
+    .sketch-fig .fill-bar { fill: color-mix(in srgb, var(--ink) 38%, transparent); }
+    .sketch-fig .fill-loss { fill: color-mix(in srgb, var(--loss) 15%, transparent); }
+    .sketch-fig .hlabel { font: 700 17px var(--hand); fill: var(--ink); }
+    .sketch-fig .hlabel.xs { font-size: 12px; }
+    .sketch-fig .hlabel.step { font-size: 13.5px; }
+    .sketch-fig .hlabel.sm { font-size: 15px; }
+    .sketch-fig .hlabel.lg { font-size: 19px; }
+    .sketch-fig .hlabel.loss { fill: var(--loss); }
+    .sketch-fig .hlabel.good { fill: var(--good); }
+    .sketch-fig .hlabel.warn { fill: var(--warn); }
+    .sketch-fig .hlabel.soft { fill: var(--ink-soft); }
+    .sketch-fig .hlabel.quote { font-style: italic; fill: var(--ink-soft); }
+
+    /* ---- route map (phase 1) ---- */
+    .route-map .rml { font-family: var(--hand); font-weight: 700; fill: var(--ink); }
+    .route-map .rml.soft  { fill: var(--ink-soft); }
+    .route-map .rml.loss  { fill: var(--loss); }
+    .route-map .rml.plan  { fill: var(--plan); }
+    .route-map .rml.paper { fill: var(--paper); }
+
+    /* ---- numbered reasons (hazard markers, matching the route maps) ---- */
+    .reasons {
+      counter-reset: hz; list-style: none;
+      margin: 20px 0 30px; padding: 0;
+      --hazard: #cf4f2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      .reasons { --hazard: #f0795a; }
+    }
+    .reasons li {
+      position: relative; padding-left: 46px; margin: 16px 0;
+      line-height: 1.62;
+    }
+    .reasons li::before {
+      content: ""; position: absolute; left: 2px; top: 2px;
+      width: 0; height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 27px solid var(--hazard);
+    }
+    .reasons li::after {
+      counter-increment: hz; content: counter(hz);
+      position: absolute; left: 2px; top: 14px; width: 30px;
+      text-align: center; color: #fff;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.76rem;
+      line-height: 1;
+    }
+    .reasons strong { color: var(--heading); }
+
+    /* ---- what a good time box gives you ---- */
+    .timebox {
+      counter-reset: tb; list-style: none;
+      margin: 20px 0 30px; padding: 0;
+      --tbgood: #0e8074;
+    }
+    @media (prefers-color-scheme: dark) {
+      .timebox { --tbgood: #35b3a4; }
+    }
+    .timebox li {
+      position: relative; padding-left: 46px; margin: 16px 0;
+      line-height: 1.62;
+    }
+    .timebox li::before {
+      counter-increment: tb; content: counter(tb);
+      position: absolute; left: 2px; top: 3px;
+      width: 27px; height: 27px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--tbgood); color: #fff;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.78rem;
+      line-height: 1;
+    }
+    .timebox strong { color: var(--heading); }
+
+    /* ---- the Shape Up cover ---- */
+    .bookfig {
+      float: right; width: 152px; margin: 6px 0 18px 26px;
+    }
+    .bookfig img {
+      display: block; width: 100%; height: auto;
+      border-radius: 6px; border: 1px solid var(--border);
+      box-shadow: 0 8px 22px rgba(0,0,0,.16);
+    }
+    .bookfig figcaption {
+      margin-top: 9px; text-align: center;
+      color: var(--muted); font-size: 0.78rem; line-height: 1.45;
+    }
+    @media (max-width: 620px) {
+      .bookfig { float: none; width: 138px; margin: 4px auto 22px; }
+    }
+
+    /* ---- how it stacks up against the four qualities ---- */
+    .qualities {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      counter-reset: q; margin: 22px 0 32px; font-size: 0.97rem;
+      --tbgood: #0e8074;
+    }
+    @media (prefers-color-scheme: dark) {
+      .qualities { --tbgood: #35b3a4; }
+    }
+    .qualities thead th {
+      text-align: left;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); padding: 0 16px 9px 0;
+      border-bottom: 2px solid color-mix(in srgb, var(--tbgood) 32%, transparent);
+    }
+    .qualities thead th + th {
+      color: var(--tbgood); padding-left: 34px;
+    }
+    .qualities tbody th {
+      position: relative; text-align: left; vertical-align: top;
+      width: 46%; font-weight: 600; color: var(--heading);
+      padding: 14px 18px 14px 34px; line-height: 1.5;
+      border-bottom: 1px solid var(--border);
+    }
+    .qualities tbody th::before {
+      counter-increment: q; content: counter(q);
+      position: absolute; left: 0; top: 15px;
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--tbgood); color: #fff;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.68rem;
+      line-height: 1;
+    }
+    .qualities tbody td {
+      position: relative; vertical-align: top; color: var(--fg);
+      padding: 14px 16px 14px 34px; line-height: 1.5;
+      background: color-mix(in srgb, var(--tbgood) 7%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--tbgood) 16%, transparent);
+    }
+    .qualities tbody td::before {
+      content: "\2713"; position: absolute; left: 13px; top: 14px;
+      color: var(--tbgood); font-weight: 800; font-size: 0.86rem; line-height: 1.5;
+    }
+    .qualities tbody tr:first-child td { border-radius: 8px 8px 0 0; }
+    .qualities tbody tr:last-child td { border-radius: 0 0 8px 8px; border-bottom: 0; }
+    .qualities tbody tr:last-child th { border-bottom: 0; }
+    @media (max-width: 560px) {
+      .qualities, .qualities thead, .qualities tbody, .qualities tr,
+      .qualities th, .qualities td { display: block; width: auto; }
+      .qualities thead { display: none; }
+      .qualities tbody tr { margin-bottom: 12px; }
+      .qualities tbody th { padding: 0 0 6px 34px; border-bottom: 0; }
+      .qualities tbody th::before { top: 1px; }
+      .qualities tbody td { padding: 10px 14px 10px 34px; border-radius: 8px; }
+      .qualities tbody td::before { top: 10px; }
+    }
+
+    /* ---- milestones ---- */
+    .milestones { counter-reset: ms; list-style: none; margin: 20px 0 28px; padding: 0; }
+    .milestones li {
+      position: relative; padding-left: 38px; margin: 12px 0;
+      line-height: 1.62;
+    }
+    .milestones li::before {
+      counter-increment: ms; content: counter(ms);
+      position: absolute; left: 0; top: 0;
+      width: 26px; height: 26px; margin-top: 1px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 14%, var(--bg));
+      color: var(--accent);
+      font-family: var(--font-head); font-weight: 700; font-size: 0.85rem; line-height: 1;
+    }
+
+    /* ---- cracks list ---- */
+    .cracks { margin: 18px 0 24px; padding-left: 1.15em; }
+    .cracks li { margin: 7px 0; padding-left: 4px; }
+    .cracks li::marker { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="post-layout">
+    <aside class="toc" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <ul>
+        <li><a href="#phase-1">Phase 1: Everyone loves it!</a></li>
+        <li><a href="#phase-2">Phase 2: Initial cracks</a></li>
+        <li><a href="#phase-3">Phase 3: Unpleasant surprise</a></li>
+        <li><a href="#phase-4">Phase 4: Let's call it done</a></li>
+        <li><a href="#why-they-fail">Why it fails</a></li>
+        <li><a href="#right-time-box">What success looks like</a></li>
+        <li><a href="#what-we-do">What we do instead</a></li>
+        <li><a href="#case-study">A case study</a></li>
+      </ul>
+    </aside>
+
+    <main class="post-main">
+      <article class="post">
+        <p class="post-eyebrow"><time datetime="2026-08-04">August 4, 2026</time> &middot; 7 min read</p>
+        <h1 class="post-title">Deadline Drain: Why Deadlines Slow Teams Down, and What to Do Instead</h1>
+
+        <p>
+          Most teams use deadlines to speed things up. Commit to a feature set with management's approval, 
+          promise a delivery date months out, and go. It feels like discipline.
+        </p>
+        <p>
+          In practice, the deadline becomes a drain on productivity. Effort pours in, but most of it leaks out through
+          planning, re-planning, and explaining before the user sees any value. I call this
+          <strong>the deadline drain</strong>.
+        </p>
+
+        <p>It plays out in four phases.</p>
+
+        <h2 id="phase-1"><span class="phase-num">Phase 1</span>Everyone loves the plan!</h2>
+        <p>
+          The project kicks off with real energy. Executives are excited. Sales is already mentioning
+          it to customers. The team has spent weeks on specs, estimates, and a committed feature list.
+          Your most senior people have reviewed the plan and signed off, so everyone feels extra
+          confident in it.
+        </p>
+        <p>
+          Nobody knows it yet, but the plan won't be a straight line to the finish line. It will be full of 
+          unexpected twists and turns.
+        </p>
+
+        <figure class="sketch-fig wide route-map">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 1080 444" role="img" aria-label="A route map. A straight teal dashed line, labelled road in the plan, runs from a dot marked today to a flag marked shipped. Four people stand under it cheering, with speech bubbles reading LGTM, best plan we've had in years, and straight shot to shipping in Q3. Beneath them, a winding charcoal road, labelled road in reality, wanders far off the straight line and passes through three red hazard markers: a constraint nobody has hit, an edge case that triples the work, and an assumption nobody has tested.">
+              <defs>
+                <filter id="rm-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="560"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+                <filter id="rm-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="560"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+              </defs>
+
+              <!-- the road as it actually runs -->
+              <g filter="url(#rm-rough)">
+                <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--ink)" stroke-width="14" stroke-linecap="round"/>
+                <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round" stroke-dasharray="12 10" opacity="0.9"/>
+              </g>
+
+              <!-- what's waiting on it -->
+              <g filter="url(#rm-rough2)" fill="var(--loss)">
+                <path d="M 272 302 L 288 274 L 304 302 Z"/>
+                <path d="M 592 386 L 608 358 L 624 386 Z"/>
+                <path d="M 786 256 L 802 228 L 818 256 Z"/>
+              </g>
+              <g class="rml paper" font-size="20" text-anchor="middle">
+                <text x="288" y="297">!</text>
+                <text x="608" y="381">!</text>
+                <text x="802" y="251">!</text>
+              </g>
+              <g class="rml" font-size="22" text-anchor="middle">
+                <text x="288" y="332">a constraint nobody has hit</text>
+                <text x="608" y="416">an edge case that triples the work</text>
+                <text x="846" y="294">an assumption</text>
+                <text x="846" y="320">nobody has tested</text>
+              </g>
+              <text x="292" y="232" text-anchor="middle" class="rml loss" font-size="24">road in reality</text>
+
+              <!-- the plan -->
+              <g filter="url(#rm-rough)">
+                <line x1="110" y1="180" x2="946" y2="180" stroke="var(--plan)" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="18 12"/>
+              </g>
+              <g filter="url(#rm-rough2)">
+                <circle cx="110" cy="180" r="9" fill="var(--plan)"/>
+                <line x1="946" y1="182" x2="946" y2="126" stroke="var(--plan)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 946 126 L 990 138 L 946 150 Z" fill="var(--plan)"/>
+              </g>
+              <text x="238" y="158" text-anchor="middle" class="rml plan" font-size="24">road in the plan</text>
+              <text x="104" y="216" text-anchor="middle" class="rml" font-size="26">today</text>
+              <text x="962" y="112" text-anchor="middle" class="rml" font-size="26">shipped</text>
+
+              <!-- everyone loves it -->
+              <g filter="url(#rm-rough2)">
+                <rect x="378" y="14" width="212" height="66" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+                <path d="M 468 78 L 488 114 L 506 78" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+                <line x1="472" y1="79" x2="503" y2="79" stroke="var(--paper)" stroke-width="4"/>
+                <rect x="648" y="22" width="228" height="66" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+                <path d="M 700 86 L 656 118 L 738 86" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+                <line x1="704" y1="87" x2="734" y2="87" stroke="var(--paper)" stroke-width="4"/>
+                <rect x="248" y="28" width="100" height="44" rx="15" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+                <path d="M 320 71 L 402 112 L 340 73" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+                <line x1="324" y1="72" x2="336" y2="72" stroke="var(--paper)" stroke-width="4"/>
+              </g>
+              <g class="rml" font-size="23" text-anchor="middle">
+                <text x="484" y="43">"best plan we've</text>
+                <text x="484" y="70">had in years"</text>
+                <text x="762" y="51">"straight shot to</text>
+                <text x="762" y="78">shipping in Q3"</text>
+                <text x="298" y="58">"LGTM!"</text>
+              </g>
+              <g filter="url(#rm-rough2)" fill="var(--ink)">
+                <circle cx="430" cy="126" r="9.5"/>
+                <path d="M 420 172 L 424 140 L 436 140 L 440 172 Z"/>
+                <g stroke="var(--ink)" stroke-width="5" stroke-linecap="round"><line x1="424" y1="142" x2="412" y2="126"/><line x1="436" y1="142" x2="448" y2="126"/></g>
+                <circle cx="495" cy="130" r="9.5"/>
+                <path d="M 485 172 L 489 144 L 501 144 L 505 172 Z"/>
+                <circle cx="560" cy="126" r="9.5"/>
+                <path d="M 550 172 L 554 140 L 566 140 L 570 172 Z"/>
+                <g stroke="var(--ink)" stroke-width="5" stroke-linecap="round"><line x1="554" y1="142" x2="542" y2="126"/><line x1="566" y1="142" x2="578" y2="126"/></g>
+                <circle cx="625" cy="130" r="9.5"/>
+                <path d="M 615 172 L 619 144 L 627 144 L 635 172 Z"/>
+                <g stroke="var(--ink)" stroke-width="5" stroke-linecap="round"><line x1="627" y1="145" x2="640" y2="131"/></g>
+              </g>
+              <g stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" filter="url(#rm-rough2)">
+                <line x1="406" y1="104" x2="400" y2="92"/><line x1="418" y1="100" x2="416" y2="87"/><line x1="392" y1="112" x2="382" y2="103"/>
+                <line x1="512" y1="108" x2="518" y2="96"/><line x1="524" y1="114" x2="533" y2="105"/>
+                <line x1="602" y1="112" x2="596" y2="100"/><line x1="590" y1="120" x2="581" y2="112"/>
+              </g>
+            </svg>
+          </div>
+        </figure>
+
+        <h2 id="phase-2"><span class="phase-num">Phase 2</span>Initial cracks start to show</h2>
+        <p>
+          The team goes heads down and builds against the committed list. Vibes in stand ups are good.
+          Jira tickets move to done. From the outside looking in, all systems green.
+        </p>
+        <p>
+          But for the people closer to the details, cracks are starting to show.
+        </p>
+        <ul class="cracks">
+          <li>A feature turns out to be harder than anyone expected</li>
+          <li>A production issue pulls the strongest engineer away for a few days</li>
+          <li>A stakeholder asks for a small addition that isn't so small</li>
+          <li>A dependency on another team slips</li>
+        </ul>
+        <p>
+          But with plenty of runway before the deadline, the team is confident they can manage these
+          issues and still deliver on time. No change in the deadline gets surfaced to management. After all, we wouldn't
+          want to jeopardize trust in our ability to deliver.
+        </p>
+
+        <figure class="sketch-fig wide route-map">
+          <div class="paper">
+          <svg class="fig-svg" viewBox="0 0 1080 444" role="img" aria-label="The Phase 1 route map, later in the journey. The teal dashed plan line now traces the winding road exactly as far as the team has walked, then leaves it and runs straight up to the flag marked shipped. Three figures lean into their stride on the road, one saying that was more complicated than we thought and another saying hopefully there aren't any more surprises. The three red warning triangles from Phase 1 are still on the road ahead and behind: a constraint nobody has hit, an edge case that triples the work, and an assumption nobody has tested.">
+            <defs>
+              <filter id="rm2-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="560"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+              <filter id="rm2-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="560"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+            </defs>
+
+            <!-- the road as it actually runs -->
+            <g filter="url(#rm2-rough)">
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--ink)" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round" stroke-dasharray="12 10" opacity="0.9"/>
+            </g>
+
+            <!-- what's waiting on it -->
+            <g filter="url(#rm2-rough2)" fill="var(--loss)">
+              <path d="M 272 302 L 288 274 L 304 302 Z"/>
+              <path d="M 592 386 L 608 358 L 624 386 Z"/>
+              <path d="M 786 256 L 802 228 L 818 256 Z"/>
+            </g>
+            <g class="rml paper" font-size="20" text-anchor="middle">
+              <text x="288" y="297">!</text>
+              <text x="608" y="381">!</text>
+              <text x="802" y="251">!</text>
+            </g>
+            <g class="rml" font-size="22" text-anchor="middle">
+              <text x="288" y="332">a constraint nobody has hit</text>
+              <text x="608" y="416">an edge case that triples the work</text>
+              <text x="846" y="294">an assumption</text>
+              <text x="846" y="320">nobody has tested</text>
+            </g>
+
+            <!-- the plan: on the road as far as the team has come, then straight to the flag -->
+            <g filter="url(#rm2-rough)">
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 355.9 303, 378.3 252, 427.8 244.4 L 946 180" fill="none" stroke="var(--plan)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="18 12"/>
+            </g>
+            <g filter="url(#rm2-rough2)">
+              <circle cx="110" cy="180" r="9" fill="var(--plan)"/>
+              <line x1="946" y1="182" x2="946" y2="126" stroke="var(--plan)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M 946 126 L 990 138 L 946 150 Z" fill="var(--plan)"/>
+            </g>
+            <text x="600" y="200" text-anchor="middle" class="rml plan" font-size="24">road in the plan</text>
+            <text x="104" y="216" text-anchor="middle" class="rml" font-size="26">today</text>
+            <text x="962" y="112" text-anchor="middle" class="rml" font-size="26">shipped</text>
+            <text x="620" y="262" text-anchor="middle" class="rml loss" font-size="24">road in reality</text>
+
+            <!-- what they're saying -->
+            <g filter="url(#rm2-rough2)">
+              <rect x="222" y="34" width="312" height="88" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M 396 120 L 410 194 L 424 120" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <line x1="400" y1="121" x2="421" y2="121" stroke="var(--paper)" stroke-width="4"/>
+              <rect x="574" y="34" width="292" height="88" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M 598 120 L 486 198 L 620 122" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <line x1="600" y1="121" x2="617" y2="121" stroke="var(--paper)" stroke-width="4"/>
+            </g>
+            <g class="rml" font-size="23" text-anchor="middle">
+              <text x="378" y="70">"that was more complicated</text>
+              <text x="378" y="100">than we thought"</text>
+              <text x="720" y="70">"hopefully there aren't</text>
+              <text x="720" y="100">any more surprises"</text>
+            </g>
+
+            <!-- the three on the road, walking -->
+            <g filter="url(#rm2-rough2)" fill="var(--ink)">
+              <g transform="translate(401,250) rotate(10)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-3" y1="-14" x2="-12" y2="0"/>
+                  <line x1="3" y1="-14" x2="10" y2="-1"/>
+                  <line x1="4" y1="-28" x2="13" y2="-20"/>
+                </g>
+              </g>
+              <g transform="translate(431,242) rotate(9)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-4" y1="-14" x2="-11" y2="1"/>
+                  <line x1="4" y1="-14" x2="11" y2="0"/>
+                  <line x1="-5" y1="-28" x2="-13" y2="-19"/>
+                </g>
+              </g>
+              <g transform="translate(464,246) rotate(11)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-3" y1="-14" x2="-12" y2="-1"/>
+                  <line x1="3" y1="-14" x2="11" y2="1"/>
+                  <line x1="4" y1="-28" x2="14" y2="-21"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+          </div>
+        </figure>
+
+        <h2 id="phase-3"><span class="phase-num">Phase 3</span>An unpleasant surprise</h2>
+        <p>
+          The cracks keep spreading. One by one, manageable issues stack up into something
+          unmanageable, and the team realizes they're underwater. There's no way they deliver by the
+          deadline.
+        </p>
+        <p>
+          Now they have no choice. Management gets pulled in. Begin damage control!
+        </p>
+        <p>
+          The team's focus shifts from solving user problems to protecting their credibility.
+          Re-planning, writing updates, explaining the slip, selling the new plan.
+        </p>
+
+        <figure class="sketch-fig wide route-map">
+          <div class="paper">
+          <svg class="fig-svg" viewBox="0 0 1080 514" role="img" aria-label="The route map again, later still. The team has left the original road and is walking a whole extra loop of road they built themselves, which branches off just past the second hazard, curls all the way round and rejoins the original a short way on. It is badged New and labelled re-planning, re-estimating, selling the new plan. The dashed teal plan line now traces the road and the entire loop before running straight to the flag marked shipped. The three hazards are unchanged. One walker says we are not going to make it and another says and now we have to take a detour to explain why.">
+            <defs>
+              <filter id="rm3-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="620"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+              <filter id="rm3-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="620"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+            </defs>
+
+            <!-- what they're saying (behind the road, so the tails pass under it) -->
+            <g filter="url(#rm3-rough2)">
+              <rect x="280" y="40" width="312" height="58" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M 470 96 L 726 336 L 506 98" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <line x1="474" y1="97" x2="503" y2="97" stroke="var(--paper)" stroke-width="4"/>
+              <rect x="600" y="40" width="300" height="88" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M 700 126 L 790 350 L 728 128" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <line x1="704" y1="127" x2="725" y2="127" stroke="var(--paper)" stroke-width="4"/>
+            </g>
+            <g class="rml" font-size="23" text-anchor="middle">
+              <text x="436" y="77">"we're not going to make it"</text>
+              <text x="750" y="76">"and now we have to take</text>
+              <text x="750" y="106">a detour to explain why"</text>
+            </g>
+
+            <!-- the road the team built for itself -->
+            <g filter="url(#rm3-rough)">
+              <path d="M 643 373 C 676 392, 792 386, 824 408 C 858 432, 826 466, 766 464 C 700 462, 666 424, 692 398 C 714 378, 710 330, 738 287" fill="none" stroke="var(--warn)" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 643 373 C 676 392, 792 386, 824 408 C 858 432, 826 466, 766 464 C 700 462, 666 424, 692 398 C 714 378, 710 330, 738 287" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round" stroke-dasharray="12 10" opacity="0.9"/>
+            </g>
+
+            <!-- the road as it actually runs -->
+            <g filter="url(#rm3-rough)">
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--ink)" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round" stroke-dasharray="12 10" opacity="0.9"/>
+            </g>
+
+            <!-- what's waiting on it -->
+            <g filter="url(#rm3-rough2)" fill="var(--loss)">
+              <path d="M 272 302 L 288 274 L 304 302 Z"/>
+              <path d="M 592 386 L 608 358 L 624 386 Z"/>
+              <path d="M 786 256 L 802 228 L 818 256 Z"/>
+            </g>
+            <g class="rml paper" font-size="20" text-anchor="middle">
+              <text x="288" y="297">!</text>
+              <text x="608" y="381">!</text>
+              <text x="802" y="251">!</text>
+            </g>
+            <g class="rml" font-size="22" text-anchor="middle">
+              <text x="288" y="332">a constraint nobody has hit</text>
+              <text x="450" y="420">an edge case that triples the work</text>
+              <text x="906" y="292">an assumption</text>
+              <text x="906" y="318">nobody has tested</text>
+            </g>
+
+            <!-- the plan: the road, the whole detour, then straight to the flag -->
+            <g filter="url(#rm3-rough)">
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 621.6 380, 633.2 377.9, 643.5 373.2 C 676 392, 792 386, 824 408 C 858 432, 826 466, 766 464 C 700 462, 666 424, 692 398 C 714 378, 710 330, 738 287 L 946 180" fill="none" stroke="var(--plan)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="18 12"/>
+            </g>
+            <g filter="url(#rm3-rough2)">
+              <circle cx="110" cy="180" r="9" fill="var(--plan)"/>
+              <line x1="946" y1="182" x2="946" y2="126" stroke="var(--plan)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M 946 126 L 990 138 L 946 150 Z" fill="var(--plan)"/>
+            </g>
+            <text x="104" y="216" text-anchor="middle" class="rml" font-size="26">today</text>
+            <text x="962" y="112" text-anchor="middle" class="rml" font-size="26">shipped</text>
+
+            <!-- the extra road, named -->
+            <g filter="url(#rm3-rough2)" transform="rotate(-3 926 398)">
+              <rect x="890" y="382" width="72" height="30" rx="9" fill="var(--loss)"/>
+              <text x="926" y="404" text-anchor="middle" class="rml paper" font-size="21">New</text>
+            </g>
+            <g class="rml" font-size="22" text-anchor="middle">
+              <text x="926" y="438">re-planning,</text>
+              <text x="926" y="464">re-estimating,</text>
+              <text x="926" y="490">selling the plan</text>
+            </g>
+
+            <!-- the three on the road they built -->
+            <g filter="url(#rm3-rough2)" fill="var(--ink)">
+              <g transform="translate(734,382) rotate(8)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-3" y1="-14" x2="-12" y2="0"/>
+                  <line x1="3" y1="-14" x2="10" y2="-1"/>
+                  <line x1="4" y1="-28" x2="13" y2="-20"/>
+                </g>
+              </g>
+              <g transform="translate(767,386) rotate(9)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-4" y1="-14" x2="-11" y2="1"/>
+                  <line x1="4" y1="-14" x2="11" y2="0"/>
+                  <line x1="-5" y1="-28" x2="-13" y2="-19"/>
+                </g>
+              </g>
+              <g transform="translate(796,391) rotate(10)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-3" y1="-14" x2="-12" y2="-1"/>
+                  <line x1="3" y1="-14" x2="11" y2="1"/>
+                  <line x1="4" y1="-28" x2="14" y2="-21"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+          </div>
+        </figure>
+
+        <h2 id="phase-4"><span class="phase-num">Phase 4</span>Let's just call it done</h2>
+        <p>
+          By now there's mounting pressure from management to wrap this up asap so the team can move on
+          to the next thing. So more things are cut while still being able to call the project "done."
+          Starting with any tech debt they originally planned to pay down.
+        </p>
+        <p>
+          Eventually it ships. Then it's time to dress it up. The project gets demo'd to the team, and it gets a round of
+          applause.
+        </p>
+        <p>
+          But customers are less enthusiastic. Some got tired of waiting and solved the problem another
+          way. Some found it didn't quite solve their problem. And some realized this wasn't a big pain
+          point in the first place.
+        </p>
+
+        <figure class="sketch-fig wide route-map">
+          <div class="paper">
+          <svg class="fig-svg" viewBox="0 0 1080 514" role="img" aria-label="The route map at the end. The team has come out of the extra loop and back onto the original road. From there a short new stretch of road drops away to the right, ending at a blue flag labelled shipped, in brackets, kind of, and the dashed teal plan line now follows it there. The original road carries on past the third hazard to the original flag, marked shipped, which nobody reaches. One walker says the tech debt is okay for now, we'll pay it down later, and another says close enough, call it shipped.">
+            <defs>
+              <filter id="rm4-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="620"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+              <filter id="rm4-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="620"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+            </defs>
+
+            <!-- the loop they built last week -->
+            <g filter="url(#rm4-rough)">
+              <path d="M 643 373 C 676 392, 792 386, 824 408 C 858 432, 826 466, 766 464 C 700 462, 666 424, 692 398 C 714 378, 710 330, 738 287" fill="none" stroke="var(--warn)" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 643 373 C 676 392, 792 386, 824 408 C 858 432, 826 466, 766 464 C 700 462, 666 424, 692 398 C 714 378, 710 330, 738 287" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round" stroke-dasharray="12 10" opacity="0.9"/>
+            </g>
+
+            <!-- the short way out -->
+            <g filter="url(#rm4-rough)">
+              <path d="M 766 272 C 796 292, 826 310, 860 326" fill="none" stroke="var(--warn)" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 766 272 C 796 292, 826 310, 860 326" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round" stroke-dasharray="12 10" opacity="0.9"/>
+            </g>
+
+            <!-- the road as it actually runs -->
+            <g filter="url(#rm4-rough)">
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--ink)" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 676 388, 694 296, 748 282 C 786 272, 782 256, 802 250 C 842 260, 896 224, 946 180" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round" stroke-dasharray="12 10" opacity="0.9"/>
+            </g>
+
+            <!-- what's still out there -->
+            <g filter="url(#rm4-rough2)" fill="var(--loss)">
+              <path d="M 272 302 L 288 274 L 304 302 Z"/>
+              <path d="M 592 386 L 608 358 L 624 386 Z"/>
+              <path d="M 786 256 L 802 228 L 818 256 Z"/>
+            </g>
+            <g class="rml paper" font-size="20" text-anchor="middle">
+              <text x="288" y="297">!</text>
+              <text x="608" y="381">!</text>
+              <text x="802" y="251">!</text>
+            </g>
+            <g class="rml" font-size="22" text-anchor="middle">
+              <text x="288" y="332">a constraint nobody has hit</text>
+              <text x="450" y="420">an edge case that triples the work</text>
+            </g>
+
+            <!-- the plan, now pointed somewhere closer -->
+            <g filter="url(#rm4-rough)">
+              <path d="M 110 180 C 160 226, 210 288, 288 296 C 366 304, 384 236, 452 244 C 522 252, 534 366, 608 378 C 621.6 380, 633.2 377.9, 643.5 373.2 C 676 392, 792 386, 824 408 C 858 432, 826 466, 766 464 C 700 462, 666 424, 692 398 C 714 378, 710 330, 738 287 L 766 272 C 796 292, 826 310, 860 326" fill="none" stroke="var(--plan)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="18 12"/>
+            </g>
+            <circle cx="110" cy="180" r="9" fill="var(--plan)" filter="url(#rm4-rough2)"/>
+
+            <!-- the flag nobody reaches -->
+            <g filter="url(#rm4-rough2)">
+              <line x1="946" y1="182" x2="946" y2="126" stroke="var(--plan)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M 946 126 L 990 138 L 946 150 Z" fill="var(--plan)"/>
+            </g>
+            <text x="962" y="112" text-anchor="middle" class="rml" font-size="26">shipped</text>
+            <text x="104" y="216" text-anchor="middle" class="rml" font-size="26">today</text>
+
+            <!-- the flag they can reach -->
+            <g filter="url(#rm4-rough2)">
+              <line x1="860" y1="330" x2="860" y2="272" stroke="var(--blue)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M 860 272 L 904 284 L 860 296 Z" fill="var(--blue)"/>
+            </g>
+            <g class="rml" font-size="26" text-anchor="middle">
+              <text x="866" y="360">shipped</text>
+              <text x="866" y="388">(kind of)</text>
+            </g>
+
+            <!-- what they're saying -->
+            <g filter="url(#rm4-rough2)">
+              <rect x="310" y="40" width="320" height="118" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M 470 156 L 710 248 L 506 158" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <line x1="474" y1="157" x2="503" y2="157" stroke="var(--paper)" stroke-width="4"/>
+              <rect x="644" y="40" width="260" height="88" rx="18" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M 744 126 L 770 208 L 772 128" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <line x1="746" y1="127" x2="767" y2="127" stroke="var(--paper)" stroke-width="4"/>
+            </g>
+            <g class="rml" font-size="23" text-anchor="middle">
+              <text x="470" y="76">"the tech debt is okay</text>
+              <text x="470" y="106">for now, we'll pay it</text>
+              <text x="470" y="136">down later!"</text>
+              <text x="774" y="76">"close enough,</text>
+              <text x="774" y="106">call it shipped!"</text>
+            </g>
+
+            <!-- out of the loop, taking the short way -->
+            <g filter="url(#rm4-rough2)" fill="var(--ink)">
+              <g transform="translate(719,291) rotate(8)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-3" y1="-14" x2="-12" y2="0"/>
+                  <line x1="3" y1="-14" x2="10" y2="-1"/>
+                  <line x1="4" y1="-28" x2="13" y2="-20"/>
+                </g>
+              </g>
+              <g transform="translate(748,275) rotate(9)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-4" y1="-14" x2="-11" y2="1"/>
+                  <line x1="4" y1="-14" x2="11" y2="0"/>
+                  <line x1="-5" y1="-28" x2="-13" y2="-19"/>
+                </g>
+              </g>
+              <g transform="translate(772,262) rotate(10)">
+                <circle cx="0" cy="-40" r="9"/>
+                <path d="M -8 -14 L -5 -32 L 5 -32 L 8 -14 Z"/>
+                <g stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round">
+                  <line x1="-3" y1="-14" x2="-12" y2="-1"/>
+                  <line x1="3" y1="-14" x2="11" y2="1"/>
+                  <line x1="4" y1="-28" x2="14" y2="-21"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+          </div>
+        </figure>
+
+        <h2 id="why-they-fail">Why this was doomed to fail</h2>
+        <ol class="reasons">
+          <li>
+            <strong>Timeline too long.</strong> A team can estimate a small piece of work with confidence. 
+            A multi month project is different. The estimate sits on a pile of unknowns and untested 
+            assumptions, and the longer the timeline, the wider the cone of uncertainty.
+          </li>
+          <li>
+            <strong>Fixed time & scope.</strong> A wrong plan needs somewhere to bend. This one had nowhere. 
+            The team couldn't move the date and couldn't touch the scope.
+          </li>
+          <li>
+            <strong>Team was building for managers, not users.</strong> The deadline made management the customer. 
+            Success meant a happy manager, and a happy manager meant hitting the date. Users never entered the equation.
+          </li>
+        </ol>
+
+        <h2 id="right-time-box">What the right time box looks like</h2>
+        <p>
+          Deadlines aren't the enemy. A time box is one of the most powerful tools in product
+          development. You just need the right kind. A good time box gives you four things.
+        </p>
+
+        <ol class="timebox">
+          <li>
+            <strong>Healthy level of urgency.</strong> Work expands to fill the time you give it, so
+            a good time box keeps just enough pressure on to sharpen focus. But not so much pressure 
+            that it becomes stressful.
+          </li>
+          <li>
+            <strong>Interests aligned with the user.</strong> The team should win when the user wins,
+            not when a manager is satisfied or a date is hit.
+          </li>
+          <li>
+            <strong>Flexibility to adapt to change.</strong> Things always change, so the team needs to 
+            be able to adapt without a lengthy approval process.
+          </li>
+          <li>
+            <strong>Minimal overhead.</strong> Time spent on planning, status, and process does not add 
+            value for users, so a good time box minimizes it.
+          </li>
+        </ol>
+
+        <h2 id="what-we-do">What we do instead</h2>
+        <figure class="bookfig">
+          <a href="https://basecamp.com/shapeup" target="_blank" rel="noopener">
+            <img src="shape-up.png" alt="The cover of Shape Up by Ryan Singer, published by Basecamp." />
+          </a>
+          <figcaption>Shape Up, by Ryan Singer</figcaption>
+        </figure>
+        <p>
+          We start with an appetite, the amount of time we're willing to spend on a piece of work.
+          Instead of estimating how long the work will take, we decide how much time it's worth, and
+          that drives the scope of what we design. Big appetite, ambitious design. Small appetite,
+          scrappy design. The concept comes from Basecamp's
+          <a href="https://basecamp.com/shapeup" target="_blank" rel="noopener">Shape Up</a>, a book we
+          highly recommend.
+        </p>
+        <p>
+          Then we create a forcing function for ourselves. The key is who it's with. Not a manager. A
+          user. Sometimes that means feedback in a user interview. Sometimes it means releasing to
+          users in the wild.
+        </p>
+        <p>
+          The date is immovable. The scope is not. That freedom virtually eliminates upfront planning,
+          and nobody needs approval to change scope. When we learn something, we just act on it.
+        </p>
+        <p>Here's how this stacks up against the four qualities.</p>
+
+        <table class="qualities">
+          <thead>
+            <tr>
+              <th scope="col">A good time box needs</th>
+              <th scope="col">This approach delivers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">A healthy level of urgency</th>
+              <td>The date is real and it's close</td>
+            </tr>
+            <tr>
+              <th scope="row">Interests aligned with the user</th>
+              <td>The only audience is the user</td>
+            </tr>
+            <tr>
+              <th scope="row">Flexibility to adapt to change</th>
+              <td>Scope can change right up to the end</td>
+            </tr>
+            <tr>
+              <th scope="row">Minimal overhead</th>
+              <td>Almost no planning, no approvals to chase</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          And there's a bonus. Morale ends strong every time. We put the product in front of users and
+          watch them use it. Either we confirm our changes worked, or we learn and course correct. Both
+          outcomes feel like progress, because both are progress.
+        </p>
+
+        <h2 id="case-study">A case study</h2>
+        <p>
+          While building Lira, our interview prep product, we realized we were missing a critical
+          flow. Creating interview answers directly in the product was a top user request, and we
+          could see why. In research call after research call, we watched people struggle to put their
+          answers together.
+        </p>
+        <p>But this was a daunting feature with many open questions.</p>
+        <ul class="cracks">
+          <li>Would AI drafted answers feel personalized?</li>
+          <li>Would users be willing to put in the effort?</li>
+          <li>What information did we need beyond the resume?</li>
+          <li>How much would users want to edit their answers?</li>
+          <li>What format would users want? Sentences, jot notes, something else?</li>
+        </ul>
+        <p>
+          The answers would drive a go or no go decision on the feature. So we gave ourselves an
+          appetite of two days, and our forcing function was three research calls booked on day three.
+          The goal was to get something rough into users' hands and help them reach an answer they
+          were happy with.
+        </p>
+        <p>
+          Here's the key insight. We didn't need to build the full product to answer our open
+          questions. We didn't even need a user interface. A simple system prompt in Gemini was enough.
+          On the calls, users pasted our prompt into the Gemini playground and it walked them through
+          building an answer step by step.
+        </p>
+        <p>
+          Three days in, our research calls with users gave us the signal we needed. Users were able 
+          to build answers they were happy with. The one challenge was thinking of relevant past experiences 
+          that mapped well to the interview questions.
+        </p>
+        <p>
+          But that was enough signal. We kept going, and today the answer builder is a core part of Lira.
+        </p>
+        <p>
+          Now notice the phases that never happened. No big plan to fall in love with. No surprises, because 
+          the project wasn't built on a tower of assumptions. No unnecessary detours because we were free to change 
+          scope as we learned.
+        </p>
+        <p>Same messy product development. None of the deadline drain.</p>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
