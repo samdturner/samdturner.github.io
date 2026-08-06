@@ -135,6 +135,21 @@
     }
     .timebox strong { color: var(--heading); }
 
+    /* ---- screenshot figure ---- */
+    .shot { margin: 34px 0; }
+    .shot img {
+      display: block; width: 100%; height: auto;
+      border-radius: 12px; border: 1px solid var(--border);
+      box-shadow: 0 10px 28px rgba(0,0,0,.14);
+    }
+    .shot figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    @media (min-width: 1180px) {
+      .shot.wide { margin-left: -36px; margin-right: -36px; }
+    }
+
     /* ---- the Shape Up cover ---- */
     .bookfig {
       float: right; width: 152px; margin: 6px 0 18px 26px;
@@ -868,6 +883,15 @@
           On the calls, users pasted our prompt into the Gemini playground and it walked them through
           building an answer step by step.
         </p>
+
+        <figure class="shot wide">
+          <img src="research-call.png" alt="A screen share during a research call: the Gemini playground running our system prompt, asking the participant which of three phrasings best describes the scale of their work. The two of us are on video in the corner." />
+          <figcaption>
+            The research call in progress. The prototype was a system prompt in the Gemini playground,
+            and the participant drove it. Only the two founders are on camera. The participant
+            isn't shown, for privacy.
+          </figcaption>
+        </figure>
         <p>
           Three days in, our research calls with users gave us the signal we needed. Users were able 
           to build answers they were happy with. The one challenge was thinking of relevant past experiences 
