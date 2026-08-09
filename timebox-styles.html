@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Styles &mdash; "What the right time box looks like"</title>
+  <meta name="description" content="Three styling options for the time box section of The Deadline Drain." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page { max-width: 820px; margin: 0 auto; padding: 44px 20px 90px; }
+    .page > h1 {
+      font-family: var(--font-head); font-size: 2rem; line-height: 1.1;
+      letter-spacing: -0.02em; color: var(--heading); margin: 0 0 10px;
+    }
+    .page > .lede { color: var(--muted); margin: 0 0 44px; }
+
+    .opt { border-top: 1px solid var(--border); padding-top: 28px; margin-top: 46px; }
+    .opt > h2 {
+      font-family: var(--font-head); font-size: 1.3rem; letter-spacing: -0.01em;
+      color: var(--heading); margin: 0 0 6px;
+    }
+    .opt > .note { color: var(--muted); font-size: 0.9rem; margin: 0 0 26px; }
+    .opt > .note b { color: var(--fg); font-weight: 600; }
+    .demo h2 {
+      font-family: var(--font-head); font-size: 1.55rem; letter-spacing: -0.015em;
+      color: var(--heading); margin: 0 0 8px;
+    }
+    .demo > p { line-height: 1.7; margin: 0 0 20px; }
+
+    /* the good green: the maps' teal flag */
+    .demo { --good: #0e8074; }
+    @media (prefers-color-scheme: dark) { .demo { --good: #35b3a4; } }
+
+    /* ============ A · flag markers ============ */
+    .flags { list-style: none; margin: 0; padding: 0; }
+    .flags li {
+      position: relative; padding-left: 46px; margin: 16px 0; line-height: 1.62;
+    }
+    .flags li::before {          /* the pole */
+      content: ""; position: absolute; left: 10px; top: 3px;
+      width: 2.5px; height: 26px; border-radius: 2px;
+      background: var(--good);
+    }
+    .flags li::after {           /* the pennant */
+      content: ""; position: absolute; left: 12px; top: 4px;
+      width: 0; height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 17px solid var(--good);
+    }
+    .flags strong { color: var(--heading); }
+
+    /* ============ B · numbered discs ============ */
+    .discs { counter-reset: gd; list-style: none; margin: 0; padding: 0; }
+    .discs li {
+      position: relative; padding-left: 46px; margin: 16px 0; line-height: 1.62;
+    }
+    .discs li::before {
+      counter-increment: gd; content: counter(gd);
+      position: absolute; left: 2px; top: 3px;
+      width: 27px; height: 27px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--good); color: #fff;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.78rem; line-height: 1;
+    }
+    .discs strong { color: var(--heading); }
+
+    /* ============ C · ticked requirements ============ */
+    .ticks { list-style: none; margin: 0; padding: 0; }
+    .ticks li {
+      position: relative; padding-left: 46px; margin: 16px 0; line-height: 1.62;
+    }
+    .ticks li::before {
+      content: ""; position: absolute; left: 3px; top: 4px;
+      width: 24px; height: 24px; border-radius: 6px;
+      border: 2px solid var(--good);
+      background: color-mix(in srgb, var(--good) 10%, transparent);
+    }
+    .ticks li::after {
+      content: "\2713"; position: absolute; left: 3px; top: 4px;
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--good); font-weight: 800; font-size: 0.86rem; line-height: 1;
+    }
+    .ticks strong { color: var(--heading); }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Three styles: "What the right time box looks like"</h1>
+    <p class="lede">
+      The same four requirements, set three ways &mdash; each one the positive counterpart to the red
+      hazard markers in "Why this was doomed to fail".
+    </p>
+
+    <!-- ============ A ============ -->
+    <section class="opt">
+      <h2>Option A &mdash; Flag markers</h2>
+      <p class="note"><b>Idea:</b> the teal pennant from the route maps becomes the bullet, so the good list is marked with the thing the maps use for the destination &mdash; the exact opposite of the red triangles. <b>Trade-off:</b> no numbers, so it reads as a set rather than an ordered four.</p>
+
+      <div class="demo">
+        <h2>What the right time box looks like</h2>
+        <p>
+          Deadlines aren't the enemy. A time constraint is one of the most powerful tools in product
+          development. You just need the right kind. A good time box gives you four things.
+        </p>
+        <ul class="flags">
+          <li>
+            <strong>A healthy amount of urgency.</strong> Work expands to fill the time you give it, so
+            a good time box keeps just enough pressure on to sharpen focus.
+          </li>
+          <li>
+            <strong>Interests aligned with the user.</strong> The team should win when the user wins,
+            not when a manager is satisfied or a date is hit.
+          </li>
+          <li>
+            <strong>Flexibility to adapt when things change.</strong> Things always change, so the date
+            holds and everything else can move.
+          </li>
+          <li>
+            <strong>Minimal overhead.</strong> Time spent on planning, status, and process is time not
+            spent adding value for users, so a good time box needs almost none of it.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ B ============ -->
+    <section class="opt">
+      <h2>Option B &mdash; Numbered discs</h2>
+      <p class="note"><b>Idea:</b> the same construction as the hazard markers &mdash; solid shape, white number &mdash; but a teal circle instead of a red triangle. Round and green reads as safe against pointed and red. <b>Trade-off:</b> the most literal mirror; it works precisely <em>because</em> it sits near the other list, and looks plainer on its own.</p>
+
+      <div class="demo">
+        <h2>What the right time box looks like</h2>
+        <p>
+          Deadlines aren't the enemy. A time constraint is one of the most powerful tools in product
+          development. You just need the right kind. A good time box gives you four things.
+        </p>
+        <ol class="discs">
+          <li>
+            <strong>A healthy amount of urgency.</strong> Work expands to fill the time you give it, so
+            a good time box keeps just enough pressure on to sharpen focus.
+          </li>
+          <li>
+            <strong>Interests aligned with the user.</strong> The team should win when the user wins,
+            not when a manager is satisfied or a date is hit.
+          </li>
+          <li>
+            <strong>Flexibility to adapt when things change.</strong> Things always change, so the date
+            holds and everything else can move.
+          </li>
+          <li>
+            <strong>Minimal overhead.</strong> Time spent on planning, status, and process is time not
+            spent adding value for users, so a good time box needs almost none of it.
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ C ============ -->
+    <section class="opt">
+      <h2>Option C &mdash; Ticked requirements</h2>
+      <p class="note"><b>Idea:</b> tinted checkboxes, already ticked &mdash; the section reads as a spec the time box has to satisfy, which pays off later when "this checks every box" arrives. <b>Trade-off:</b> the post already uses a round tick for the "checks every box" list further down, so the two need to stay visually distinct.</p>
+
+      <div class="demo">
+        <h2>What the right time box looks like</h2>
+        <p>
+          Deadlines aren't the enemy. A time constraint is one of the most powerful tools in product
+          development. You just need the right kind. A good time box gives you four things.
+        </p>
+        <ul class="ticks">
+          <li>
+            <strong>A healthy amount of urgency.</strong> Work expands to fill the time you give it, so
+            a good time box keeps just enough pressure on to sharpen focus.
+          </li>
+          <li>
+            <strong>Interests aligned with the user.</strong> The team should win when the user wins,
+            not when a manager is satisfied or a date is hit.
+          </li>
+          <li>
+            <strong>Flexibility to adapt when things change.</strong> Things always change, so the date
+            holds and everything else can move.
+          </li>
+          <li>
+            <strong>Minimal overhead.</strong> Time spent on planning, status, and process is time not
+            spent adding value for users, so a good time box needs almost none of it.
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
