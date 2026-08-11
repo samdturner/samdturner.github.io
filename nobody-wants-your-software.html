@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nobody Wants Your Software</title>
+  <meta name="description" content="Customers don't want your product. They want a job done. Map the job, measure the outcomes, and build for the steps where they struggle." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+    /* ---- section numbers ---- */
+    .sec-num {
+      display: block;
+      font-family: var(--font-head);
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 7px;
+    }
+
+    /* ---- sketchbook figures ---- */
+    .sketch-fig {
+      margin: 36px 0;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.20);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.62);
+      --wk: #b28a5c;
+      --loss: #cf4f2e; --good: #2f8f4e; --warn: #c07818; --plan: #0e8074;
+      --mute: #8a8378;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sketch-fig {
+        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
+        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.58);
+        --wk: #c99b67;
+        --loss: #f0795a; --good: #6ecf95; --warn: #e8a24e; --plan: #35b3a4;
+        --mute: #7a7368;
+      }
+    }
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 22px 20px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    .sketch-fig .fig-svg { width: 100%; height: auto; display: block; }
+    @media (min-width: 1180px) {
+      .sketch-fig.wide { margin-left: -36px; margin-right: -36px; }
+    }
+
+    /* ---- the ladder of wants, in the intro ---- */
+    .sketch-fig .ink-s { stroke: var(--ink); fill: none; }
+    .sketch-fig .good-s { stroke: var(--good); fill: none; }
+    .sketch-fig .shadow { fill: color-mix(in srgb, var(--ink) 13%, transparent); }
+    .sketch-fig .ribbon { stroke: color-mix(in srgb, var(--plan) 13%, transparent); fill: none; }
+    /* the climb, as a fill ramp from "just a tool" to "the whole point" */
+    .sketch-fig .lv1 { fill: color-mix(in srgb, var(--ink) 7%, var(--paper)); }
+    .sketch-fig .lv2 { fill: color-mix(in srgb, var(--plan) 9%, var(--paper)); }
+    .sketch-fig .lv3 { fill: color-mix(in srgb, var(--plan) 17%, var(--paper)); }
+    .sketch-fig .lv4 { fill: color-mix(in srgb, var(--plan) 27%, var(--paper)); }
+    .sketch-fig .lv5 { fill: color-mix(in srgb, var(--good) 34%, var(--paper)); }
+    .sketch-fig .hlabel { font: 700 17px var(--hand); fill: var(--ink); }
+    .sketch-fig .hlabel.md { font-size: 16px; }
+    .sketch-fig .hlabel.lg { font-size: 19px; }
+    .sketch-fig .hlabel.soft { fill: var(--ink-soft); }
+    .sketch-fig .hlabel.plan { fill: var(--plan); }
+    .sketch-fig .elab {
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      fill: var(--ink-soft);
+    }
+
+    /* ---- the job map, two rows of four with the step statements ---- */
+    .jobmap-title {
+      margin: 0 0 20px;
+      padding-bottom: 13px;
+      border-bottom: 1.5px dashed color-mix(in srgb, var(--ink) 72%, transparent);
+      text-align: center;
+      font-family: var(--hand); font-weight: 700;
+      font-size: 1.16rem; line-height: 1.3;
+      color: var(--ink);
+    }
+    .jobmap-title::before {
+      content: "The job";
+      display: block;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--plan);
+      margin-bottom: 6px;
+    }
+    .jobmap { margin: 0 10px; }
+    .jrow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .jcard {
+      position: relative;
+      display: flex; flex-direction: column;
+      min-width: 0;
+      padding: 16px 13px 15px;
+      background: color-mix(in srgb, var(--paper) 88%, #fff);
+      border: 1.5px solid color-mix(in srgb, var(--ink) 42%, transparent);
+      border-radius: 12px;
+      box-shadow: 0 2px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+    }
+    .jcard .j-num {
+      position: absolute; top: -11px; left: 11px;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--plan); color: var(--paper);
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.72rem; line-height: 1;
+    }
+    .jcard .j-name {
+      font-family: var(--hand); font-weight: 700;
+      font-size: 1.08rem; line-height: 1.15; color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .jcard .j-say {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: 0.74rem; line-height: 1.42;
+      color: var(--ink);
+    }
+    .jobmap .jrow + .jrow { margin-top: 22px; }
+
+    /* the same map, with desired outcomes hanging off each step */
+    .jcol { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    /* line the step cards, the statements, and the blanks up across the row */
+    .omap .jrow { grid-template-rows: repeat(5, auto); row-gap: 8px; }
+    .omap .jcol { display: grid; grid-template-rows: subgrid; grid-row: span 5; }
+    .omap .jcard { padding: 14px 12px 12px; }
+    .omap .jcard .j-name { margin-bottom: 0; }
+    .onote {
+      padding: 8px 10px 9px;
+      border: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--paper) 88%, #fff);
+      font-family: var(--font-body); font-weight: 400;
+      font-size: 0.71rem; line-height: 1.38;
+      color: var(--ink);
+    }
+    .onote.ph {
+      display: flex; flex-direction: column; justify-content: center; gap: 6px;
+      min-height: 42px;
+      border-style: dashed;
+      background: none;
+    }
+    .onote.ph span {
+      height: 5px; border-radius: 3px;
+      background: color-mix(in srgb, var(--ink) 15%, transparent);
+    }
+    .onote.ph span:last-child { width: 62%; }
+
+    /* dot votes: what customers said about each outcome */
+    .votes .onote { position: relative; }
+    .dots { display: inline-flex; }
+    .dots i {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--loss);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--paper) 88%, #fff),
+                  0 1px 2px rgba(0, 0, 0, .2);
+    }
+    .dots.ok i { background: var(--good); }
+    .votes .onote .dots {
+      position: absolute; top: -7px; right: -7px;
+    }
+    .vote-legend {
+      margin-top: 20px;
+      display: flex; flex-wrap: wrap; gap: 10px 26px;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 0.8rem; color: var(--ink);
+    }
+    .vote-legend .lg { display: inline-flex; align-items: center; gap: 8px; }
+
+    @media (max-width: 780px) {
+      .jrow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .jobmap .jrow + .jrow { margin-top: 14px; }
+      .jrow { row-gap: 18px; }
+      /* the columns stack in pairs on small screens, so drop the shared tracks */
+      .omap .jrow { grid-template-rows: none; row-gap: 18px; }
+      .omap .jcol { display: flex; grid-row: auto; }
+    }
+    @media (max-width: 420px) {
+      .jrow { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    /* ---- outcome measurements table ---- */
+    .measures {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      margin: 22px 0 32px; font-size: 0.95rem;
+      --tb: var(--accent);
+    }
+    .measures thead th {
+      text-align: left;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.68rem; letter-spacing: 0.11em; text-transform: uppercase;
+      color: var(--muted); padding: 0 14px 10px 0;
+      border-bottom: 2px solid color-mix(in srgb, var(--tb) 32%, transparent);
+    }
+    .measures tbody th {
+      text-align: left; vertical-align: top;
+      font-family: var(--font-head); font-weight: 700;
+      color: var(--heading); font-size: 0.98rem;
+      padding: 12px 14px 12px 0;
+      border-bottom: 1px solid var(--border);
+      width: 170px;
+    }
+    .measures tbody td {
+      vertical-align: top; line-height: 1.55;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .measures tbody td.what {
+      color: var(--muted); font-size: 0.92rem;
+      width: 34%;
+    }
+    .measures tbody td.example { color: var(--fg); }
+    .measures tbody tr:last-child th,
+    .measures tbody tr:last-child td { border-bottom: 0; }
+    @media (max-width: 620px) {
+      .measures, .measures thead, .measures tbody, .measures tr,
+      .measures th, .measures td { display: block; width: auto; }
+      .measures thead { display: none; }
+      .measures tbody tr {
+        margin-bottom: 14px; padding: 10px 12px;
+        border: 1px solid var(--border); border-radius: 8px;
+      }
+      .measures tbody th { padding: 0 0 4px 0; border: 0; font-size: 1rem; }
+      .measures tbody td { padding: 4px 0; border: 0; }
+      .measures tbody td.what { color: var(--muted); font-size: 0.88rem; }
+    }
+
+    /* ---- the same table, paired bad and good examples ---- */
+    .measures.pairs {
+      --bad: #cf4f2e;
+      --ok: #2f8f4e;
+    }
+    @media (prefers-color-scheme: dark) {
+      .measures.pairs { --bad: #f0795a; --ok: #6ecf95; }
+    }
+    .measures.pairs thead th:nth-child(2),
+    .measures.pairs thead th:nth-child(3) { padding-left: 15px; }
+    .measures.pairs tbody th { padding-right: 12px; }
+    .measures.pairs tbody td {
+      width: 33%;
+      color: var(--fg);
+      border-left: 1px solid var(--border);
+    }
+    .measures.pairs tbody td::before {
+      color: var(--mark);
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .measures.pairs tbody td.ex-bad { --mark: var(--bad); }
+    .measures.pairs tbody td.ex-bad::before { content: "\2717"; }
+    .measures.pairs tbody td.ex-good { --mark: var(--ok); }
+    .measures.pairs tbody td.ex-good::before { content: "\2713"; }
+    @media (max-width: 620px) {
+      .measures.pairs tbody td { width: auto; border-left: 0; padding: 5px 0; }
+    }
+
+    /* ---- the Jobs to Be Done cover ---- */
+    .bookfig {
+      float: right; width: 152px; margin: 6px 0 18px 26px;
+    }
+    .bookfig img {
+      display: block; width: 100%; height: auto;
+      border-radius: 6px; border: 1px solid var(--border);
+      box-shadow: 0 8px 22px rgba(0,0,0,.16);
+    }
+    .bookfig figcaption {
+      margin-top: 9px; text-align: center;
+      color: var(--muted); font-size: 0.78rem; line-height: 1.45;
+    }
+    @media (max-width: 620px) {
+      .bookfig { float: none; width: 138px; margin: 4px auto 22px; }
+    }
+
+    /* ---- the eight steps list ---- */
+    .jobsteps { counter-reset: js; list-style: none; margin: 20px 0 28px; padding: 0; }
+    .jobsteps li {
+      position: relative; padding-left: 44px; margin: 14px 0;
+      line-height: 1.62;
+    }
+    .jobsteps li::before {
+      counter-increment: js; content: counter(js);
+      position: absolute; left: 0; top: 2px;
+      width: 28px; height: 28px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 14%, var(--bg));
+      color: var(--accent);
+      font-family: var(--font-head); font-weight: 700; font-size: 0.82rem; line-height: 1;
+    }
+    .jobsteps strong { color: var(--heading); }
+
+    /* ---- measurement dimensions & outcome examples ---- */
+    .dims {
+      list-style: none;
+      margin: 20px 0 28px;
+      padding: 0;
+    }
+    .dims li {
+      position: relative;
+      padding-left: 22px;
+      margin: 10px 0;
+      line-height: 1.62;
+    }
+    .dims li::before {
+      content: "";
+      position: absolute; left: 2px; top: 0.72em;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+    .dims strong { color: var(--heading); }
+    .dims.examples { margin: 16px 0 24px; }
+    .dims.examples li {
+      margin: 7px 0;
+      font-family: var(--font-head); font-weight: 700;
+      color: var(--heading);
+    }
+    .dims .dim-tag { color: var(--muted); font-size: 0.88em; white-space: nowrap; }
+
+    /* ---- what the audit gives you (marker triangles, as in The Deadline Drain) ---- */
+    .audit {
+      counter-reset: ad; list-style: none;
+      margin: 20px 0 30px; padding: 0;
+      --marker: #0e8074;
+    }
+    @media (prefers-color-scheme: dark) {
+      .audit { --marker: #35b3a4; }
+    }
+    .audit li {
+      position: relative; padding-left: 46px; margin: 16px 0;
+      line-height: 1.62;
+    }
+    .audit li::before {
+      content: ""; position: absolute; left: 2px; top: 2px;
+      width: 0; height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 27px solid var(--marker);
+    }
+    .audit li::after {
+      counter-increment: ad; content: counter(ad);
+      position: absolute; left: 2px; top: 14px; width: 30px;
+      text-align: center; color: #fff;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.76rem;
+      line-height: 1;
+    }
+    .audit strong { color: var(--heading); }
+
+    /* ---- pull quote for job statement ---- */
+    .job-statement {
+      margin: 20px 0 26px;
+      padding: 15px 22px 17px;
+      border-left: 3px solid var(--accent);
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      border-radius: 0 8px 8px 0;
+    }
+    .job-statement .js-lbl {
+      display: block;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.66rem; letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .job-statement .js-txt {
+      margin: 0;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 1.14rem; line-height: 1.4;
+      color: var(--heading);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="post-layout">
+    <aside class="toc" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <ul>
+        <li><a href="#statement">Write the job statement</a></li>
+        <li><a href="#map">Map the job</a></li>
+        <li><a href="#measure">How customers measure value</a></li>
+        <li><a href="#underserved">Where customers struggle</a></li>
+        <li><a href="#roadmap">How this helps</a></li>
+      </ul>
+    </aside>
+
+    <main class="post-main">
+      <article class="post">
+        <p class="post-eyebrow"><time datetime="2026-08-10">August 10, 2026</time> &middot; 5 min read</p>
+        <h1 class="post-title">Nobody Wants Your Software</h1>
+
+        <p>
+          Customers don't care about your solution. They care about their desired outcomes.
+        </p>
+        <p>
+          At <a href="https://www.meetlira.ai/" target="_blank">Lira</a>, we recently built a beta workflow
+          that lets users to create a resume. To know what to build, we first had to zoom out and ask what 
+          customers actually want from it. And the truth is nobody wants a resume builder. They 
+          want the resume. And they don't really want the resume either, or the interviews it wins, or 
+          even the job. What people are after is the income, security, and sense of purpose a job provides.
+        </p>
+        <p>
+          Every product sits in a hierarchy of desired outcomes, and customers will hire whichever solution
+          does the best job of moving them to their desired outcomes.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 956 400" role="img" aria-label="A sentence that climbs from lower left to upper right along a soft rising sweep. It reads: I only want a resume builder, because I really want a resume, because I really want an interview, because I really want a job offer, because I really want income, security, fulfilment. Each phrase sits in a card with its lead-in written above it, and the cards shade from grey at the bottom to green at the top. Underneath, a handwritten line reads, keep asking until the answer stops changing.">
+              <defs>
+                <filter id="ladder-rough" filterUnits="userSpaceOnUse" x="0" y="0" width="956" height="400"><feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="12" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.5"/></filter>
+                <marker id="ladder-ah" viewBox="0 0 12 12" refX="8.6" refY="6" markerWidth="19" markerHeight="19"
+                        markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                  <path d="M1.6 1 L9 6 L1.6 11" fill="none" stroke="var(--ink)" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+              </defs>
+
+              <text x="10" y="28" class="elab">the ladder, one question at a time</text>
+
+              <!-- the sweep the whole chain rides on -->
+              <path d="M24 348 Q 308 326 508 252 T 932 116" class="ribbon" stroke-width="30" stroke-linecap="round"/>
+
+              <!-- shadows -->
+              <g class="shadow">
+                <rect x="18" y="246" width="156" height="88" rx="14"/>
+                <rect x="212" y="208" width="156" height="88" rx="14"/>
+                <rect x="406" y="170" width="156" height="88" rx="14"/>
+                <rect x="600" y="132" width="156" height="88" rx="14"/>
+                <rect x="794" y="94" width="156" height="88" rx="14"/>
+              </g>
+
+              <!-- cards -->
+              <g stroke-width="2.4" filter="url(#ladder-rough)">
+                <rect x="12" y="240" width="156" height="88" rx="14" class="lv1 ink-s"/>
+                <rect x="206" y="202" width="156" height="88" rx="14" class="lv2 ink-s"/>
+                <rect x="400" y="164" width="156" height="88" rx="14" class="lv3 ink-s"/>
+                <rect x="594" y="126" width="156" height="88" rx="14" class="lv4 ink-s"/>
+              </g>
+              <rect x="788" y="88" width="156" height="88" rx="14" class="lv5 good-s" stroke-width="3.2" filter="url(#ladder-rough)"/>
+
+              <!-- what's on each card -->
+              <g class="hlabel lg" text-anchor="middle">
+                <text x="90" y="278">A resume</text>
+                <text x="90" y="300">builder</text>
+                <text x="284" y="252">A resume</text>
+                <text x="478" y="214">An interview</text>
+                <text x="672" y="176">A job offer</text>
+                <text x="866" y="110">Income,</text>
+                <text x="866" y="132">security,</text>
+                <text x="866" y="154">fulfillment</text>
+              </g>
+
+              <!-- the lead-in to each card, sitting directly above it -->
+              <g class="hlabel" text-anchor="middle">
+                <text x="90" y="210">I only</text>
+                <text x="90" y="230">want</text>
+              </g>
+              <g class="hlabel plan" text-anchor="middle">
+                <text x="284" y="172">because I</text>
+                <text x="284" y="192">really want</text>
+                <text x="478" y="134">because I</text>
+                <text x="478" y="154">really want</text>
+                <text x="672" y="96">because I</text>
+                <text x="672" y="116">really want</text>
+                <text x="866" y="58">because I</text>
+                <text x="866" y="78">really want</text>
+              </g>
+
+              <!-- arrows, drawn as short hand-swept curves -->
+              <g class="ink-s" stroke-width="3" stroke-linecap="round" marker-end="url(#ladder-ah)" filter="url(#ladder-rough)">
+                <path d="M170 286 Q 186 258 204 247"/>
+                <path d="M364 248 Q 380 220 398 209"/>
+                <path d="M558 210 Q 574 182 592 171"/>
+                <path d="M752 172 Q 768 144 786 133"/>
+              </g>
+
+            </svg>
+          </div>
+          <figcaption>
+            The hierarchy behind a resume builder. The product is the bottom rung.
+          </figcaption>
+        </figure>
+
+        <p>
+          Some product teams get this backwards. They fall in love with the solution, then hunt for
+          people who might want it.
+        </p>
+        <p>
+          The fix is to <strong>audit the job before you touch the solution</strong>. Map every step
+          and learn what matters to the customer at each one. Build for the steps where customers struggle, and they'll
+          hire your product, love it, and hire it again.
+        </p>
+
+        <h2 id="statement"><span class="sec-num">Step 1</span>Write the job statement</h2>
+        <p>
+          The audit starts with naming the job. In the
+          <a href="https://strategyn.com/jobs-to-be-done/" target="_blank" rel="noopener">Jobs to Be
+          Done framework</a>, a job statement captures what the customer is trying to get done in a
+          single sentence.
+        </p>
+
+        <p>A good job statement follows three principles.</p>
+        <ol class="jobsteps">
+          <li><strong>Stable over time.</strong> It would have made sense 20 years ago.</li>
+          <li><strong>Solution agnostic.</strong> It describes what the customer wants done, not how.</li>
+          <li><strong>Right level of abstraction.</strong> Concrete enough to map the steps, but not so broad it becomes an abstract aspiration.</li>
+        </ol>
+
+        <p>Here's each principle, failed and passed.</p>
+
+        <table class="measures pairs">
+          <thead>
+            <tr>
+              <th scope="col">Principle</th>
+              <th scope="col">Bad example</th>
+              <th scope="col">Good example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Stable over time</th>
+              <td class="ex-bad">Send a WhatsApp message</td>
+              <td class="ex-good">Send a message to someone in another location</td>
+            </tr>
+            <tr>
+              <th scope="row">Solution agnostic</th>
+              <td class="ex-bad">Cook a recipe from a meal kit</td>
+              <td class="ex-good">Get a nutritious dinner on the table on a weeknight</td>
+            </tr>
+            <tr>
+              <th scope="row">Right level of abstraction</th>
+              <td class="ex-bad">Stay on top of my money</td>
+              <td class="ex-good">File an accurate tax return on time</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          Back to our resume builder. Here's the job that feature serves.
+        </p>
+
+        <div class="job-statement">
+          <span class="js-lbl">Job statement</span>
+          <p class="js-txt">Convey my qualifications to a hiring decision-maker for a target job.</p>
+        </div>
+
+        <h2 id="map"><span class="sec-num">Step 2</span>Map the job</h2>
+        <figure class="bookfig">
+          <a href="https://strategyn.com/jobs-to-be-done-book/" target="_blank" rel="noopener">
+            <img src="jobs-to-be-done.jpg" alt="The cover of Jobs to Be Done: Theory to Practice by Anthony W. Ulwick." />
+          </a>
+          <figcaption>Jobs to Be Done, by Tony Ulwick</figcaption>
+        </figure>
+        <p>
+          Most jobs break down into some version of the same eight steps. This is the job map, from Tony
+          Ulwick's book <em>Jobs to Be Done: Theory to Practice</em>. It describes what the customer is
+          trying to accomplish at each stage, regardless of what solution they use.
+        </p>
+        <p>The eight steps.</p>
+
+        <ol class="jobsteps">
+          <li><strong>Define.</strong> Determine goals and plan how to get the job done.</li>
+          <li><strong>Locate.</strong> Gather the inputs and information needed.</li>
+          <li><strong>Prepare.</strong> Set up and organize the inputs.</li>
+          <li><strong>Confirm.</strong> Verify everything is ready before proceeding.</li>
+          <li><strong>Execute.</strong> Carry out the core of the job.</li>
+          <li><strong>Monitor.</strong> Assess whether the job is going well.</li>
+          <li><strong>Modify.</strong> Make adjustments as needed.</li>
+          <li><strong>Conclude.</strong> Finish the job or get ready to repeat it.</li>
+        </ol>
+
+        <p>Here's the map applied to our resume job.</p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <p class="jobmap-title">Convey my qualifications to a hiring decision-maker for a target job</p>
+            <div class="jobmap" role="img" aria-label="The eight-step job map for the job of conveying my qualifications. Step 1, Define: determine what the target role requires of me. Step 2, Locate: gather the evidence that supports my qualifications. Step 3, Prepare: organize my experience into the claims most relevant to the role. Step 4, Confirm: verify every claim is accurate and defensible. Step 5, Execute: deliver my qualifications to the decision-maker. Step 6, Monitor: assess whether the decision-maker is responding. Step 7, Modify: adjust which qualifications I present for a new role. Step 8, Conclude: preserve my record of qualifications for next time.">
+              <div class="jrow">
+                <div class="jcard">
+                  <span class="j-num">1</span>
+                  <span class="j-name">Define</span>
+                  <span class="j-say">Determine what the target role requires of me</span>
+                </div>
+                <div class="jcard">
+                  <span class="j-num">2</span>
+                  <span class="j-name">Locate</span>
+                  <span class="j-say">Gather the evidence that supports my qualifications</span>
+                </div>
+                <div class="jcard">
+                  <span class="j-num">3</span>
+                  <span class="j-name">Prepare</span>
+                  <span class="j-say">Organize my experience into the claims most relevant to the role</span>
+                </div>
+                <div class="jcard">
+                  <span class="j-num">4</span>
+                  <span class="j-name">Confirm</span>
+                  <span class="j-say">Verify every claim is accurate and defensible</span>
+                </div>
+              </div>
+
+              <div class="jrow">
+                <div class="jcard">
+                  <span class="j-num">5</span>
+                  <span class="j-name">Execute</span>
+                  <span class="j-say">Deliver my qualifications to the decision-maker</span>
+                </div>
+                <div class="jcard">
+                  <span class="j-num">6</span>
+                  <span class="j-name">Monitor</span>
+                  <span class="j-say">Assess whether the decision-maker is responding</span>
+                </div>
+                <div class="jcard">
+                  <span class="j-num">7</span>
+                  <span class="j-name">Modify</span>
+                  <span class="j-say">Adjust which qualifications I present for a new role</span>
+                </div>
+                <div class="jcard">
+                  <span class="j-num">8</span>
+                  <span class="j-name">Conclude</span>
+                  <span class="j-say">Preserve my record of qualifications for next time</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <figcaption>
+            The eight steps of the job, and what the customer is trying to accomplish at each one.
+          </figcaption>
+        </figure>
+
+        <h2 id="measure"><span class="sec-num">Step 3</span>Understand how customers measure value</h2>
+        <p>
+          The map tells you what customers are trying to do. It doesn't tell you how they judge success. 
+          For that, look at the metrics customers carry in their heads at every step, whether they can 
+          articulate them or not. These are the desired outcomes.
+        </p>
+        <p>Customers measure value along a set of dimensions.</p>
+
+        <ul class="dims">
+          <li><strong>Speed.</strong> How long a step takes.</li>
+          <li><strong>Effort.</strong> How much work a step demands.</li>
+          <li><strong>Predictability.</strong> How consistent the result is each time.</li>
+          <li><strong>Likelihood of errors.</strong> The chance of mistakes during the step.</li>
+          <li><strong>Risk.</strong> The chance of a bad consequence downstream.</li>
+          <li><strong>Output.</strong> How much gets done, or how good the result is.</li>
+          <li><strong>Waste.</strong> Work that gets thrown away, including rework.</li>
+          <li><strong>Cost.</strong> The money required.</li>
+        </ul>
+
+        <p>Desired outcomes hang off the steps of the map. Here's the resume job again, with a few of its outcomes written out.</p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <p class="jobmap-title">Convey my qualifications to a hiring decision-maker for a target job</p>
+            <div class="jobmap omap" role="img" aria-label="The eight-step job map with desired outcomes hanging off each step. Prepare: minimize the time it takes to decide which of my experiences belong in a given application; minimize the time it takes to produce a first complete draft of my qualifications; minimize the time it takes to cut my material down to the space available. Confirm: minimize the time it takes to check my material against what the posting asks for; minimize the likelihood that a claim can't be defended in an interview; minimize the likelihood that a gap or a short tenure raises a question I haven't answered. Modify: minimize the time it takes to tailor my material to a new posting; minimize the likelihood that text from the previous version survives into the new one; minimize the likelihood of losing a version I later want back. Each of those three steps has further outcomes, and the other five steps carry their own, all shown as blank cards.">
+              <div class="jrow">
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">1</span><span class="j-name">Define</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">2</span><span class="j-name">Locate</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">3</span><span class="j-name">Prepare</span></div>
+                  <div class="onote">Minimize the time it takes to decide which of my experiences belong in a given application</div>
+                  <div class="onote">Minimize the time it takes to produce a first complete draft of my qualifications</div>
+                  <div class="onote">Minimize the time it takes to cut my material down to the space available</div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">4</span><span class="j-name">Confirm</span></div>
+                  <div class="onote">Minimize the time it takes to check my material against what the posting asks for</div>
+                  <div class="onote">Minimize the likelihood that a claim can't be defended in an interview</div>
+                  <div class="onote">Minimize the likelihood that a gap or a short tenure raises a question I haven't answered</div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+              </div>
+
+              <div class="jrow">
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">5</span><span class="j-name">Execute</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">6</span><span class="j-name">Monitor</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">7</span><span class="j-name">Modify</span></div>
+                  <div class="onote">Minimize the time it takes to tailor my material to a new posting</div>
+                  <div class="onote">Minimize the likelihood that text from the previous version survives into the new one</div>
+                  <div class="onote">Minimize the likelihood of losing a version I later want back</div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">8</span><span class="j-name">Conclude</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <figcaption>
+            Desired outcomes hang off every step. The blank cards stand in for everything else, and a 
+            real job produces dozens more.
+          </figcaption>
+        </figure>
+
+        <p>
+          Notice that most outcome statements collapse into two forms. <em>Minimize the time it takes to…</em> and 
+          <em>minimize the likelihood that….</em> A typical job produces 50 to 150 of these statements across the map.
+        </p>
+
+        <h2 id="underserved"><span class="sec-num">Step 4</span>Find where customers struggle</h2>
+        <p>
+          Desired outcomes are where the audit pays off. The outcome your customer ultimately cares
+          about comes from getting the whole job done. Desired outcomes measure how well each step is
+          going. Serve the steps well and the customer reaches the outcome.
+        </p>
+        <p>
+          For every outcome statement, ask customers two questions. How important is this to you, and
+          how satisfied are you today?
+        </p>
+        <p>
+          <strong>Important and poorly satisfied means underserved</strong>, and underserved outcomes
+          are what customers will pay to fix. In the resume job, formatting is well served. Every tool
+          does it for free. But <em>tailoring at volume</em> and <em>surviving automated screening</em>
+          are important and badly served. That's where the opportunity is.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <p class="jobmap-title">Convey my qualifications to a hiring decision-maker for a target job</p>
+            <div class="jobmap omap votes" role="img" aria-label="The same job map, with what customers said marked on each outcome. Prepare's three outcomes are marked with green dots, meaning customers are already satisfied: minimize the time it takes to decide which of my experiences belong in a given application; minimize the time it takes to produce a first complete draft of my qualifications; minimize the time it takes to cut my material down to the space available. Confirm's three are marked red, meaning customers struggle: minimize the time it takes to check my material against what the posting asks for; minimize the likelihood that a claim can't be defended in an interview; minimize the likelihood that a gap or a short tenure raises a question I haven't answered. Modify's three are also marked red: minimize the time it takes to tailor my material to a new posting; minimize the likelihood that text from the previous version survives into the new one; minimize the likelihood of losing a version I later want back.">
+              <div class="jrow">
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">1</span><span class="j-name">Define</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">2</span><span class="j-name">Locate</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">3</span><span class="j-name">Prepare</span></div>
+                  <div class="onote"><span class="dots ok" aria-hidden="true"><i></i></span>Minimize the time it takes to decide which of my experiences belong in a given application</div>
+                  <div class="onote"><span class="dots ok" aria-hidden="true"><i></i></span>Minimize the time it takes to produce a first complete draft of my qualifications</div>
+                  <div class="onote"><span class="dots ok" aria-hidden="true"><i></i></span>Minimize the time it takes to cut my material down to the space available</div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">4</span><span class="j-name">Confirm</span></div>
+                  <div class="onote"><span class="dots bad" aria-hidden="true"><i></i></span>Minimize the time it takes to check my material against what the posting asks for</div>
+                  <div class="onote"><span class="dots bad" aria-hidden="true"><i></i></span>Minimize the likelihood that a claim can't be defended in an interview</div>
+                  <div class="onote"><span class="dots bad" aria-hidden="true"><i></i></span>Minimize the likelihood that a gap or a short tenure raises a question I haven't answered</div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+              </div>
+
+              <div class="jrow">
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">5</span><span class="j-name">Execute</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">6</span><span class="j-name">Monitor</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">7</span><span class="j-name">Modify</span></div>
+                  <div class="onote"><span class="dots bad" aria-hidden="true"><i></i></span>Minimize the time it takes to tailor my material to a new posting</div>
+                  <div class="onote"><span class="dots bad" aria-hidden="true"><i></i></span>Minimize the likelihood that text from the previous version survives into the new one</div>
+                  <div class="onote"><span class="dots bad" aria-hidden="true"><i></i></span>Minimize the likelihood of losing a version I later want back</div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+                <div class="jcol">
+                  <div class="jcard"><span class="j-num">8</span><span class="j-name">Conclude</span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                  <div class="onote ph"><span></span><span></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="vote-legend">
+              <span class="lg"><span class="dots bad"><i></i></span> customers struggle here</span>
+              <span class="lg"><span class="dots ok"><i></i></span> customers are already satisfied</span>
+            </div>
+          </div>
+          <figcaption>
+            The same map, marked up with what customers said. Confirm and Modify are where they
+            struggle. Prepare, where every tool competes, they're happy with.
+          </figcaption>
+        </figure>
+
+        <h2 id="roadmap">How this actually helps</h2>
+        <p>
+          The list of things you could build is endless. Every customer call, every competitor launch,
+          every brainstorm adds to it. The audit is how you stay on track. It helps in three ways.
+        </p>
+
+        <ol class="audit">
+          <li>
+            <strong>It filters your roadmap.</strong> Every feature idea has to name the job step it
+            serves. No step, no build.
+          </li>
+          <li>
+            <strong>It scores your features.</strong> Desired outcomes are the yardstick. A feature is
+            good if it measurably improves one, and great if the one it improves is underserved.
+          </li>
+          <li>
+            <strong>It points to your next bet.</strong> The importance and satisfaction questions
+            surface the underserved outcomes, and those are where customers are waiting to pay.
+          </li>
+        </ol>
+
+        <p>
+          Your customer doesn't want your product. They want the job
+          done. The audit keeps you building toward that, and nothing else.
+        </p>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
