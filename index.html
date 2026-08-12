@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ship Confidently — The Product Playbook</title>
-  <meta name="description" content="A playbook for lean AI-native teams to de-risk big ideas, fast. Eight steps to validate an idea, the weekly sprint that ships it, and the advanced moves that make it faster." />
+  <title>Sam Turner — Product engineer</title>
+  <meta name="description" content="Sam Turner builds products with small teams and writes down what actually works. Home of the Product Playbook: eight steps to de-risk a big idea and the weekly sprint that ships it." />
+  <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&display=swap" />
   <style>
     /* ============================================================
-       THE PRODUCT PLAYBOOK · notebook skin
-       Design-sprint-diagram style: pure white paper, bold black
-       marker lettering, solid filled icons, one yellow highlighter
-       accent. Plain HTML, CSS and JavaScript — no framework, no
-       build step. The board is drawn into a fixed 1470x1300 world
-       that is panned and zoomed with a single CSS transform.
+       Home page: who I am, what the playbook is, and the board.
+
+       The page itself uses the site's type and colour tokens from
+       style.css. The board is a separate world with its own
+       notebook skin — pure white paper, bold black marker
+       lettering, solid filled icons — drawn into a fixed
+       1470x1300 space that is scaled to fit the screen with a
+       single CSS transform. Plain HTML, CSS and JavaScript: no
+       framework, no build step.
        ============================================================ */
 
     :root {
@@ -28,30 +32,164 @@
       --hand: 'Patrick Hand', 'Segoe Print', 'Bradley Hand', cursive;
     }
 
-    * { box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; }
+    /* ---- top bar: sits on the page's own background, ruled off
+           edge to edge while its contents line up with the fold ---- */
+    .topnav { border-bottom: 1px solid var(--border); }
+    .topnav-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 1760px;
+      margin: 0 auto;
+      padding: 15px 44px;
+    }
+    .nav-photo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+      display: block;
+      border: 1px solid var(--border);
+    }
+    .nav-name {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.015em;
+      color: var(--heading);
+    }
 
-    body {
+    /* ---- the fold: the pitch on the left, the board on the right ---- */
+    .top {
+      display: grid;
+      /* the board's column is content-sized and the pair is centred,
+         so shrinking the board never opens a gap beside the pitch */
+      grid-template-columns: 336px auto;
+      justify-content: center;
+      gap: 48px;
+      align-items: start;
+      max-width: 1760px;
+      margin: 0 auto;
+      padding: 30px 44px 0;
+    }
+    /* the board is the taller of the two, so the pitch rides in the
+       middle of it — the row's top stays put either way, which is
+       what the board's own sizing measures against */
+    .rail { align-self: center; }
+
+    .kicker {
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--accent);
+      margin: 0 0 14px;
+    }
+    .kicker .sep { color: var(--muted); margin: 0 7px; }
+
+    .rail h1 {
+      font-family: var(--font-head);
+      font-size: 2.35rem;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--heading);
+      margin: 0 0 16px;
+    }
+    .lede {
+      margin: 0;
+      font-size: 1.02rem;
+      line-height: 1.66;
+      color: var(--fg);
+    }
+
+    .cta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      margin: 28px 0 0;
+      font-size: 0.92rem;
+    }
+    .cta .btn {
+      font-family: var(--font-head);
+      font-weight: 600;
+      font-size: 0.88rem;
+      border: 1.5px solid var(--accent);
+      border-radius: 999px;
+      padding: 9px 19px;
+      transition: background .15s, color .15s;
+    }
+    .cta .btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+    }
+
+    /* ---- the note about the playbook, below the fold ---- */
+    .note {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 76px 32px 0;
+      scroll-margin-top: 32px;
+    }
+    .note h2 {
+      font-family: var(--font-head);
+      font-size: 1.62rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--heading);
+      margin: 0 0 16px;
+    }
+    .note p { margin: 0 0 16px; font-size: 1rem; line-height: 1.72; }
+    .note p:last-child { margin-bottom: 0; }
+
+    /* the one highlighter stroke on the page, borrowed from the board */
+    .hl {
+      background: linear-gradient(104deg,
+        rgba(255, 222, 51, 0) 1%, rgba(255, 222, 51, .7) 3%,
+        rgba(255, 222, 51, .62) 96%, rgba(255, 222, 51, 0) 98%);
+      padding: 2px 5px 3px;
+      margin: 0 -3px;
+      border-radius: 4px;
+      color: #141414;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
+    /* ---- the board ---- */
+    .exhibit { min-width: 0; }
+
+    .paper {
+      position: relative;
+      /* when the board is limited by height it is narrower than its
+         column: hold it against the pitch rather than centring it,
+         which would open a gap between the two */
       margin: 0;
       background: var(--paper);
       color: var(--ink);
       font-family: var(--hand);
-      -webkit-font-smoothing: antialiased;
+      border-radius: 16px;
+      /* the edge is a ring rather than a border: a border would eat
+         into the content box and leave the board a couple of pixels
+         wider than the space it is given, which shows up as a stray
+         scrollbar */
+      box-shadow: 0 0 0 1px var(--border), 0 18px 44px -30px rgba(15, 23, 42, .5);
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (prefers-color-scheme: dark) {
+      .paper { box-shadow: 0 0 0 1px #2f2f33, 0 18px 44px -26px rgba(0, 0, 0, .9); }
     }
 
-    .stage {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      min-height: 560px;
-      overflow: hidden;
-      background: var(--paper);
-      cursor: grab;
-      touch-action: none;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .stage.dragging { cursor: grabbing; }
+    /* sized by script: as wide and tall as the scaled board. The
+       world's box is bigger than the part that is drawn on, so it
+       is clipped here — otherwise it would drag empty scrollable
+       space along behind the card. */
+    .scaler { position: relative; margin: 0 auto; overflow: hidden; }
 
     .world {
       position: absolute;
@@ -60,50 +198,102 @@
       transform-origin: 0 0;
     }
 
-    /* ---- entrance animations ---- */
+    .scroll-hint {
+      margin: 10px 2px 0;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+    .scroll-hint[hidden] { display: none; }
+
+    /* ---- footer ---- */
+    .foot {
+      max-width: 640px;
+      margin: 64px auto 0;
+      padding: 24px 32px 40px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+    .foot p { margin: 0; }
+
+    /* one column: the pitch first, then the board */
+    @media (max-width: 899px) {
+      .topnav-inner { padding: 13px 24px; }
+      .top {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 30px;
+        padding: 28px 24px 0;
+      }
+      .rail h1 { font-size: 2rem; }
+      .lede { max-width: 38em; }
+      .note { padding-top: 56px; padding-left: 24px; padding-right: 24px; }
+    }
+
+    /* ---- entrance animations, held until the board scrolls into view ---- */
     @keyframes inkIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes scribbleIn {
       from { opacity: 0; transform: translate(-50%, -50%) rotate(-2.5deg) scale(.86); }
       to   { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
     }
-    .ink { animation: inkIn .6s ease both; }
-    .scribble { animation: scribbleIn .35s ease both; }
+    .paper .ink, .paper .scribble { opacity: 0; }
+    .paper.in .ink { animation: inkIn .6s ease both; }
+    .paper.in .scribble { animation: scribbleIn .35s ease both; }
 
     /* ---- title ---- */
+    /* ranged left off the sprint frame's edge, x = ZONE.x */
     .title-block {
       position: absolute;
-      left: 720px;
-      top: 96px;
-      transform: translate(-50%, -50%);
-      text-align: center;
+      left: 150px;
+      top: 112px;
+      transform: translateY(-50%);
+      text-align: left;
       z-index: 2;
       pointer-events: none;
     }
-    .title-inner { position: relative; display: inline-block; padding: 4px 10px; }
+    .title-inner { position: relative; display: inline-block; padding: 4px 0; }
     .title-stack { position: relative; display: inline-block; }
+
+    /* the name rides above the title, so it travels with a
+       screenshot of the board */
+    .board-by {
+      font-family: var(--marker);
+      font-size: 17px;
+      letter-spacing: .14em;
+      color: var(--ink-soft);
+      margin: 0 0 11px;
+    }
     .doodle {
       position: absolute;
       left: 100%;
-      top: 0;
-      margin-left: -16px;
+      top: -18px;
+      margin-left: 2px;
       overflow: visible;
-      transform: scale(.8);
+      transform: scale(.62);
       transform-origin: top left;
     }
-    .title-stack h1 { margin: 0; font-weight: 400; }
-    .t1, .t2 { display: block; font-family: var(--marker); transform: rotate(-0.6deg); }
-    .t1 { font-size: 58px; letter-spacing: .04em; line-height: .9; }
-    .t2 { font-size: 39px; letter-spacing: .05em; color: #2A9D8F; margin-top: 4px; }
-    .title-sub { font-size: 20px; margin: 8px 0 0; }
+    /* one line, two tones: the rotation rides on the line so the
+       two words tilt together */
+    .title-stack .board-title {
+      margin: 0;
+      font-weight: 400;
+      line-height: 1;
+      transform: rotate(-0.6deg);
+    }
+    .t1, .t2 { font-family: var(--marker); font-size: 50px; letter-spacing: .04em; }
+    .t2 { color: #2A9D8F; margin-left: .2em; }
+    .title-sub { font-size: 23px; margin: 10px 0 0; }
 
     /* ---- the board below the title band ---- */
     .board { position: absolute; left: 0; top: 160px; }
     .board > svg { position: absolute; inset: 0; overflow: visible; }
 
     .dividers { opacity: 0; transition: opacity .8s ease 1s; }
-    .stage.ready .dividers { opacity: .28; }
+    .paper.in .dividers { opacity: .28; }
 
     /* ---- the yellow sketch button shared by every clickable label ---- */
+    .paper a { color: var(--ink); }
+    .paper a:hover { text-decoration: none; }
+
     .chip {
       display: inline-block;
       color: var(--ink);
@@ -180,7 +370,7 @@
       letter-spacing: .03em;
       margin: 0;
     }
-    .stage.ready .sprint-header { opacity: 1; }
+    .paper.in .sprint-header { opacity: 1; }
 
     .lap-label {
       position: absolute;
@@ -245,84 +435,66 @@
     .adv-item .chip { font-size: 15px; line-height: 1.15; padding: 1px 8px 3px; }
     .adv-item .plain { font-size: 15.5px; line-height: 1.12; text-align: left; }
 
-    /* ============ screen-space UI ============ */
-    .zoom {
-      position: absolute;
-      right: 16px;
-      top: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 4;
-    }
-    .zoom button {
-      width: 44px;
-      height: 44px;
-      border: 3.5px solid var(--ink);
-      border-radius: 50% 46% 52% 48%;
-      background: var(--paper);
-      color: var(--ink);
-      font-size: 21px;
-      font-family: var(--marker);
-      cursor: pointer;
-      box-shadow: 2px 3px 0 rgba(20, 20, 20, .2);
-      line-height: 1;
-    }
-    .zoom button:nth-child(1) { transform: rotate(-2deg); }
-    .zoom button:nth-child(2) { transform: rotate(0deg); }
-    .zoom button:nth-child(3) { transform: rotate(2deg); }
-
-    .corner {
-      position: absolute;
-      left: 16px;
-      top: 16px;
-      z-index: 4;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 17px;
-    }
-    .corner a { text-decoration: none; color: var(--ink); }
-    .corner a:focus-visible { outline: 3.5px solid var(--ink); outline-offset: 4px; border-radius: 10px; }
-
-    .hint {
-      position: absolute;
-      left: 16px;
-      bottom: 14px;
-      z-index: 4;
-      font-size: 15.5px;
-      color: var(--ink-soft);
-      pointer-events: none;
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      .ink, .scribble { animation: none; }
+      .paper .ink, .paper .scribble { opacity: 1; animation: none; }
       .dividers, .sprint-header { transition: none; }
-    }
-
-    @media (max-width: 640px) {
-      .corner { font-size: 15px; }
-      .hint { font-size: 14px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="stage" id="stage">
-    <div class="world" id="world"></div>
-
-    <div class="corner" data-ui>
-      <a href="writing.html"><span class="chip">All writing →</span></a>
+  <div class="topnav">
+    <div class="topnav-inner">
+      <img class="nav-photo" src="sam-photo.jpg" alt="Sam Turner" width="38" height="38" />
+      <span class="nav-name">Sam Turner</span>
     </div>
-
-    <div class="zoom" data-ui>
-      <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
-      <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
-      <button type="button" id="zoom-fit" aria-label="Fit page to screen">⤢</button>
-    </div>
-
-    <p class="hint">Drag to pan · scroll or pinch to zoom</p>
   </div>
+
+  <div class="top">
+    <header class="rail">
+      <p class="kicker">Product Engineer <span class="sep">·</span> Ex-Technical Founder</p>
+      <h1>Turn a big idea into paying customers.</h1>
+      <p class="lede">
+        I build products with small teams and write down what actually works.
+        This is the playbook I use: eight steps to de-risk the idea, then a
+        weekly sprint you run until it lands.
+      </p>
+      <p class="cta">
+        <a class="btn" href="writing.html">Read the writing →</a>
+        <a href="#playbook">Why I made this ↓</a>
+      </p>
+    </header>
+
+    <section class="exhibit" id="exhibit" aria-label="The Product Playbook board">
+      <div class="paper" id="paper">
+        <div class="scaler" id="scaler">
+          <div class="world" id="world"></div>
+        </div>
+      </div>
+      <p class="scroll-hint" id="scroll-hint" hidden>Scroll sideways to see the whole board →</p>
+    </section>
+  </div>
+
+  <section class="note" id="playbook">
+    <h2>The Product Playbook</h2>
+    <p>
+      The board above is the method I use to take a big, risky idea and turn it into
+      something people pay for. It has two halves: eight steps that
+      <span class="hl">de-risk the idea before you build it</span>, and a weekly sprint you
+      run on repeat — one lap a week — until the product lands.
+    </p>
+    <p>
+      I drew it because most of the advice I found was either strategy with no instructions,
+      or process with no evidence behind it. This is the version I wish someone had handed
+      me: everything I'd actually do, in the order I'd do it, on one page. The steps I've
+      written about link out to the essay; the rest are on their way.
+    </p>
+    <p><a href="writing.html">Read all the writing →</a></p>
+  </section>
+
+  <footer class="foot">
+    <p>&copy; 2026 Sam Turner. Built with plain HTML and hosted on GitHub Pages.</p>
+  </footer>
 
   <script>
   (function () {
@@ -785,16 +957,18 @@
     function render() {
       var html = "";
 
-      // header rule under the title section
-      html += '<svg width="820" height="12" viewBox="0 0 820 12" aria-hidden="true" ' +
-        'style="position:absolute;left:720px;top:178px;transform:translateX(-50%);pointer-events:none">' +
-        '<path d="' + sketchyLine(10, 6, 810, 5, 987, 2) + '" fill="none" stroke="' + I +
+      // header rule under the title section, run out to the board's width
+      html += '<svg width="1148" height="12" viewBox="0 0 1148 12" aria-hidden="true" ' +
+        'style="position:absolute;left:150px;top:212px;pointer-events:none">' +
+        '<path d="' + sketchyLine(3, 6, 1145, 5, 987, 2) + '" fill="none" stroke="' + I +
         '" stroke-width="3" stroke-linecap="round" opacity=".8"/></svg>';
 
-      // board title: two-tone stack + mascot
-      html += '<div class="title-block ink"><div class="title-inner"><div class="title-stack">' +
+      // board title: name, then the two-tone stack + mascot
+      html += '<div class="title-block ink"><div class="title-inner">' +
+        '<p class="board-by">BY SAM TURNER</p>' +
+        '<div class="title-stack">' +
         launcherDoodle() +
-        '<h1><span class="t1">SHIP</span><span class="t2">CONFIDENTLY</span></h1>' +
+        '<p class="board-title"><span class="t1">SHIP</span><span class="t2">CONFIDENTLY</span></p>' +
         "</div>" +
         '<p class="title-sub">A playbook for lean AI-native teams to de-risk big ideas, fast.</p>' +
         "</div></div>";
@@ -815,144 +989,93 @@
       return html;
     }
 
-    var stage = document.getElementById("stage");
+    var topEl = document.querySelector(".top");
+    var rail = document.querySelector(".rail");
+    var exhibit = document.getElementById("exhibit");
+    var paper = document.getElementById("paper");
+    var scaler = document.getElementById("scaler");
     var world = document.getElementById("world");
+    var scrollHint = document.getElementById("scroll-hint");
+
     world.style.width = WORLD.w + "px";
     world.style.height = WORLD.h + "px";
     world.innerHTML = render();
 
     // ------------------------------------------------------------
-    // Pan and zoom: one transform on the world, driven by pointers.
+    // Fit the board beside the photo, whole, without scrolling:
+    // one scale on the world and a scaler box sized to match, so
+    // the page reserves exactly the room the board needs.
+    //
+    // Beside the rail the board is boxed in by the room left in
+    // the viewport, height included. Stacked under it on a narrow
+    // screen there is no fold to stay inside, so only the width
+    // counts. Either way it stops shrinking at MIN_K, where the
+    // lettering gives out, and the card scrolls sideways instead.
+    //
+    // VIEW is the part of the world that is actually drawn on —
+    // the START banner overhangs x = 0, and nothing reaches the
+    // world's right edge — so the card is trimmed to it rather
+    // than to WORLD, which would leave a gutter down one side.
     // ------------------------------------------------------------
 
-    // low enough that the whole board still fits on a phone screen
-    var MIN_K = 0.18;
-    var MAX_K = 2.6;
-    var view = { x: 0, y: 0, k: 1 };
+    var VIEW = { x0: -42, x1: 1322 };
+    var VIEW_W = VIEW.x1 - VIEW.x0;
+    var MIN_K_BESIDE = 0.5;
+    var MIN_K_STACKED = 0.68;
+    var FOLD_GAP = 28; // breathing room left under the board
 
-    function apply() {
-      world.style.transform = "translate(" + view.x + "px," + view.y + "px) scale(" + view.k + ")";
-    }
+    var beside = window.matchMedia("(min-width: 900px)");
 
-    function fitView() {
-      var r = stage.getBoundingClientRect();
-      var pad = r.width < 700 ? 20 : 55;
-      var k = Math.min((r.width - pad * 2) / WORLD.w, (r.height - pad * 2) / WORLD.h, 1.2);
-      view.k = Math.max(k, MIN_K);
-      view.x = (r.width - WORLD.w * view.k) / 2;
-      view.y = (r.height - WORLD.h * view.k) / 2;
-      apply();
-    }
+    function layout() {
+      // every measurement here is of something the board cannot
+      // resize — the shell, the fixed pitch column, the viewport —
+      // so sizing the card never feeds back into the next pass
+      var k, floor;
 
-    // Zoom about a point in stage-local coordinates.
-    function zoomAt(px, py, factor) {
-      var k = Math.min(MAX_K, Math.max(MIN_K, view.k * factor));
-      var scale = k / view.k;
-      view.x = px - (px - view.x) * scale;
-      view.y = py - (py - view.y) * scale;
-      view.k = k;
-      apply();
-    }
-
-    fitView();
-    window.addEventListener("resize", fitView);
-    setTimeout(function () { stage.classList.add("ready"); }, 60);
-
-    stage.addEventListener("wheel", function (e) {
-      e.preventDefault();
-      var r = stage.getBoundingClientRect();
-      zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0016));
-    }, { passive: false });
-
-    var pointers = new Map();
-    var drag = null;
-    var pinch = null;
-    var moved = false;
-    var suppressClick = false;
-
-    function pointerList() {
-      return Array.from(pointers.values());
-    }
-
-    stage.addEventListener("pointerdown", function (e) {
-      if (e.target.closest("[data-ui]")) return;
-      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      moved = false;
-
-      if (pointers.size === 2) {
-        var p = pointerList();
-        var r = stage.getBoundingClientRect();
-        pinch = {
-          dist: Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1,
-          k: view.k,
-          mx: (p[0].x + p[1].x) / 2 - r.left,
-          my: (p[0].y + p[1].y) / 2 - r.top
-        };
-        drag = null;
-      } else if (pointers.size === 1) {
-        drag = { sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y };
-        stage.classList.add("dragging");
+      if (beside.matches) {
+        var cs = getComputedStyle(topEl);
+        var room = topEl.clientWidth - parseFloat(cs.paddingLeft) -
+          parseFloat(cs.paddingRight) - rail.offsetWidth -
+          (parseFloat(cs.columnGap) || 0);
+        var top = paper.getBoundingClientRect().top + window.pageYOffset;
+        k = Math.min(1, room / VIEW_W, (window.innerHeight - top - FOLD_GAP) / WORLD.h);
+        floor = MIN_K_BESIDE;
+      } else {
+        k = Math.min(1, exhibit.clientWidth / VIEW_W);
+        floor = MIN_K_STACKED;
       }
-    });
+      k = Math.max(floor, k);
 
-    window.addEventListener("pointermove", function (e) {
-      if (!pointers.has(e.pointerId)) return;
-      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      var boardW = Math.ceil(VIEW_W * k);
+      world.style.transform = "translate(" + (-VIEW.x0 * k).toFixed(2) + "px,0) scale(" + k + ")";
+      scaler.style.width = boardW + "px";
+      scaler.style.height = Math.ceil(WORLD.h * k) + "px";
+      paper.style.maxWidth = boardW + "px";
+      scrollHint.hidden = paper.scrollWidth <= paper.clientWidth + 1;
+    }
 
-      if (pinch && pointers.size >= 2) {
-        var p = pointerList();
-        var dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1;
-        moved = true;
-        var k = Math.min(MAX_K, Math.max(MIN_K, pinch.k * (dist / pinch.dist)));
-        var scale = k / view.k;
-        view.x = pinch.mx - (pinch.mx - view.x) * scale;
-        view.y = pinch.my - (pinch.my - view.y) * scale;
-        view.k = k;
-        apply();
-        return;
-      }
+    layout();
+    window.addEventListener("resize", layout);
 
-      if (!drag) return;
-      var dx = e.clientX - drag.sx;
-      var dy = e.clientY - drag.sy;
-      if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
-      view.x = drag.ox + dx;
-      view.y = drag.oy + dy;
-      apply();
-    });
+    // Web fonts land after first paint and change how wide the
+    // labels sit; re-measure once they are in.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(layout);
+    }
 
-    function endPointer(e) {
-      if (!pointers.has(e.pointerId)) return;
-      pointers.delete(e.pointerId);
-      if (pointers.size < 2) pinch = null;
-      if (pointers.size === 0) {
-        drag = null;
-        stage.classList.remove("dragging");
-        if (moved) {
-          // a drag that ends on a link should not follow it
-          suppressClick = true;
-          setTimeout(function () { suppressClick = false; }, 0);
+    // Hold the ink until the board is actually on screen.
+    function draw() { paper.classList.add("in"); }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          draw();
+          io.disconnect();
         }
-      }
+      }, { threshold: 0.12 });
+      io.observe(paper);
+    } else {
+      draw();
     }
-    window.addEventListener("pointerup", endPointer);
-    window.addEventListener("pointercancel", endPointer);
-
-    stage.addEventListener("click", function (e) {
-      if (!suppressClick) return;
-      e.preventDefault();
-      e.stopPropagation();
-    }, true);
-
-    document.getElementById("zoom-in").addEventListener("click", function () {
-      var r = stage.getBoundingClientRect();
-      zoomAt(r.width / 2, r.height / 2, 1.35);
-    });
-    document.getElementById("zoom-out").addEventListener("click", function () {
-      var r = stage.getBoundingClientRect();
-      zoomAt(r.width / 2, r.height / 2, 1 / 1.35);
-    });
-    document.getElementById("zoom-fit").addEventListener("click", fitView);
   })();
   </script>
 </body>
