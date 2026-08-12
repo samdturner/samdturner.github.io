@@ -5,12 +5,21 @@ A simple static blog — plain HTML and CSS, no build step — designed to be ho
 ## Structure
 
 ```
-index.html            Home page with the list of posts
+index.html            Home page — the interactive playbook board
+writing.html          The list of posts, grouped by month
 style.css             Site styles (light + dark mode)
-sam-photo.jpg         Author photo used on the home page
+sam-photo.jpg         Author photo used on the writing page
 hello-world.html      A blog post — every post lives at the root
 .nojekyll             Tells GitHub Pages to serve files as-is
 ```
+
+The home page is a pan-and-zoom board of the product playbook. It is one
+self-contained file: the layout data, the hand-drawn SVG helpers, the icons and
+the pan/zoom logic all live in the `<script>` at the bottom of `index.html`,
+in plain JavaScript with no framework and no build step. To change the board,
+edit the `STEPS`, `DAYS` and `ADVANCED` arrays at the top of that script —
+`x`/`y` are coordinates in a fixed 1470×1300 world that is scaled to fit the
+screen. A step becomes a clickable yellow button as soon as it is given a `url`.
 
 Posts are not nested in a subfolder: each one sits at the root and is served at
 `/<post-name>.html`. Links between posts should be relative (`weekly-sprint-playbook.html`),
@@ -39,4 +48,5 @@ Then visit http://localhost:8000.
 
 1. Copy `hello-world.html` and rename it (e.g. `my-post.html`).
 2. Edit the title, date, and content.
-3. Add a link to it from the post list in `index.html`.
+3. Add a link to it from the post list in `writing.html`.
+4. If the post belongs to a step on the playbook, set that step's `url` in `index.html`.

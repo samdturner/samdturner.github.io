@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sam Turner — Writing</title>
+  <meta name="description" content="Sam Turner builds products with small teams and writes down what actually works: how they think, how they operate, and how they ship absurdly fast." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ============================================================
+       Post index.
+       Left rail is identity only: photo, name, role, bio.
+       Right column is a dated list grouped by month, each entry
+       carrying a small mark drawn from that essay's own figure.
+       ============================================================ */
+
+    body { font-size: 17px; }
+
+    .layout {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 64px 24px 0;
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* ---- left rail: identity only ---- */
+    .rail { position: sticky; top: 64px; }
+
+    .rail-photo {
+      width: 96px;
+      height: 96px;
+      border-radius: 14px;
+      display: block;
+      object-fit: cover;
+      margin: 0 0 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 6px 18px -8px rgba(15, 23, 42, .35);
+    }
+    @media (prefers-color-scheme: dark) {
+      .rail-photo { box-shadow: 0 6px 18px -8px rgba(0, 0, 0, .8); }
+    }
+
+    .rail-name {
+      font-family: var(--font-head);
+      font-size: 1.44rem;
+      font-weight: 700;
+      letter-spacing: -0.026em;
+      color: var(--heading);
+      margin: 0 0 9px;
+      line-height: 1.14;
+    }
+    .rail-role {
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--accent);
+      margin: 0 0 16px;
+    }
+    .rail-bio {
+      margin: 0;
+      font-size: 0.93rem;
+      line-height: 1.64;
+      color: var(--muted);
+    }
+    .rail-back {
+      margin: 18px 0 0;
+      font-size: 0.88rem;
+    }
+
+    /* ---- month groupings ---- */
+    .month {
+      font-family: var(--font-head);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--muted);
+      margin: 34px 0 2px;
+      opacity: .75;
+    }
+    .month:first-child { margin-top: 6px; }
+
+    /* ---- entries ---- */
+    .posts { list-style: none; margin: 0; padding: 0; }
+
+    .post { position: relative; }
+
+    .post > a {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 152px;
+      gap: 28px;
+      align-items: start;
+      padding: 24px 0 26px;
+    }
+    .post > a:hover { text-decoration: none; }
+    .post + .post > a { border-top: 1px solid var(--border); }
+
+    .post-head {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .post-kicker {
+      font-family: var(--font-head);
+      font-size: 0.64rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+    .post-when {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .post-when .dot {
+      display: inline-block;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .55;
+      margin: 0 7px 2px;
+    }
+
+    .post h2 {
+      font-family: var(--font-head);
+      font-size: 1.24rem;
+      font-weight: 600;
+      line-height: 1.28;
+      letter-spacing: -0.02em;
+      color: var(--heading);
+      margin: 0 0 8px;
+      transition: color .16s ease;
+    }
+    .post > a:hover h2 { color: var(--accent); }
+    .post p {
+      margin: 0;
+      font-size: 0.94rem;
+      line-height: 1.62;
+      color: var(--muted);
+    }
+
+    .post.featured > a { padding-top: 6px; }
+
+    /* ---- per-essay marks, drawn in the articles' sketch language ---- */
+    .thumb {
+      --paper: #fbf7ee;
+      --paper-dot: rgba(120, 110, 90, .20);
+      --edge: rgba(178, 138, 92, .42);
+      --ink: #2b2620;
+      --ink-soft: rgba(90, 70, 45, .45);
+      --plan: #0e8074;
+      --loss: #cf4f2e;
+      --good: #2f8f4e;
+
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.1px, transparent 1.1px);
+      background-size: 13px 13px;
+      border: 1px solid var(--edge);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color .18s ease, transform .18s ease;
+    }
+    @media (prefers-color-scheme: dark) {
+      .thumb {
+        --paper: #1c1a13;
+        --paper-dot: rgba(220, 200, 160, .13);
+        --edge: rgba(201, 155, 103, .38);
+        --ink: #ece5d5;
+        --ink-soft: rgba(210, 190, 155, .42);
+        --plan: #35b3a4;
+        --loss: #f0795a;
+        --good: #6ecf95;
+      }
+    }
+    .post > a:hover .thumb {
+      border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+      transform: translateY(-2px);
+    }
+    .thumb svg { display: block; width: 100%; height: auto; }
+
+    /* shared drawing primitives */
+    .thumb .s-ink   { stroke: var(--ink); }
+    .thumb .s-soft  { stroke: var(--ink-soft); }
+    .thumb .s-plan  { stroke: var(--plan); }
+    .thumb .s-loss  { stroke: var(--loss); }
+    .thumb .s-good  { stroke: var(--good); }
+    .thumb .f-ink   { fill: var(--ink); }
+    .thumb .f-plan  { fill: var(--plan); }
+    .thumb .f-loss  { fill: var(--loss); }
+    .thumb .f-good  { fill: var(--good); }
+    .thumb .f-paper { fill: var(--paper); }
+    .thumb .f-none  { fill: none; }
+    .thumb svg [class*="s-"] {
+      fill: none;
+      stroke-width: 2.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .thumb .thin { stroke-width: 1.5; }
+    .thumb .thick { stroke-width: 3.2; }
+    .thumb .dash { stroke-dasharray: 5 4.5; }
+
+    /* ---- responsive ---- */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-top: 44px; }
+      .rail { position: static; padding-bottom: 34px; border-bottom: 1px solid var(--border); }
+      .rail-bio { max-width: 36em; }
+    }
+    @media (max-width: 600px) {
+      .post > a { grid-template-columns: minmax(0, 1fr) 104px; gap: 16px; }
+      .post h2 { font-size: 1.1rem; }
+      .post p { font-size: 0.9rem; }
+    }
+
+    /* ---- footer ---- */
+    .foot {
+      grid-column: 1 / -1;
+      margin-top: 56px;
+      border-top: 1px solid var(--border);
+      padding: 26px 0 56px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .foot p { margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+
+    <aside class="rail">
+      <img class="rail-photo" src="sam-photo.jpg" alt="Sam Turner" width="96" height="96" />
+      <p class="rail-name">Sam Turner</p>
+      <p class="rail-role">Product engineer</p>
+      <p class="rail-bio">
+        I build products with small teams and write down what actually works:
+        how they think, how they operate, and how they ship absurdly fast.
+      </p>
+      <p class="rail-back"><a href="index.html">← The playbook</a></p>
+    </aside>
+
+    <main>
+      <p class="month">August 2026</p>
+      <ul class="posts">
+
+        <li class="post featured">
+          <a href="nobody-wants-your-software.html">
+            <div>
+              <div class="post-head">
+                <span class="post-kicker">Latest</span>
+                <span class="post-when"><time datetime="2026-08-10">Aug 10</time><span class="dot"></span>5 min read</span>
+              </div>
+              <h2>Nobody Wants Your Software</h2>
+              <p>
+                Customers don't want your product. They want a job done. Map the job, measure the
+                outcomes, and build for the steps where they struggle.
+              </p>
+            </div>
+            <!-- eight-step job map, one step glowing where the money is -->
+            <div class="thumb">
+              <svg viewBox="0 0 160 108" role="img" aria-label="Eight small boxes in a horizontal chain — the eight steps of a job map — with one box glowing red to mark an underserved step.">
+                <g class="s-soft thin">
+                  <rect class="f-paper" x="8"   y="46" width="15" height="16" rx="3" />
+                  <rect class="f-paper" x="27"  y="46" width="15" height="16" rx="3" />
+                  <rect class="f-paper" x="46"  y="46" width="15" height="16" rx="3" />
+                  <rect class="f-paper" x="84"  y="46" width="15" height="16" rx="3" />
+                  <rect class="f-paper" x="103" y="46" width="15" height="16" rx="3" />
+                  <rect class="f-paper" x="122" y="46" width="15" height="16" rx="3" />
+                  <rect class="f-paper" x="141" y="46" width="15" height="16" rx="3" />
+                </g>
+                <rect class="s-loss f-paper thick" x="65" y="45" width="15" height="18" rx="3" />
+                <g class="s-soft thin">
+                  <line x1="23"  y1="54" x2="27"  y2="54" />
+                  <line x1="42"  y1="54" x2="46"  y2="54" />
+                  <line x1="61"  y1="54" x2="65"  y2="54" />
+                  <line x1="80"  y1="54" x2="84"  y2="54" />
+                  <line x1="99"  y1="54" x2="103" y2="54" />
+                  <line x1="118" y1="54" x2="122" y2="54" />
+                  <line x1="137" y1="54" x2="141" y2="54" />
+                </g>
+                <g class="f-loss">
+                  <circle cx="72.5" cy="34" r="2.6" />
+                  <circle cx="72.5" cy="28" r="1.6" opacity=".55" />
+                </g>
+                <path class="s-loss thin" d="M67 78 L78 78" />
+              </svg>
+            </div>
+          </a>
+        </li>
+
+        <li class="post">
+          <a href="not-every-decision-deserves-a-meeting.html">
+            <div>
+              <div class="post-head">
+                <span class="post-when"><time datetime="2026-08-06">Aug 6</time><span class="dot"></span>6 min read</span>
+              </div>
+              <h2>Not Every Decision Deserves a Meeting</h2>
+              <p>
+                Before you loop in four people and book the hour, three factors for deciding whether
+                the decision has earned it: urgency, impact, and reversibility.
+              </p>
+            </div>
+            <!-- the funnel: everything enters left, three gates drop most of it away -->
+            <div class="thumb">
+              <svg viewBox="0 0 160 108" role="img" aria-label="A funnel narrowing through three gates, with decisions dropping away at each one and a small meeting box at the end.">
+                <path class="s-soft thin" d="M10 20 L112 44" />
+                <path class="s-soft thin" d="M10 88 L112 64" />
+                <path class="s-ink thin" d="M44 27 L44 81" />
+                <path class="s-ink thin" d="M72 34 L72 74" />
+                <path class="s-ink thin" d="M100 40 L100 68" />
+                <path class="s-loss" d="M44 88 L44 98" />
+                <path class="s-loss" d="M39.5 93.5 L44 98 L48.5 93.5" />
+                <path class="s-loss" d="M72 82 L72 92" />
+                <path class="s-loss" d="M67.5 87.5 L72 92 L76.5 87.5" />
+                <path class="s-loss" d="M100 76 L100 86" />
+                <path class="s-loss" d="M95.5 81.5 L100 86 L104.5 81.5" />
+                <path class="s-plan thick" d="M14 54 L124 54" />
+                <path class="s-plan thick" d="M118 48.5 L124 54 L118 59.5" />
+                <rect class="s-ink f-paper" x="130" y="42" width="20" height="24" rx="4" />
+                <path class="s-ink thin" d="M136 50 h8 M136 56 h8" />
+              </svg>
+            </div>
+          </a>
+        </li>
+
+        <li class="post">
+          <a href="the-deadline-drain.html">
+            <div>
+              <div class="post-head">
+                <span class="post-when"><time datetime="2026-08-04">Aug 4</time><span class="dot"></span>7 min read</span>
+              </div>
+              <h2>The Deadline Drain: Why Deadlines Slow Teams Down, and What to Do Instead</h2>
+              <p>
+                Long deadlines don't speed teams up. Effort leaks out through planning, re-planning, and
+                explaining before it ever reaches the product. The four phases of the drain, and the kind
+                of time box that works instead.
+              </p>
+            </div>
+            <!-- road in the plan vs road in reality -->
+            <div class="thumb">
+              <svg viewBox="0 0 160 108" role="img" aria-label="A straight dashed planned route from start to finish, and beneath it a winding real road that detours past three hazard markers.">
+                <path class="s-plan dash" d="M18 78 L140 26" />
+                <path class="s-ink" d="M18 78 C 40 96, 48 52, 68 60 S 92 96, 108 66 S 126 40, 140 26" />
+                <circle class="f-ink" cx="18" cy="78" r="4" />
+                <path class="s-ink thin" d="M140 26 L140 12" />
+                <path class="s-plan f-plan thin" d="M140 13 L154 17 L140 21 Z" />
+                <g class="s-loss thin">
+                  <path class="f-none" d="M52 74 L57 65 L62 74 Z" />
+                  <path class="f-none" d="M84 82 L89 73 L94 82 Z" />
+                  <path class="f-none" d="M116 56 L121 47 L126 56 Z" />
+                </g>
+                <g class="f-loss">
+                  <rect x="56.2" y="67.5" width="1.6" height="3.4" rx=".8" />
+                  <rect x="88.2" y="75.5" width="1.6" height="3.4" rx=".8" />
+                  <rect x="120.2" y="49.5" width="1.6" height="3.4" rx=".8" />
+                </g>
+              </svg>
+            </div>
+          </a>
+        </li>
+
+        <li class="post">
+          <a href="mindsets-of-winning-product-teams.html">
+            <div>
+              <div class="post-head">
+                <span class="post-when"><time datetime="2026-08-03">Aug 3</time><span class="dot"></span>8 min read</span>
+              </div>
+              <h2>Mindsets of Winning Product Teams</h2>
+              <p>
+                Mindsets shape the hundreds of decisions behind every product. The nine that I've found
+                work, and the seven anti-patterns that quietly slow a startup down.
+              </p>
+            </div>
+            <!-- nine that work, seven that don't -->
+            <div class="thumb">
+              <svg viewBox="0 0 160 108" role="img" aria-label="A grid of nine check marks beside a cluster of seven crosses.">
+                <g class="s-good">
+                  <path d="M14 30 l4.5 5 L27 24" />
+                  <path d="M38 30 l4.5 5 L51 24" />
+                  <path d="M62 30 l4.5 5 L75 24" />
+                  <path d="M14 58 l4.5 5 L27 52" />
+                  <path d="M38 58 l4.5 5 L51 52" />
+                  <path d="M62 58 l4.5 5 L75 52" />
+                  <path d="M14 86 l4.5 5 L27 80" />
+                  <path d="M38 86 l4.5 5 L51 80" />
+                  <path d="M62 86 l4.5 5 L75 80" />
+                </g>
+                <path class="s-soft thin" d="M89 18 L89 94" />
+                <g class="s-loss">
+                  <path d="M102 24 l9 9 M111 24 l-9 9" />
+                  <path d="M126 24 l9 9 M135 24 l-9 9" />
+                  <path d="M102 52 l9 9 M111 52 l-9 9" />
+                  <path d="M126 52 l9 9 M135 52 l-9 9" />
+                  <path d="M102 80 l9 9 M111 80 l-9 9" />
+                  <path d="M126 80 l9 9 M135 80 l-9 9" />
+                  <path d="M114 66 l9 9 M123 66 l-9 9" opacity=".55" />
+                </g>
+              </svg>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <p class="month">July 2026</p>
+      <ul class="posts">
+
+        <li class="post">
+          <a href="size-your-bets-by-your-level-of-conviction.html">
+            <div>
+              <div class="post-head">
+                <span class="post-when"><time datetime="2026-07-30">Jul 30</time><span class="dot"></span>7 min read</span>
+              </div>
+              <h2>Size Your Bets by Your Level of Conviction</h2>
+              <p>
+                Prioritize many small, high-conviction bets over large bets based on guesses. The four
+                problems with big speculative bets, and how we built a feedback feature as five small
+                ones instead.
+              </p>
+            </div>
+            <!-- one big bet misses; five small ones correct their way in -->
+            <div class="thumb">
+              <svg viewBox="0 0 160 108" role="img" aria-label="One long arrow leaving the start and missing the target, beside five short arrows that step and correct their way onto it.">
+                <circle class="s-soft thin" cx="132" cy="26" r="13" />
+                <circle class="s-soft thin" cx="132" cy="26" r="6.5" />
+                <circle class="f-ink" cx="132" cy="26" r="2.4" />
+                <path class="s-soft thin dash" d="M20 87 L120 32" />
+                <circle class="f-ink" cx="18" cy="90" r="4" />
+                <path class="s-loss thick" d="M20 87 L72 12" />
+                <path class="s-loss thick" d="M71 22.2 L72 12 L62.8 16.5" />
+                <path class="s-good" d="M21 87 L48 80 L66 68 L90 58 L108 44 L120 31" />
+                <path class="s-good" d="M117.5 39.5 L120 31 L111.7 34.1" />
+                <g class="f-good">
+                  <circle cx="48" cy="80" r="2.6" />
+                  <circle cx="66" cy="68" r="2.6" />
+                  <circle cx="90" cy="58" r="2.6" />
+                  <circle cx="108" cy="44" r="2.6" />
+                </g>
+              </svg>
+            </div>
+          </a>
+        </li>
+
+        <li class="post">
+          <a href="product-engineering.html">
+            <div>
+              <div class="post-head">
+                <span class="post-when"><time datetime="2026-07-27">Jul 27</time><span class="dot"></span>9 min read</span>
+              </div>
+              <h2>How Lean AI-Native Teams Ship Absurdly Fast: Rise of the Product Engineer</h2>
+              <p>
+                Collapsing product, design, and engineering into one role — and why the teams that do it
+                ship far faster. It's not that anyone types faster; it's what's left when you stop paying
+                the coordination taxes.
+              </p>
+            </div>
+            <!-- three roles split by handoffs, collapsed into one unbroken block -->
+            <div class="thumb">
+              <svg viewBox="0 0 160 108" role="img" aria-label="Three separate work blocks divided by red handoff gaps, collapsing into a single unbroken block below.">
+                <rect class="s-soft thin f-paper" x="14" y="16" width="34" height="18" rx="4" />
+                <rect class="s-loss thin" x="52" y="16" width="16" height="18" rx="4" />
+                <path class="s-loss thin" d="M55 34 L68 20 M55 27 L62 20" />
+                <rect class="s-soft thin f-paper" x="72" y="16" width="24" height="18" rx="4" />
+                <rect class="s-loss thin" x="100" y="16" width="16" height="18" rx="4" />
+                <path class="s-loss thin" d="M103 34 L116 20 M103 27 L110 20" />
+                <rect class="s-soft thin f-paper" x="120" y="16" width="26" height="18" rx="4" />
+
+                <path class="s-ink thin" d="M80 46 L80 60" />
+                <path class="s-ink thin" d="M75 55 L80 60 L85 55" />
+
+                <rect class="s-plan f-none" x="14" y="72" width="132" height="20" rx="5" />
+                <path class="s-plan thin" d="M46 72 L46 92 M78 72 L78 92 M110 72 L110 92" opacity=".38" />
+              </svg>
+            </div>
+          </a>
+        </li>
+
+        <li class="post">
+          <a href="weekly-sprint-playbook.html">
+            <div>
+              <div class="post-head">
+                <span class="post-when"><time datetime="2026-07-23">Jul 23</time><span class="dot"></span>17 min read</span>
+              </div>
+              <h2>The Weekly Sprint Playbook: How We Got Our First Paying Customers</h2>
+              <p>
+                A step-by-step playbook for the weekly sprint that took us from zero to our first five
+                paying customers, developed over 2.5 years of building startups.
+              </p>
+            </div>
+            <!-- the four-step loop: understand, prioritize, build, ship -->
+            <div class="thumb">
+              <svg viewBox="0 0 160 108" role="img" aria-label="A four-step cycle — understand, prioritize, build, ship — drawn as four arcs looping back on themselves.">
+                <g class="s-plan">
+                  <path d="M80 20 A 34 34 0 0 1 108.5 35.5" />
+                  <path d="M114 42 A 34 34 0 0 1 103 76" />
+                  <path d="M96 80 A 34 34 0 0 1 61 78" />
+                  <path d="M54 72 A 34 34 0 0 1 55 33" />
+                </g>
+                <g class="s-plan">
+                  <path d="M104 30.5 L109.5 36 L104.5 41" />
+                  <path d="M108 72 L102.5 76.5 L104.5 82" />
+                  <path d="M62.5 72.5 L58 78.5 L64 82" />
+                  <path d="M52 39 L56 32.5 L62 35" />
+                </g>
+                <g class="f-plan">
+                  <circle cx="80" cy="20" r="4.6" />
+                  <circle cx="114" cy="54" r="4.6" />
+                  <circle cx="80" cy="88" r="4.6" />
+                  <circle cx="46" cy="54" r="4.6" />
+                </g>
+                <circle class="s-soft thin" cx="80" cy="54" r="8" />
+                <path class="s-soft thin" d="M80 49.5 L80 54 L83 56.5" />
+              </svg>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </main>
+
+    <footer class="foot">
+      <p>&copy; 2026 Sam Turner. Built with plain HTML and hosted on GitHub Pages.</p>
+    </footer>
+
+  </div>
+</body>
+</html>

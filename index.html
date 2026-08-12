@@ -3,525 +3,957 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sam Turner — Writing</title>
-  <meta name="description" content="Sam Turner builds products with small teams and writes down what actually works: how they think, how they operate, and how they ship absurdly fast." />
-  <link rel="stylesheet" href="style.css" />
+  <title>Ship Confidently — The Product Playbook</title>
+  <meta name="description" content="A playbook for lean AI-native teams to de-risk big ideas, fast. Eight steps to validate an idea, the weekly sprint that ships it, and the advanced moves that make it faster." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&display=swap" />
   <style>
     /* ============================================================
-       Post index.
-       Left rail is identity only: photo, name, role, bio.
-       Right column is a dated list grouped by month, each entry
-       carrying a small mark drawn from that essay's own figure.
+       THE PRODUCT PLAYBOOK · notebook skin
+       Design-sprint-diagram style: pure white paper, bold black
+       marker lettering, solid filled icons, one yellow highlighter
+       accent. Plain HTML, CSS and JavaScript — no framework, no
+       build step. The board is drawn into a fixed 1470x1300 world
+       that is panned and zoomed with a single CSS transform.
        ============================================================ */
 
-    body { font-size: 17px; }
-
-    .layout {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 64px 24px 0;
-      display: grid;
-      grid-template-columns: 232px minmax(0, 1fr);
-      gap: 64px;
-      align-items: start;
+    :root {
+      --paper: #FFFFFF;
+      --ink: #141414;
+      --ink-soft: #5C5C5C;
+      --sticky: #FFE45C;
+      --sticky-soft: #FFF5C2;
+      --marker: 'Permanent Marker', 'Marker Felt', 'Comic Sans MS', cursive;
+      --hand: 'Patrick Hand', 'Segoe Print', 'Bradley Hand', cursive;
     }
 
-    /* ---- left rail: identity only ---- */
-    .rail { position: sticky; top: 64px; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
 
-    .rail-photo {
-      width: 96px;
-      height: 96px;
-      border-radius: 14px;
-      display: block;
-      object-fit: cover;
-      margin: 0 0 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 6px 18px -8px rgba(15, 23, 42, .35);
-    }
-    @media (prefers-color-scheme: dark) {
-      .rail-photo { box-shadow: 0 6px 18px -8px rgba(0, 0, 0, .8); }
-    }
-
-    .rail-name {
-      font-family: var(--font-head);
-      font-size: 1.44rem;
-      font-weight: 700;
-      letter-spacing: -0.026em;
-      color: var(--heading);
-      margin: 0 0 9px;
-      line-height: 1.14;
-    }
-    .rail-role {
-      font-family: var(--font-head);
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: var(--accent);
-      margin: 0 0 16px;
-    }
-    .rail-bio {
+    body {
       margin: 0;
-      font-size: 0.93rem;
-      line-height: 1.64;
-      color: var(--muted);
-    }
-
-    /* ---- month groupings ---- */
-    .month {
-      font-family: var(--font-head);
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: var(--muted);
-      margin: 34px 0 2px;
-      opacity: .75;
-    }
-    .month:first-child { margin-top: 6px; }
-
-    /* ---- entries ---- */
-    .posts { list-style: none; margin: 0; padding: 0; }
-
-    .post { position: relative; }
-
-    .post > a {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 152px;
-      gap: 28px;
-      align-items: start;
-      padding: 24px 0 26px;
-    }
-    .post > a:hover { text-decoration: none; }
-    .post + .post > a { border-top: 1px solid var(--border); }
-
-    .post-head {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-    }
-    .post-kicker {
-      font-family: var(--font-head);
-      font-size: 0.64rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-    }
-    .post-when {
-      font-size: 0.78rem;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
-    .post-when .dot {
-      display: inline-block;
-      width: 3px; height: 3px;
-      border-radius: 50%;
-      background: currentColor;
-      opacity: .55;
-      margin: 0 7px 2px;
-    }
-
-    .post h2 {
-      font-family: var(--font-head);
-      font-size: 1.24rem;
-      font-weight: 600;
-      line-height: 1.28;
-      letter-spacing: -0.02em;
-      color: var(--heading);
-      margin: 0 0 8px;
-      transition: color .16s ease;
-    }
-    .post > a:hover h2 { color: var(--accent); }
-    .post p {
-      margin: 0;
-      font-size: 0.94rem;
-      line-height: 1.62;
-      color: var(--muted);
-    }
-
-    .post.featured > a { padding-top: 6px; }
-
-    /* ---- per-essay marks, drawn in the articles' sketch language ---- */
-    .thumb {
-      --paper: #fbf7ee;
-      --paper-dot: rgba(120, 110, 90, .20);
-      --edge: rgba(178, 138, 92, .42);
-      --ink: #2b2620;
-      --ink-soft: rgba(90, 70, 45, .45);
-      --plan: #0e8074;
-      --loss: #cf4f2e;
-      --good: #2f8f4e;
-
       background: var(--paper);
-      background-image: radial-gradient(var(--paper-dot) 1.1px, transparent 1.1px);
-      background-size: 13px 13px;
-      border: 1px solid var(--edge);
-      border-radius: 10px;
+      color: var(--ink);
+      font-family: var(--hand);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 560px;
       overflow: hidden;
-      transition: border-color .18s ease, transform .18s ease;
+      background: var(--paper);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    @media (prefers-color-scheme: dark) {
-      .thumb {
-        --paper: #1c1a13;
-        --paper-dot: rgba(220, 200, 160, .13);
-        --edge: rgba(201, 155, 103, .38);
-        --ink: #ece5d5;
-        --ink-soft: rgba(210, 190, 155, .42);
-        --plan: #35b3a4;
-        --loss: #f0795a;
-        --good: #6ecf95;
-      }
-    }
-    .post > a:hover .thumb {
-      border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-      transform: translateY(-2px);
-    }
-    .thumb svg { display: block; width: 100%; height: auto; }
+    .stage.dragging { cursor: grabbing; }
 
-    /* shared drawing primitives */
-    .thumb .s-ink   { stroke: var(--ink); }
-    .thumb .s-soft  { stroke: var(--ink-soft); }
-    .thumb .s-plan  { stroke: var(--plan); }
-    .thumb .s-loss  { stroke: var(--loss); }
-    .thumb .s-good  { stroke: var(--good); }
-    .thumb .f-ink   { fill: var(--ink); }
-    .thumb .f-plan  { fill: var(--plan); }
-    .thumb .f-loss  { fill: var(--loss); }
-    .thumb .f-good  { fill: var(--good); }
-    .thumb .f-paper { fill: var(--paper); }
-    .thumb .f-none  { fill: none; }
-    .thumb svg [class*="s-"] {
-      fill: none;
-      stroke-width: 2.1;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .thumb .thin { stroke-width: 1.5; }
-    .thumb .thick { stroke-width: 3.2; }
-    .thumb .dash { stroke-dasharray: 5 4.5; }
-
-    /* ---- responsive ---- */
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-top: 44px; }
-      .rail { position: static; padding-bottom: 34px; border-bottom: 1px solid var(--border); }
-      .rail-bio { max-width: 36em; }
-    }
-    @media (max-width: 600px) {
-      .post > a { grid-template-columns: minmax(0, 1fr) 104px; gap: 16px; }
-      .post h2 { font-size: 1.1rem; }
-      .post p { font-size: 0.9rem; }
+    .world {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
     }
 
-    /* ---- footer ---- */
-    .foot {
-      grid-column: 1 / -1;
-      margin-top: 56px;
-      border-top: 1px solid var(--border);
-      padding: 26px 0 56px;
-      font-size: 0.82rem;
-      color: var(--muted);
+    /* ---- entrance animations ---- */
+    @keyframes inkIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scribbleIn {
+      from { opacity: 0; transform: translate(-50%, -50%) rotate(-2.5deg) scale(.86); }
+      to   { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
     }
-    .foot p { margin: 0; }
+    .ink { animation: inkIn .6s ease both; }
+    .scribble { animation: scribbleIn .35s ease both; }
+
+    /* ---- title ---- */
+    .title-block {
+      position: absolute;
+      left: 720px;
+      top: 96px;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .title-inner { position: relative; display: inline-block; padding: 4px 10px; }
+    .title-stack { position: relative; display: inline-block; }
+    .doodle {
+      position: absolute;
+      left: 100%;
+      top: 0;
+      margin-left: -16px;
+      overflow: visible;
+      transform: scale(.8);
+      transform-origin: top left;
+    }
+    .title-stack h1 { margin: 0; font-weight: 400; }
+    .t1, .t2 { display: block; font-family: var(--marker); transform: rotate(-0.6deg); }
+    .t1 { font-size: 58px; letter-spacing: .04em; line-height: .9; }
+    .t2 { font-size: 39px; letter-spacing: .05em; color: #2A9D8F; margin-top: 4px; }
+    .title-sub { font-size: 20px; margin: 8px 0 0; }
+
+    /* ---- the board below the title band ---- */
+    .board { position: absolute; left: 0; top: 160px; }
+    .board > svg { position: absolute; inset: 0; overflow: visible; }
+
+    .dividers { opacity: 0; transition: opacity .8s ease 1s; }
+    .stage.ready .dividers { opacity: .28; }
+
+    /* ---- the yellow sketch button shared by every clickable label ---- */
+    .chip {
+      display: inline-block;
+      color: var(--ink);
+      line-height: 1.25;
+      background: var(--sticky-soft);
+      border: 2.5px solid var(--ink);
+      border-radius: 10px;
+      padding: 3px 12px 5px;
+      box-shadow: 2.5px 2.5px 0 rgba(20, 20, 20, .75);
+      transition: background .15s, box-shadow .15s, transform .15s;
+    }
+    a:hover > .chip,
+    a:focus-visible > .chip,
+    a:hover .chip,
+    a:focus-visible .chip {
+      background: var(--sticky);
+      box-shadow: 1px 1px 0 rgba(20, 20, 20, .75);
+      transform: translate(1.5px, 1.5px);
+    }
+
+    .tilebtn {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-align: center;
+    }
+    .tilebtn:focus-visible { outline: 3.5px solid var(--ink); outline-offset: 4px; border-radius: 10px; }
+
+    /* ---- start banner ---- */
+    .start-banner {
+      position: absolute;
+      left: 78px;
+      top: 150px;
+      transform: translate(-50%, -50%) rotate(-1.5deg);
+      z-index: 2;
+    }
+
+    /* ---- step nodes ---- */
+    .step {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      text-align: center;
+    }
+    .step > svg { overflow: visible; display: block; margin: 0 auto; }
+    .step-face { fill: var(--paper); transition: fill .15s; }
+    a.step:hover .step-face,
+    a.step:focus-visible .step-face { fill: rgba(255, 222, 51, .45); }
+    .step-label {
+      display: block;
+      margin: 3px auto 0;
+      font-size: 20px;
+      line-height: 1.2;
+      width: 194px;
+    }
+
+    /* ---- sprint zone ---- */
+    .sprint-header {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: var(--paper);
+      padding: 2px 20px;
+      z-index: 3;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity .5s ease .7s;
+      font-family: var(--marker);
+      font-size: 30px;
+      font-weight: 400;
+      letter-spacing: .03em;
+      margin: 0;
+    }
+    .stage.ready .sprint-header { opacity: 1; }
+
+    .lap-label {
+      position: absolute;
+      transform: translate(-50%, -50%) rotate(-1deg);
+      font-size: 24px;
+      white-space: nowrap;
+    }
+    .lap-label b { font-family: var(--marker); font-size: 20px; font-weight: 400; }
+
+    /* ---- day columns ---- */
+    .day {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    .day-inner { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .day-mark { display: inline-block; text-align: center; }
+    .day-mark > svg { display: block; margin: 0 auto; }
+    .day-word { display: block; font-size: 13.5px; margin-top: -3px; white-space: nowrap; }
+    .day .chip {
+      font-size: 21px;
+      font-family: var(--marker);
+      letter-spacing: .03em;
+      white-space: nowrap;
+    }
+
+    .move {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+    .move-row {
+      width: 200px;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 2px;
+    }
+    .move-row svg { flex-shrink: 0; }
+    .move-row span { font-size: 17px; line-height: 1.1; text-align: left; }
+
+    /* ---- advanced strip ---- */
+    .adv-label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 168px;
+    }
+    .adv-label-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .adv-label-row span { font-family: var(--marker); font-size: 21px; }
+    .adv-label-sub { font-size: 15.5px; color: var(--ink-soft); margin-top: 1px; }
+    .adv-item {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 204px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .adv-item > svg { flex-shrink: 0; }
+    .adv-item .chip { font-size: 15px; line-height: 1.15; padding: 1px 8px 3px; }
+    .adv-item .plain { font-size: 15.5px; line-height: 1.12; text-align: left; }
+
+    /* ============ screen-space UI ============ */
+    .zoom {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 4;
+    }
+    .zoom button {
+      width: 44px;
+      height: 44px;
+      border: 3.5px solid var(--ink);
+      border-radius: 50% 46% 52% 48%;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 21px;
+      font-family: var(--marker);
+      cursor: pointer;
+      box-shadow: 2px 3px 0 rgba(20, 20, 20, .2);
+      line-height: 1;
+    }
+    .zoom button:nth-child(1) { transform: rotate(-2deg); }
+    .zoom button:nth-child(2) { transform: rotate(0deg); }
+    .zoom button:nth-child(3) { transform: rotate(2deg); }
+
+    .corner {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 17px;
+    }
+    .corner a { text-decoration: none; color: var(--ink); }
+    .corner a:focus-visible { outline: 3.5px solid var(--ink); outline-offset: 4px; border-radius: 10px; }
+
+    .hint {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      z-index: 4;
+      font-size: 15.5px;
+      color: var(--ink-soft);
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ink, .scribble { animation: none; }
+      .dividers, .sprint-header { transition: none; }
+    }
+
+    @media (max-width: 640px) {
+      .corner { font-size: 15px; }
+      .hint { font-size: 14px; }
+    }
   </style>
 </head>
 <body>
-  <div class="layout">
 
-    <aside class="rail">
-      <img class="rail-photo" src="sam-photo.jpg" alt="Sam Turner" width="96" height="96" />
-      <p class="rail-name">Sam Turner</p>
-      <p class="rail-role">Product engineer</p>
-      <p class="rail-bio">
-        I build products with small teams and write down what actually works: 
-        how they think, how they operate, and how they ship absurdly fast.
-      </p>
-    </aside>
+  <div class="stage" id="stage">
+    <div class="world" id="world"></div>
 
-    <main>
-      <p class="month">August 2026</p>
-      <ul class="posts">
+    <div class="corner" data-ui>
+      <a href="writing.html"><span class="chip">All writing →</span></a>
+    </div>
 
-        <li class="post featured">
-          <a href="nobody-wants-your-software.html">
-            <div>
-              <div class="post-head">
-                <span class="post-kicker">Latest</span>
-                <span class="post-when"><time datetime="2026-08-10">Aug 10</time><span class="dot"></span>5 min read</span>
-              </div>
-              <h2>Nobody Wants Your Software</h2>
-              <p>
-                Customers don't want your product. They want a job done. Map the job, measure the
-                outcomes, and build for the steps where they struggle.
-              </p>
-            </div>
-            <!-- eight-step job map, one step glowing where the money is -->
-            <div class="thumb">
-              <svg viewBox="0 0 160 108" role="img" aria-label="Eight small boxes in a horizontal chain — the eight steps of a job map — with one box glowing red to mark an underserved step.">
-                <g class="s-soft thin">
-                  <rect class="f-paper" x="8"   y="46" width="15" height="16" rx="3" />
-                  <rect class="f-paper" x="27"  y="46" width="15" height="16" rx="3" />
-                  <rect class="f-paper" x="46"  y="46" width="15" height="16" rx="3" />
-                  <rect class="f-paper" x="84"  y="46" width="15" height="16" rx="3" />
-                  <rect class="f-paper" x="103" y="46" width="15" height="16" rx="3" />
-                  <rect class="f-paper" x="122" y="46" width="15" height="16" rx="3" />
-                  <rect class="f-paper" x="141" y="46" width="15" height="16" rx="3" />
-                </g>
-                <rect class="s-loss f-paper thick" x="65" y="45" width="15" height="18" rx="3" />
-                <g class="s-soft thin">
-                  <line x1="23"  y1="54" x2="27"  y2="54" />
-                  <line x1="42"  y1="54" x2="46"  y2="54" />
-                  <line x1="61"  y1="54" x2="65"  y2="54" />
-                  <line x1="80"  y1="54" x2="84"  y2="54" />
-                  <line x1="99"  y1="54" x2="103" y2="54" />
-                  <line x1="118" y1="54" x2="122" y2="54" />
-                  <line x1="137" y1="54" x2="141" y2="54" />
-                </g>
-                <g class="f-loss">
-                  <circle cx="72.5" cy="34" r="2.6" />
-                  <circle cx="72.5" cy="28" r="1.6" opacity=".55" />
-                </g>
-                <path class="s-loss thin" d="M67 78 L78 78" />
-              </svg>
-            </div>
-          </a>
-        </li>
+    <div class="zoom" data-ui>
+      <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+      <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+      <button type="button" id="zoom-fit" aria-label="Fit page to screen">⤢</button>
+    </div>
 
-        <li class="post">
-          <a href="not-every-decision-deserves-a-meeting.html">
-            <div>
-              <div class="post-head">
-                <span class="post-when"><time datetime="2026-08-06">Aug 6</time><span class="dot"></span>6 min read</span>
-              </div>
-              <h2>Not Every Decision Deserves a Meeting</h2>
-              <p>
-                Before you loop in four people and book the hour, three factors for deciding whether
-                the decision has earned it: urgency, impact, and reversibility.
-              </p>
-            </div>
-            <!-- the funnel: everything enters left, three gates drop most of it away -->
-            <div class="thumb">
-              <svg viewBox="0 0 160 108" role="img" aria-label="A funnel narrowing through three gates, with decisions dropping away at each one and a small meeting box at the end.">
-                <path class="s-soft thin" d="M10 20 L112 44" />
-                <path class="s-soft thin" d="M10 88 L112 64" />
-                <path class="s-ink thin" d="M44 27 L44 81" />
-                <path class="s-ink thin" d="M72 34 L72 74" />
-                <path class="s-ink thin" d="M100 40 L100 68" />
-                <path class="s-loss" d="M44 88 L44 98" />
-                <path class="s-loss" d="M39.5 93.5 L44 98 L48.5 93.5" />
-                <path class="s-loss" d="M72 82 L72 92" />
-                <path class="s-loss" d="M67.5 87.5 L72 92 L76.5 87.5" />
-                <path class="s-loss" d="M100 76 L100 86" />
-                <path class="s-loss" d="M95.5 81.5 L100 86 L104.5 81.5" />
-                <path class="s-plan thick" d="M14 54 L124 54" />
-                <path class="s-plan thick" d="M118 48.5 L124 54 L118 59.5" />
-                <rect class="s-ink f-paper" x="130" y="42" width="20" height="24" rx="4" />
-                <path class="s-ink thin" d="M136 50 h8 M136 56 h8" />
-              </svg>
-            </div>
-          </a>
-        </li>
-
-        <li class="post">
-          <a href="the-deadline-drain.html">
-            <div>
-              <div class="post-head">
-                <span class="post-when"><time datetime="2026-08-04">Aug 4</time><span class="dot"></span>7 min read</span>
-              </div>
-              <h2>The Deadline Drain: Why Deadlines Slow Teams Down, and What to Do Instead</h2>
-              <p>
-                Long deadlines don't speed teams up. Effort leaks out through planning, re-planning, and
-                explaining before it ever reaches the product. The four phases of the drain, and the kind
-                of time box that works instead.
-              </p>
-            </div>
-            <!-- road in the plan vs road in reality -->
-            <div class="thumb">
-              <svg viewBox="0 0 160 108" role="img" aria-label="A straight dashed planned route from start to finish, and beneath it a winding real road that detours past three hazard markers.">
-                <path class="s-plan dash" d="M18 78 L140 26" />
-                <path class="s-ink" d="M18 78 C 40 96, 48 52, 68 60 S 92 96, 108 66 S 126 40, 140 26" />
-                <circle class="f-ink" cx="18" cy="78" r="4" />
-                <path class="s-ink thin" d="M140 26 L140 12" />
-                <path class="s-plan f-plan thin" d="M140 13 L154 17 L140 21 Z" />
-                <g class="s-loss thin">
-                  <path class="f-none" d="M52 74 L57 65 L62 74 Z" />
-                  <path class="f-none" d="M84 82 L89 73 L94 82 Z" />
-                  <path class="f-none" d="M116 56 L121 47 L126 56 Z" />
-                </g>
-                <g class="f-loss">
-                  <rect x="56.2" y="67.5" width="1.6" height="3.4" rx=".8" />
-                  <rect x="88.2" y="75.5" width="1.6" height="3.4" rx=".8" />
-                  <rect x="120.2" y="49.5" width="1.6" height="3.4" rx=".8" />
-                </g>
-              </svg>
-            </div>
-          </a>
-        </li>
-
-        <li class="post">
-          <a href="mindsets-of-winning-product-teams.html">
-            <div>
-              <div class="post-head">
-                <span class="post-when"><time datetime="2026-08-03">Aug 3</time><span class="dot"></span>8 min read</span>
-              </div>
-              <h2>Mindsets of Winning Product Teams</h2>
-              <p>
-                Mindsets shape the hundreds of decisions behind every product. The nine that I've found
-                work, and the seven anti-patterns that quietly slow a startup down.
-              </p>
-            </div>
-            <!-- nine that work, seven that don't -->
-            <div class="thumb">
-              <svg viewBox="0 0 160 108" role="img" aria-label="A grid of nine check marks beside a cluster of seven crosses.">
-                <g class="s-good">
-                  <path d="M14 30 l4.5 5 L27 24" />
-                  <path d="M38 30 l4.5 5 L51 24" />
-                  <path d="M62 30 l4.5 5 L75 24" />
-                  <path d="M14 58 l4.5 5 L27 52" />
-                  <path d="M38 58 l4.5 5 L51 52" />
-                  <path d="M62 58 l4.5 5 L75 52" />
-                  <path d="M14 86 l4.5 5 L27 80" />
-                  <path d="M38 86 l4.5 5 L51 80" />
-                  <path d="M62 86 l4.5 5 L75 80" />
-                </g>
-                <path class="s-soft thin" d="M89 18 L89 94" />
-                <g class="s-loss">
-                  <path d="M102 24 l9 9 M111 24 l-9 9" />
-                  <path d="M126 24 l9 9 M135 24 l-9 9" />
-                  <path d="M102 52 l9 9 M111 52 l-9 9" />
-                  <path d="M126 52 l9 9 M135 52 l-9 9" />
-                  <path d="M102 80 l9 9 M111 80 l-9 9" />
-                  <path d="M126 80 l9 9 M135 80 l-9 9" />
-                  <path d="M114 66 l9 9 M123 66 l-9 9" opacity=".55" />
-                </g>
-              </svg>
-            </div>
-          </a>
-        </li>
-      </ul>
-
-      <p class="month">July 2026</p>
-      <ul class="posts">
-
-        <li class="post">
-          <a href="size-your-bets-by-your-level-of-conviction.html">
-            <div>
-              <div class="post-head">
-                <span class="post-when"><time datetime="2026-07-30">Jul 30</time><span class="dot"></span>7 min read</span>
-              </div>
-              <h2>Size Your Bets by Your Level of Conviction</h2>
-              <p>
-                Prioritize many small, high-conviction bets over large bets based on guesses. The four
-                problems with big speculative bets, and how we built a feedback feature as five small
-                ones instead.
-              </p>
-            </div>
-            <!-- one big bet misses; five small ones correct their way in -->
-            <div class="thumb">
-              <svg viewBox="0 0 160 108" role="img" aria-label="One long arrow leaving the start and missing the target, beside five short arrows that step and correct their way onto it.">
-                <circle class="s-soft thin" cx="132" cy="26" r="13" />
-                <circle class="s-soft thin" cx="132" cy="26" r="6.5" />
-                <circle class="f-ink" cx="132" cy="26" r="2.4" />
-                <path class="s-soft thin dash" d="M20 87 L120 32" />
-                <circle class="f-ink" cx="18" cy="90" r="4" />
-                <path class="s-loss thick" d="M20 87 L72 12" />
-                <path class="s-loss thick" d="M71 22.2 L72 12 L62.8 16.5" />
-                <path class="s-good" d="M21 87 L48 80 L66 68 L90 58 L108 44 L120 31" />
-                <path class="s-good" d="M117.5 39.5 L120 31 L111.7 34.1" />
-                <g class="f-good">
-                  <circle cx="48" cy="80" r="2.6" />
-                  <circle cx="66" cy="68" r="2.6" />
-                  <circle cx="90" cy="58" r="2.6" />
-                  <circle cx="108" cy="44" r="2.6" />
-                </g>
-              </svg>
-            </div>
-          </a>
-        </li>
-
-        <li class="post">
-          <a href="product-engineering.html">
-            <div>
-              <div class="post-head">
-                <span class="post-when"><time datetime="2026-07-27">Jul 27</time><span class="dot"></span>9 min read</span>
-              </div>
-              <h2>How Lean AI-Native Teams Ship Absurdly Fast: Rise of the Product Engineer</h2>
-              <p>
-                Collapsing product, design, and engineering into one role — and why the teams that do it
-                ship far faster. It's not that anyone types faster; it's what's left when you stop paying
-                the coordination taxes.
-              </p>
-            </div>
-            <!-- three roles split by handoffs, collapsed into one unbroken block -->
-            <div class="thumb">
-              <svg viewBox="0 0 160 108" role="img" aria-label="Three separate work blocks divided by red handoff gaps, collapsing into a single unbroken block below.">
-                <rect class="s-soft thin f-paper" x="14" y="16" width="34" height="18" rx="4" />
-                <rect class="s-loss thin" x="52" y="16" width="16" height="18" rx="4" />
-                <path class="s-loss thin" d="M55 34 L68 20 M55 27 L62 20" />
-                <rect class="s-soft thin f-paper" x="72" y="16" width="24" height="18" rx="4" />
-                <rect class="s-loss thin" x="100" y="16" width="16" height="18" rx="4" />
-                <path class="s-loss thin" d="M103 34 L116 20 M103 27 L110 20" />
-                <rect class="s-soft thin f-paper" x="120" y="16" width="26" height="18" rx="4" />
-
-                <path class="s-ink thin" d="M80 46 L80 60" />
-                <path class="s-ink thin" d="M75 55 L80 60 L85 55" />
-
-                <rect class="s-plan f-none" x="14" y="72" width="132" height="20" rx="5" />
-                <path class="s-plan thin" d="M46 72 L46 92 M78 72 L78 92 M110 72 L110 92" opacity=".38" />
-              </svg>
-            </div>
-          </a>
-        </li>
-
-        <li class="post">
-          <a href="weekly-sprint-playbook.html">
-            <div>
-              <div class="post-head">
-                <span class="post-when"><time datetime="2026-07-23">Jul 23</time><span class="dot"></span>17 min read</span>
-              </div>
-              <h2>The Weekly Sprint Playbook: How We Got Our First Paying Customers</h2>
-              <p>
-                A step-by-step playbook for the weekly sprint that took us from zero to our first five
-                paying customers, developed over 2.5 years of building startups.
-              </p>
-            </div>
-            <!-- the four-step loop: understand, prioritize, build, ship -->
-            <div class="thumb">
-              <svg viewBox="0 0 160 108" role="img" aria-label="A four-step cycle — understand, prioritize, build, ship — drawn as four arcs looping back on themselves.">
-                <g class="s-plan">
-                  <path d="M80 20 A 34 34 0 0 1 108.5 35.5" />
-                  <path d="M114 42 A 34 34 0 0 1 103 76" />
-                  <path d="M96 80 A 34 34 0 0 1 61 78" />
-                  <path d="M54 72 A 34 34 0 0 1 55 33" />
-                </g>
-                <g class="s-plan">
-                  <path d="M104 30.5 L109.5 36 L104.5 41" />
-                  <path d="M108 72 L102.5 76.5 L104.5 82" />
-                  <path d="M62.5 72.5 L58 78.5 L64 82" />
-                  <path d="M52 39 L56 32.5 L62 35" />
-                </g>
-                <g class="f-plan">
-                  <circle cx="80" cy="20" r="4.6" />
-                  <circle cx="114" cy="54" r="4.6" />
-                  <circle cx="80" cy="88" r="4.6" />
-                  <circle cx="46" cy="54" r="4.6" />
-                </g>
-                <circle class="s-soft thin" cx="80" cy="54" r="8" />
-                <path class="s-soft thin" d="M80 49.5 L80 54 L83 56.5" />
-              </svg>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </main>
-
-    <footer class="foot">
-      <p>&copy; 2026 Sam Turner. Built with plain HTML and hosted on GitHub Pages.</p>
-    </footer>
-
+    <p class="hint">Drag to pan · scroll or pinch to zoom</p>
   </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    // ============================================================
+    // Data: the board is entirely described by these three lists.
+    // ============================================================
+
+    var STEPS = [
+      { id: "icp", n: 1, x: 250, y: 150, icon: "target", title: "Define your ICP", url: null },
+      { id: "will-pay", n: 2, x: 550, y: 150, icon: "coins", title: "Validate people will pay", url: null },
+      { id: "demand", n: 3, x: 850, y: 150, icon: "magnet", title: "Validate you can capture demand", url: null },
+      { id: "jtbd", n: 4, x: 1150, y: 150, icon: "briefcase", title: "Map out the JTBD",
+        full: "Map out the job to be done", url: "nobody-wants-your-software.html" },
+      { id: "low-fi", n: 5, x: 1150, y: 345, icon: "pencil", title: "Find the value prop that lands", url: null },
+      { id: "mindsets", n: 6, x: 850, y: 345, icon: "bulb", title: "Adopt mindsets of a winning team",
+        url: "mindsets-of-winning-product-teams.html" },
+      { id: "factory", n: 7, x: 550, y: 345, icon: "factory", title: "Setup your customer factory", url: null },
+      { id: "team", n: 8, x: 250, y: 345, icon: "team", title: "Set up your team to ship absurdly fast",
+        url: "product-engineering.html" }
+    ];
+
+    var SPRINT = "weekly-sprint-playbook.html";
+
+    var DAYS = [
+      { id: "day-1", n: 1, word: "Understand", url: SPRINT, x: 260, icon: "bars",
+        moves: ["Quantitative review", "User interviews"] },
+      { id: "day-2", n: 2, word: "Prioritize", url: SPRINT, x: 475, icon: "funnel",
+        moves: ["Synthesize learnings", "Feature prioritization"] },
+      { id: "day-3", n: 3, word: "Build", url: SPRINT, x: 690, icon: "hammer",
+        moves: ["Set a time box", "Low fidelity sketch", "Go high fidelity", "Build"] },
+      { id: "day-4", n: 4, word: "Build more", url: SPRINT, x: 905, icon: "loop",
+        moves: ["Repeat the build loop", "Prep the launch", "Schedule user interviews", "Plan user interviews"] },
+      { id: "day-5", n: 5, word: "Ship", url: SPRINT, x: 1120, icon: "plane",
+        moves: ["Finish building", "QA", "Configure analytics", "Ship"] }
+    ];
+
+    // Advanced concepts — layered on once the basic weekly sprint
+    // is mastered, to go even faster.
+    var ADVANCED = [
+      { id: "adv-quality", label: "Make quality decisions", icon: "medal", url: null },
+      { id: "adv-meetings", label: "Decide without meetings", icon: "nomeeting",
+        url: "not-every-decision-deserves-a-meeting.html" },
+      { id: "adv-bets", label: "Size your bets", icon: "dice",
+        url: "size-your-bets-by-your-level-of-conviction.html" },
+      { id: "adv-code", label: "Aim for low cost code", icon: "code",
+        url: "https://www.linkedin.com/pulse/aim-cost-effective-code-over-clean-sam-turner/" }
+    ];
+
+    var WORLD = { w: 1470, h: 1300 };
+    var ZONE = { x: 150, y: 490, w: 1095, h: 500 };
+    var DAY_Y = 562;
+    var MOVE_Y0 = 628;
+    var MOVE_DY = 48;
+    var zoneBot = ZONE.y + ZONE.h;
+
+    // ------------------------------------------------------------
+    // Sketchy helpers: confident marker, slight wobble.
+    // ------------------------------------------------------------
+
+    function prand(seed) {
+      var x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+      return x - Math.floor(x);
+    }
+
+    function sketchyLine(x1, y1, x2, y2, seed, wob) {
+      wob = wob === undefined ? 2 : wob;
+      var segs = Math.max(3, Math.floor(Math.hypot(x2 - x1, y2 - y1) / 60));
+      var dx = x2 - x1;
+      var dy = y2 - y1;
+      var len = Math.hypot(dx, dy) || 1;
+      var nx = -dy / len;
+      var ny = dx / len;
+      var d = "M " + x1.toFixed(1) + " " + y1.toFixed(1);
+      for (var i = 1; i <= segs; i++) {
+        var t = i / segs;
+        var off = i === segs ? 0 : (prand(seed + i) - 0.5) * 2 * wob;
+        d += " L " + (x1 + dx * t + nx * off).toFixed(1) + " " + (y1 + dy * t + ny * off).toFixed(1);
+      }
+      return d;
+    }
+
+    // One flowing hand-drawn curve through a list of waypoints.
+    // Midpoints get a small perpendicular wobble, then the whole
+    // thing is smoothed with a catmull-rom spline.
+    function smoothPath(points, seed, wave) {
+      wave = wave === undefined ? 7 : wave;
+      var pts = [];
+      for (var i = 0; i < points.length; i++) {
+        pts.push(points[i]);
+        if (i < points.length - 1) {
+          var x1 = points[i][0], y1 = points[i][1];
+          var x2 = points[i + 1][0], y2 = points[i + 1][1];
+          var dx = x2 - x1;
+          var dy = y2 - y1;
+          var len = Math.hypot(dx, dy) || 1;
+          var off = (prand(seed + i * 3) - 0.5) * 2 * wave;
+          pts.push([
+            (x1 + x2) / 2 + (-dy / len) * off,
+            (y1 + y2) / 2 + (dx / len) * off
+          ]);
+        }
+      }
+      var d = "M " + pts[0][0].toFixed(1) + " " + pts[0][1].toFixed(1);
+      for (var j = 0; j < pts.length - 1; j++) {
+        var p0 = pts[Math.max(j - 1, 0)];
+        var p1 = pts[j];
+        var p2 = pts[j + 1];
+        var p3 = pts[Math.min(j + 2, pts.length - 1)];
+        var c1x = p1[0] + (p2[0] - p0[0]) / 6;
+        var c1y = p1[1] + (p2[1] - p0[1]) / 6;
+        var c2x = p2[0] - (p3[0] - p1[0]) / 6;
+        var c2y = p2[1] - (p3[1] - p1[1]) / 6;
+        d += " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) + ", " +
+             c2x.toFixed(1) + " " + c2y.toFixed(1) + ", " +
+             p2[0].toFixed(1) + " " + p2[1].toFixed(1);
+      }
+      return d;
+    }
+
+    function sketchyRect(x, y, w, h, seed, over) {
+      over = over === undefined ? 7 : over;
+      return [
+        sketchyLine(x - over, y, x + w + over, y, seed + 1),
+        sketchyLine(x + w, y - over, x + w, y + h + over, seed + 2),
+        sketchyLine(x + w + over, y + h, x - over, y + h, seed + 3),
+        sketchyLine(x, y + h + over, x, y - over, seed + 4)
+      ];
+    }
+
+    function sketchyCircle(cx, cy, r, seed, wob) {
+      wob = wob === undefined ? 1.8 : wob;
+      var pts = [];
+      var n = 14;
+      for (var i = 0; i < n; i++) {
+        var a = (i / n) * Math.PI * 2;
+        var rr = r + (prand(seed + i) - 0.5) * 2 * wob;
+        pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]);
+      }
+      var d = "M " + pts[0][0].toFixed(1) + " " + pts[0][1].toFixed(1);
+      for (var k = 0; k < n; k++) {
+        var p0 = pts[k];
+        var p1 = pts[(k + 1) % n];
+        var mx = (p0[0] + p1[0]) / 2;
+        var my = (p0[1] + p1[1]) / 2;
+        d += " Q " + p0[0].toFixed(1) + " " + p0[1].toFixed(1) + " " + mx.toFixed(1) + " " + my.toFixed(1);
+      }
+      return d + " Z";
+    }
+
+    // ------------------------------------------------------------
+    // Solid marker icons
+    // ------------------------------------------------------------
+
+    var I = "var(--ink)";
+    var P = "var(--paper)";
+    var RED = "#E8503A";
+    var GOLD = "#F5B32E";
+    var TEAL = "#2A9D8F";
+    var BLUE = "#3B7DD8";
+    var PURPLE = "#8A5CC9";
+    var GREEN = "#3AA45C";
+
+    var ICONS = {
+      medal:
+        '<path d="M -8 2 L -14 22 L -5 16 L 0 23 Z" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<path d="M 8 2 L 14 22 L 5 16 L 0 23 Z" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<circle cx="0" cy="-6" r="14" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<path d="M 0 -14 L 2.6 -8.4 L 8.6 -7.8 L 4.2 -3.7 L 5.4 2.2 L 0 -0.8 L -5.4 2.2 L -4.2 -3.7 L -8.6 -7.8 L -2.6 -8.4 Z" fill="' + P + '" stroke="' + I + '" stroke-width="1.4" stroke-linejoin="round"/>',
+
+      store:
+        '<rect x="-17" y="-4" width="34" height="24" fill="' + P + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<path d="M -20 -6 Q -20 -16 -13.3 -16 L 13.3 -16 Q 20 -16 20 -6 L 13.3 -6 Q 13.3 -11 6.6 -11 Q 6.6 -6 0 -6 Q 0 -11 -6.6 -11 Q -6.6 -6 -13.3 -6 Z" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<rect x="-3" y="6" width="9" height="14" fill="' + I + '"/>' +
+        '<rect x="-13" y="2" width="8" height="8" fill="' + BLUE + '" stroke="' + I + '" stroke-width="1.8"/>',
+
+      coins:
+        '<ellipse cx="0" cy="12" rx="17" ry="7" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<ellipse cx="0" cy="4" rx="17" ry="7" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<ellipse cx="0" cy="-4" rx="17" ry="7" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<text x="0" y="0" text-anchor="middle" fill="' + I + '" font-size="10" font-weight="700" font-family="Arial, sans-serif">$</text>',
+
+      target:
+        '<circle cx="-2" cy="2" r="17" fill="' + RED + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<circle cx="-2" cy="2" r="11" fill="' + P + '" stroke="' + I + '" stroke-width="1.8"/>' +
+        '<circle cx="-2" cy="2" r="5.5" fill="' + RED + '" stroke="' + I + '" stroke-width="1.8"/>' +
+        '<path d="M 4 -4 L 18 -18 M 18 -18 L 10 -18 M 18 -18 L 18 -10" fill="none" stroke="' + I + '" stroke-width="3.4" stroke-linecap="round"/>',
+
+      magnet:
+        '<path d="M -16 -14 L -6 -14 L -6 2 Q -6 9 0 9 Q 6 9 6 2 L 6 -14 L 16 -14 L 16 2 Q 16 19 0 19 Q -16 19 -16 2 Z" fill="' + RED + '" stroke="' + I + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<rect x="-16" y="-14" width="10" height="6" fill="' + P + '" stroke="' + I + '" stroke-width="1.8"/>' +
+        '<rect x="6" y="-14" width="10" height="6" fill="' + P + '" stroke="' + I + '" stroke-width="1.8"/>' +
+        '<path d="M -8 -21 Q 0 -25 8 -21 M -11 -17.5 Q 0 -22.5 11 -17.5" fill="none" stroke="' + BLUE + '" stroke-width="2.2" stroke-linecap="round"/>',
+
+      briefcase:
+        '<rect x="-18" y="-8" width="36" height="24" rx="3.5" fill="' + BLUE + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<path d="M -7 -8 L -7 -15 L 7 -15 L 7 -8" fill="none" stroke="' + I + '" stroke-width="3.6"/>' +
+        '<rect x="-3.5" y="0" width="7" height="6" fill="' + GOLD + '" stroke="' + I + '" stroke-width="1.6"/>' +
+        '<line x1="-18" y1="3" x2="-3.5" y2="3" stroke="' + I + '" stroke-width="1.6" opacity=".55"/>' +
+        '<line x1="3.5" y1="3" x2="18" y2="3" stroke="' + I + '" stroke-width="1.6" opacity=".55"/>',
+
+      bulb:
+        '<circle cx="0" cy="-3" r="12.5" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<path d="M -6 7 L -5 14 L 5 14 L 6 7 Z" fill="' + P + '" stroke="' + I + '" stroke-width="2"/>' +
+        '<rect x="-4.5" y="14" width="9" height="3" fill="' + I + '"/>' +
+        '<path d="M -3.5 -6 Q 0 -10 3.5 -6" fill="none" stroke="' + I + '" stroke-width="1.8" stroke-linecap="round"/>' +
+        '<path d="M -19 -14 L -14 -11 M 19 -14 L 14 -11 M 0 -22 L 0 -17.5 M -21 0 L -16 0 M 21 0 L 16 0" fill="none" stroke="' + GOLD + '" stroke-width="3" stroke-linecap="round"/>',
+
+      pencil:
+        '<g transform="rotate(-40)">' +
+        '<rect x="-4.5" y="-20" width="9" height="28" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2.2"/>' +
+        '<path d="M -4.5 8 L 0 18 L 4.5 8 Z" fill="' + P + '" stroke="' + I + '" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M -1.6 14.4 L 0 18 L 1.6 14.4 Z" fill="' + I + '"/>' +
+        '<rect x="-4.5" y="-24" width="9" height="4" fill="' + RED + '" stroke="' + I + '" stroke-width="1.8"/>' +
+        '</g>' +
+        '<path d="M -16 16 q 4 -3 8 0 q 4 3 8 0 q 4 -3 8 0" fill="none" stroke="' + I + '" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<path d="M -12 21 q 4 -3 8 0 q 4 3 8 0" fill="none" stroke="' + I + '" stroke-width="2.6" stroke-linecap="round"/>',
+
+      factory:
+        '<path d="M -19 18 L -19 -2 L -13 -2 L -13 -14 L -8 -14 L -8 -2 L -3 -2 L -3 4 L 5 -3 L 5 4 L 13 -3 L 13 18 Z" fill="' + TEAL + '" stroke="' + I + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<rect x="-16" y="4" width="5" height="5" fill="' + GOLD + '" stroke="' + I + '" stroke-width="1.4"/>' +
+        '<rect x="-8" y="4" width="5" height="5" fill="' + GOLD + '" stroke="' + I + '" stroke-width="1.4"/>' +
+        '<circle cx="-10.5" cy="-19" r="3" fill="none" stroke="' + I + '" stroke-width="2"/>' +
+        '<circle cx="-5" cy="-22" r="2.2" fill="none" stroke="' + I + '" stroke-width="1.8"/>',
+
+      bars:
+        '<rect x="-16" y="2" width="8" height="16" fill="' + RED + '" stroke="' + I + '" stroke-width="2"/>' +
+        '<rect x="-4" y="-8" width="8" height="26" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2"/>' +
+        '<rect x="8" y="-16" width="8" height="34" fill="' + TEAL + '" stroke="' + I + '" stroke-width="2"/>',
+
+      funnel:
+        '<path d="M -18 -16 L 18 -16 L 5 2 L 5 16 L -5 20 L -5 2 Z" fill="' + PURPLE + '" stroke="' + I + '" stroke-width="2.4" stroke-linejoin="round"/>',
+
+      hammer:
+        '<g transform="rotate(38)">' +
+        '<rect x="-3.5" y="-6" width="7" height="26" rx="2" fill="' + GOLD + '" stroke="' + I + '" stroke-width="2"/>' +
+        '<path d="M -13 -18 L 8 -18 Q 13 -18 13 -12 L 13 -7 L 6 -7 L 6 -4 L -6 -4 L -6 -7 L -13 -7 Z" fill="#8A93A3" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '</g>',
+
+      loop:
+        '<path d="M -14 -4 A 14 14 0 1 1 -4 13" fill="none" stroke="' + GREEN + '" stroke-width="5.5" stroke-linecap="round"/>' +
+        '<path d="M -12 20 L -4 13 L -13 7 Z" fill="' + GREEN + '" stroke="' + I + '" stroke-width="1.6" stroke-linejoin="round"/>',
+
+      plane:
+        '<path d="M -20 2 L 20 -14 L 4 18 L -1 5 Z" fill="' + BLUE + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<path d="M -1 5 L 20 -14 L 2 8 L 2 15 Z" fill="#2A5EA8" stroke="' + I + '" stroke-width="1.8" stroke-linejoin="round"/>',
+
+      rocket:
+        '<path d="M -9 8 L -17 17 L -8 14 Z" fill="' + GOLD + '" stroke="' + I + '" stroke-width="1.8" stroke-linejoin="round"/>' +
+        '<path d="M 9 8 L 17 17 L 8 14 Z" fill="' + GOLD + '" stroke="' + I + '" stroke-width="1.8" stroke-linejoin="round"/>' +
+        '<path d="M 0 -21 Q 10 -9 8.5 5 L 6.5 12 L -6.5 12 L -8.5 5 Q -10 -9 0 -21 Z" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<circle cx="0" cy="-4" r="4.6" fill="' + BLUE + '" stroke="' + I + '" stroke-width="1.8"/>' +
+        '<path d="M -3.4 12 Q 0 22 3.4 12 Z" fill="' + GOLD + '" stroke="' + I + '" stroke-width="1.8" stroke-linejoin="round"/>',
+
+      nomeeting:
+        '<path d="M -16 -13 Q -16 -19 -10 -19 L 10 -19 Q 16 -19 16 -13 L 16 -1 Q 16 5 10 5 L -2 5 L -11 13 L -9.5 5 Q -16 5 -16 -1 Z" fill="' + BLUE + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<line x1="-19" y1="16" x2="19" y2="-19" stroke="' + RED + '" stroke-width="4.2" stroke-linecap="round"/>',
+
+      dice:
+        '<rect x="-15" y="-15" width="30" height="30" rx="6" fill="' + PURPLE + '" stroke="' + I + '" stroke-width="2.4"/>' +
+        '<circle cx="-7" cy="-7" r="2.9" fill="' + P + '"/>' +
+        '<circle cx="7" cy="-7" r="2.9" fill="' + P + '"/>' +
+        '<circle cx="0" cy="0" r="2.9" fill="' + P + '"/>' +
+        '<circle cx="-7" cy="7" r="2.9" fill="' + P + '"/>' +
+        '<circle cx="7" cy="7" r="2.9" fill="' + P + '"/>',
+
+      code:
+        '<path d="M -8 -9 L -17 0 L -8 9" fill="none" stroke="' + TEAL + '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M 8 -9 L 17 0 L 8 9" fill="none" stroke="' + TEAL + '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M 3.5 -12 L -3.5 12" fill="none" stroke="' + GOLD + '" stroke-width="3.6" stroke-linecap="round"/>',
+
+      team:
+        '<path d="M -18 17 Q -18 1 -9 1 Q 0 1 0 17 Z" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<circle cx="-9" cy="-8" r="6.6" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2"/>' +
+        '<path d="M 1 18 Q 1 4 8.5 4 Q 16 4 16 18 Z" fill="' + BLUE + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<circle cx="8.5" cy="-5" r="5.9" fill="' + BLUE + '" stroke="' + I + '" stroke-width="2.2"/>' +
+        '<path d="M 13 -17 L 16 -21 M 17 -12 L 22 -14 M 8 -19 L 9 -23" fill="none" stroke="' + GOLD + '" stroke-width="2.6" stroke-linecap="round"/>'
+    };
+
+    function icon(name, size, x, y) {
+      var pos = x === undefined ? "" : ' x="' + x + '" y="' + y + '"';
+      return '<svg width="' + size + '" height="' + size + '" viewBox="-24 -24 48 48" aria-hidden="true"' +
+        pos + '>' + (ICONS[name] || "") + "</svg>";
+    }
+
+    // A little launcher sending off a paper plane, tucked beside the title.
+    function launcherDoodle() {
+      return '<svg class="doodle" width="140" height="130" viewBox="0 0 140 130" aria-hidden="true">' +
+        '<g fill="none" stroke="' + I + '" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="' + sketchyCircle(36, 44, 10, 940, 0.9) + '" fill="' + P + '"/>' +
+        '<path d="M 29 36 Q 32 31 36 34 M 36 34 Q 39 30 44 35" stroke-width="2"/>' +
+        '<circle cx="32.5" cy="42.5" r="1.3" fill="' + I + '" stroke="none"/>' +
+        '<circle cx="39.5" cy="42.5" r="1.3" fill="' + I + '" stroke="none"/>' +
+        '<path d="M 32.5 48 Q 36 51 39.5 48" stroke-width="2"/>' +
+        '<path d="M 28 55 L 44 55 L 47.5 76 L 24.5 76 Z" fill="' + P + '"/>' +
+        '<path d="M 28 62 L 44 62" stroke-width="1.6" opacity=".4"/>' +
+        '<path d="M 31 76 L 27 100 M 41 76 L 45 100"/>' +
+        '<path d="M 27 100 L 20 100 M 45 100 L 52 100"/>' +
+        '<path d="M 28 59 L 17 70 L 24 74"/>' +
+        '<path d="M 44 58 L 60 42 L 63 38"/>' +
+        '</g>' +
+        '<path d="M 66 35 Q 82 18 102 13" fill="none" stroke="' + I + '" stroke-width="1.8" stroke-dasharray="4 5" stroke-linecap="round" opacity=".6"/>' +
+        '<g transform="translate(112, 10) rotate(-14)">' +
+        '<path d="M -12 1 L 12 -9 L 2.5 11 L -0.5 3.5 Z" fill="' + BLUE + '" stroke="' + I + '" stroke-width="1.7" stroke-linejoin="round"/>' +
+        '<path d="M -0.5 3.5 L 12 -9 L 1 4.5 L 1 8.5 Z" fill="#2A5EA8" stroke="' + I + '" stroke-width="1.3" stroke-linejoin="round"/>' +
+        '</g>' +
+        '<g stroke="' + RED + '" stroke-width="2.2" stroke-linecap="round" opacity=".85" fill="none">' +
+        '<path d="M 76 40 L 82 40 M 79 37 L 79 43"/>' +
+        '<path d="M 96 30 L 100 30 M 98 28 L 98 32"/>' +
+        '</g>' +
+        '</svg>';
+    }
+
+    // ------------------------------------------------------------
+    // Board markup
+    // ------------------------------------------------------------
+
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function delay(seconds) {
+      return reduceMotion ? "" : "animation-delay:" + seconds.toFixed(2) + "s;";
+    }
+
+    var pathPoints = [[186, 150]]
+      .concat(STEPS.slice(0, 4).map(function (s) { return [s.x, s.y]; }))
+      .concat([[1290, 150], [1290, 345]])
+      .concat(STEPS.slice(4).map(function (s) { return [s.x, s.y]; }))
+      .concat([[100, 345], [100, 528], [144, 528]]);
+
+    var ROUTE_ARROWS = [
+      [400, 152, 4], [1000, 148, -4], [1286, 252, 90], [1000, 348, 184],
+      [400, 342, 176], [104, 440, 90], [128, 528, 0]
+    ];
+
+    function boardSvg() {
+      var out = '<svg width="' + WORLD.w + '" height="' + WORLD.h + '" aria-hidden="true">';
+
+      // the route: one flowing hand-drawn dashed curve
+      out += '<g class="ink" style="animation-delay:.2s" fill="none" stroke="' + I + '" stroke-linecap="round">';
+      out += '<path d="' + smoothPath(pathPoints, 5) + '" stroke-width="5" stroke-dasharray="14 15" opacity=".92"/>';
+      ROUTE_ARROWS.forEach(function (a) {
+        out += '<path d="M ' + (a[0] - 12) + " " + (a[1] - 9) + " L " + (a[0] + 7) + " " + a[1] +
+          " L " + (a[0] - 12) + " " + (a[1] + 9) + '" transform="rotate(' + a[2] + ", " + a[0] + ", " + a[1] +
+          ')" stroke-width="4.5" opacity=".92"/>';
+      });
+      out += "</g>";
+
+      // sprint zone frame
+      out += '<g class="ink" style="animation-delay:.6s" fill="none" stroke="' + I + '" stroke-linecap="round">';
+      sketchyRect(ZONE.x, ZONE.y, ZONE.w, ZONE.h, 21).forEach(function (d) {
+        out += '<path d="' + d + '" stroke-width="5" opacity=".95"/>';
+      });
+      out += "</g>";
+
+      // column dividers
+      out += '<g class="dividers" stroke="' + I + '" fill="none">';
+      DAYS.slice(0, 4).forEach(function (d, i) {
+        out += '<path d="' + sketchyLine(d.x + 107, ZONE.y + 52, d.x + 107, ZONE.y + 344, 70 + i) +
+          '" stroke-width="3" stroke-dasharray="8 10"/>';
+      });
+      out += "</g>";
+
+      // lap-back swoop
+      out += '<g class="ink" style="animation-delay:1.2s" fill="none">';
+      out += '<path d="M 1120 ' + (zoneBot + 4) + " C 1122 " + (zoneBot + 62) + ", 1046 " + (zoneBot + 78) +
+        ", 900 " + (zoneBot + 80) + " L 480 " + (zoneBot + 82) + " C 342 " + (zoneBot + 82) + ", 264 " +
+        (zoneBot + 66) + ", 261 " + (zoneBot + 14) + '" stroke="' + I + '" stroke-width="5" stroke-linecap="round" opacity=".95"/>';
+      out += '<path d="M 246 ' + (zoneBot + 42) + " L 261 " + (zoneBot + 8) + " L 280 " + (zoneBot + 40) +
+        '" stroke="' + I + '" stroke-width="5" stroke-linecap="round" fill="none"/>';
+      out += "</g>";
+
+      // the line above the advanced strip
+      out += '<path d="' + sketchyLine(ZONE.x + 16, 852, ZONE.x + ZONE.w - 16, 849, 731, 2.5) +
+        '" stroke="' + I + '" stroke-width="3.5" stroke-linecap="round" opacity=".85" fill="none"/>';
+
+      return out + "</svg>";
+    }
+
+    function startBanner() {
+      return '<div class="start-banner ink">' +
+        '<svg width="196" height="58" viewBox="0 0 196 58">' +
+        '<polygon points="4,6 170,3 192,29 170,55 6,52" fill="' + I + '"/>' +
+        '<text x="88" y="36" text-anchor="middle" fill="' + P + '" font-size="18" ' +
+        'font-family="\'Permanent Marker\', cursive" letter-spacing=".03em">YOUR BIG IDEA</text>' +
+        "</svg></div>";
+    }
+
+    function stepNode(s, i) {
+      var clickable = !!s.url;
+      var tag = clickable ? "a" : "div";
+      var attrs = clickable
+        ? ' href="' + s.url + '" class="step scribble tilebtn" aria-label="' + (s.full || s.title) + '"'
+        : ' class="step scribble"';
+
+      var label = clickable
+        ? '<span class="chip">' + s.title + " →</span>"
+        : s.title;
+
+      return "<" + tag + attrs + ' style="left:' + s.x + "px;top:" + s.y + "px;" + delay(0.15 + i * 0.07) + '">' +
+        '<svg width="122" height="104" viewBox="-61 -61 122 104" aria-hidden="true">' +
+        '<path class="step-face" d="' + sketchyCircle(0, 0, 38, i * 11 + 3) + '" stroke="' + I + '" stroke-width="4.5"/>' +
+        '<path d="' + sketchyCircle(0, 0, 38, i * 11 + 7) + '" fill="none" stroke="' + I + '" stroke-width="1.8" opacity=".28"/>' +
+        '<circle cx="31" cy="-31" r="15" fill="' + I + '"/>' +
+        '<text x="31" y="-24.5" text-anchor="middle" fill="' + P + '" font-size="17" font-family="\'Permanent Marker\', cursive">' + s.n + "</text>" +
+        icon(s.icon, 52, -26, -26) +
+        "</svg>" +
+        '<span class="step-label">' + label + "</span>" +
+        "</" + tag + ">";
+    }
+
+    function dayColumn(d, i) {
+      var out = '<a href="' + d.url + '" class="day scribble tilebtn" aria-label="Day ' + d.n + ": " + d.word + '"' +
+        ' style="left:' + d.x + "px;top:" + DAY_Y + "px;" + delay(0.9 + i * 0.07) + '">' +
+        '<span class="day-inner">' +
+        '<span class="day-mark">' + icon(d.icon, 27) + '<span class="day-word">' + d.word + "</span></span>" +
+        '<span class="chip">DAY ' + d.n + " →</span>" +
+        "</span></a>";
+
+      d.moves.forEach(function (m, j) {
+        var tilt = ((i * 7 + j * 11) % 3) - 1;
+        var box = sketchyRect(1, 1, 17, 17, 300 + i * 10 + j, 2).map(function (dd) {
+          return '<path d="' + dd + '" fill="none" stroke="' + I + '" stroke-width="3" stroke-linecap="round"/>';
+        }).join("");
+
+        out += '<div class="move scribble" style="left:' + d.x + "px;top:" + (MOVE_Y0 + j * MOVE_DY) + "px;" +
+          delay(1.05 + i * 0.07 + j * 0.05) + '">' +
+          '<div class="move-row" style="transform:rotate(' + tilt + 'deg)">' +
+          '<svg width="22" height="22" viewBox="-2 -2 23 23" aria-hidden="true">' + box + "</svg>" +
+          "<span>" + m + "</span>" +
+          "</div></div>";
+      });
+
+      return out;
+    }
+
+    function advancedStrip() {
+      var out = '<div class="adv-label ink" style="left:' + (ZONE.x + 102) + "px;top:908px;" + delay(1.25) + '">' +
+        '<div class="adv-label-row">' + icon("rocket", 30) + "<span>ADVANCED</span></div>" +
+        '<div class="adv-label-sub">go even faster</div>' +
+        "</div>";
+
+      ADVANCED.forEach(function (a, idx) {
+        var badge = '<svg width="48" height="48" viewBox="-24 -24 48 48" aria-hidden="true">' +
+          '<path d="' + sketchyCircle(0, 0, 20.5, 500 + idx * 7, 1.2) + '" fill="' + P + '" stroke="' + I + '" stroke-width="3.2"/>' +
+          icon(a.icon, 29, -14.5, -14.5) + "</svg>";
+
+        var body = a.url
+          ? '<a href="' + a.url + '" class="tilebtn"' +
+            (/^https?:/.test(a.url) ? ' target="_blank" rel="noopener"' : "") +
+            ' aria-label="' + a.label + '"><span class="chip">' + a.label + " →</span></a>"
+          : '<span class="plain">' + a.label + "</span>";
+
+        out += '<div class="adv-item scribble" style="left:' + (452 + idx * 212) + "px;top:908px;" +
+          delay(1.35 + idx * 0.08) + '">' + badge + body + "</div>";
+      });
+
+      return out;
+    }
+
+    function render() {
+      var html = "";
+
+      // header rule under the title section
+      html += '<svg width="820" height="12" viewBox="0 0 820 12" aria-hidden="true" ' +
+        'style="position:absolute;left:720px;top:178px;transform:translateX(-50%);pointer-events:none">' +
+        '<path d="' + sketchyLine(10, 6, 810, 5, 987, 2) + '" fill="none" stroke="' + I +
+        '" stroke-width="3" stroke-linecap="round" opacity=".8"/></svg>';
+
+      // board title: two-tone stack + mascot
+      html += '<div class="title-block ink"><div class="title-inner"><div class="title-stack">' +
+        launcherDoodle() +
+        '<h1><span class="t1">SHIP</span><span class="t2">CONFIDENTLY</span></h1>' +
+        "</div>" +
+        '<p class="title-sub">A playbook for lean AI-native teams to de-risk big ideas, fast.</p>' +
+        "</div></div>";
+
+      // everything below the title band
+      html += '<div class="board" style="width:' + WORLD.w + 'px;height:1140px">';
+      html += boardSvg();
+      html += startBanner();
+      html += STEPS.map(stepNode).join("");
+      html += '<h2 class="sprint-header" style="left:' + (ZONE.x + ZONE.w / 2) + "px;top:" + (ZONE.y - 2) +
+        'px">THE WEEKLY SPRINT</h2>';
+      html += '<div class="lap-label ink" style="left:695px;top:' + (zoneBot + 106) + "px;" + delay(1.25) + '">' +
+        "repeat! <b>ONE LAP = ONE WEEK</b> · as many laps as it takes</div>";
+      html += DAYS.map(dayColumn).join("");
+      html += advancedStrip();
+      html += "</div>";
+
+      return html;
+    }
+
+    var stage = document.getElementById("stage");
+    var world = document.getElementById("world");
+    world.style.width = WORLD.w + "px";
+    world.style.height = WORLD.h + "px";
+    world.innerHTML = render();
+
+    // ------------------------------------------------------------
+    // Pan and zoom: one transform on the world, driven by pointers.
+    // ------------------------------------------------------------
+
+    // low enough that the whole board still fits on a phone screen
+    var MIN_K = 0.18;
+    var MAX_K = 2.6;
+    var view = { x: 0, y: 0, k: 1 };
+
+    function apply() {
+      world.style.transform = "translate(" + view.x + "px," + view.y + "px) scale(" + view.k + ")";
+    }
+
+    function fitView() {
+      var r = stage.getBoundingClientRect();
+      var pad = r.width < 700 ? 20 : 55;
+      var k = Math.min((r.width - pad * 2) / WORLD.w, (r.height - pad * 2) / WORLD.h, 1.2);
+      view.k = Math.max(k, MIN_K);
+      view.x = (r.width - WORLD.w * view.k) / 2;
+      view.y = (r.height - WORLD.h * view.k) / 2;
+      apply();
+    }
+
+    // Zoom about a point in stage-local coordinates.
+    function zoomAt(px, py, factor) {
+      var k = Math.min(MAX_K, Math.max(MIN_K, view.k * factor));
+      var scale = k / view.k;
+      view.x = px - (px - view.x) * scale;
+      view.y = py - (py - view.y) * scale;
+      view.k = k;
+      apply();
+    }
+
+    fitView();
+    window.addEventListener("resize", fitView);
+    setTimeout(function () { stage.classList.add("ready"); }, 60);
+
+    stage.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      var r = stage.getBoundingClientRect();
+      zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0016));
+    }, { passive: false });
+
+    var pointers = new Map();
+    var drag = null;
+    var pinch = null;
+    var moved = false;
+    var suppressClick = false;
+
+    function pointerList() {
+      return Array.from(pointers.values());
+    }
+
+    stage.addEventListener("pointerdown", function (e) {
+      if (e.target.closest("[data-ui]")) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      moved = false;
+
+      if (pointers.size === 2) {
+        var p = pointerList();
+        var r = stage.getBoundingClientRect();
+        pinch = {
+          dist: Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1,
+          k: view.k,
+          mx: (p[0].x + p[1].x) / 2 - r.left,
+          my: (p[0].y + p[1].y) / 2 - r.top
+        };
+        drag = null;
+      } else if (pointers.size === 1) {
+        drag = { sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y };
+        stage.classList.add("dragging");
+      }
+    });
+
+    window.addEventListener("pointermove", function (e) {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pinch && pointers.size >= 2) {
+        var p = pointerList();
+        var dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1;
+        moved = true;
+        var k = Math.min(MAX_K, Math.max(MIN_K, pinch.k * (dist / pinch.dist)));
+        var scale = k / view.k;
+        view.x = pinch.mx - (pinch.mx - view.x) * scale;
+        view.y = pinch.my - (pinch.my - view.y) * scale;
+        view.k = k;
+        apply();
+        return;
+      }
+
+      if (!drag) return;
+      var dx = e.clientX - drag.sx;
+      var dy = e.clientY - drag.sy;
+      if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      view.x = drag.ox + dx;
+      view.y = drag.oy + dy;
+      apply();
+    });
+
+    function endPointer(e) {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.delete(e.pointerId);
+      if (pointers.size < 2) pinch = null;
+      if (pointers.size === 0) {
+        drag = null;
+        stage.classList.remove("dragging");
+        if (moved) {
+          // a drag that ends on a link should not follow it
+          suppressClick = true;
+          setTimeout(function () { suppressClick = false; }, 0);
+        }
+      }
+    }
+    window.addEventListener("pointerup", endPointer);
+    window.addEventListener("pointercancel", endPointer);
+
+    stage.addEventListener("click", function (e) {
+      if (!suppressClick) return;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
+
+    document.getElementById("zoom-in").addEventListener("click", function () {
+      var r = stage.getBoundingClientRect();
+      zoomAt(r.width / 2, r.height / 2, 1.35);
+    });
+    document.getElementById("zoom-out").addEventListener("click", function () {
+      var r = stage.getBoundingClientRect();
+      zoomAt(r.width / 2, r.height / 2, 1 / 1.35);
+    });
+    document.getElementById("zoom-fit").addEventListener("click", fitView);
+  })();
+  </script>
 </body>
 </html>
