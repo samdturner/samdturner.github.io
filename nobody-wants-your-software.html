@@ -29,15 +29,7 @@
       --loss: #cf4f2e; --good: #2f8f4e; --warn: #c07818; --plan: #0e8074;
       --mute: #8a8378;
     }
-    @media (prefers-color-scheme: dark) {
-      .sketch-fig {
-        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
-        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.58);
-        --wk: #c99b67;
-        --loss: #f0795a; --good: #6ecf95; --warn: #e8a24e; --plan: #35b3a4;
-        --mute: #7a7368;
-      }
-    }
+
     .sketch-fig .paper {
       background: var(--paper);
       background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
@@ -244,9 +236,7 @@
       --bad: #cf4f2e;
       --ok: #2f8f4e;
     }
-    @media (prefers-color-scheme: dark) {
-      .measures.pairs { --bad: #f0795a; --ok: #6ecf95; }
-    }
+
     .measures.pairs thead th:nth-child(2),
     .measures.pairs thead th:nth-child(3) { padding-left: 15px; }
     .measures.pairs tbody th { padding-right: 12px; }
@@ -336,9 +326,7 @@
       margin: 20px 0 30px; padding: 0;
       --marker: #0e8074;
     }
-    @media (prefers-color-scheme: dark) {
-      .audit { --marker: #35b3a4; }
-    }
+
     .audit li {
       position: relative; padding-left: 46px; margin: 16px 0;
       line-height: 1.62;
@@ -386,6 +374,8 @@
 <body>
   <div class="post-layout">
     <aside class="toc" aria-label="Table of contents">
+      <a class="bk-ghost" href="index.html#board"><span class="arw">←</span> Full playbook</a>
+
       <p class="toc-title">Contents</p>
       <ul>
         <li><a href="#statement">Write the job statement</a></li>
@@ -398,7 +388,7 @@
 
     <main class="post-main">
       <article class="post">
-        <p class="post-eyebrow"><time datetime="2026-08-10">August 10, 2026</time> &middot; 5 min read</p>
+        <p class="post-eyebrow">5 min read</p>
         <h1 class="post-title">Nobody Wants Your Software</h1>
 
         <p>

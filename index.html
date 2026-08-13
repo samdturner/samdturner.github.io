@@ -330,7 +330,7 @@
     .rec-author {
       margin: 0 0 8px;
       font-size: 0.88rem;
-      color: var(--accent);
+      color: var(--muted);
     }
     .rec-desc {
       margin: 0;
@@ -1411,6 +1411,8 @@
     });
 
     document.getElementById("cover-btn").addEventListener("click", openPreview);
+    // articles link back with #board, meaning "open the playbook again"
+    if (location.hash === "#board") openPreview();
     Array.prototype.forEach.call(document.querySelectorAll(".open-board"), function (b) {
       b.addEventListener("click", openPreview);
     });

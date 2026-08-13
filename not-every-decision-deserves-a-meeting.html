@@ -34,16 +34,7 @@
       --toast-bg: #ffffff; --toast-edge: #e2e5e8; --toast-fg: #21262b;
       --toast-undo: #0d7a68; --toast-dead: #a4aab0;
     }
-    @media (prefers-color-scheme: dark) {
-      .sketch-fig {
-        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
-        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.58);
-        --wk: #c99b67;
-        --blue: #6f9bff; --loss: #f0795a; --good: #6ecf95; --warn: #e8a24e; --plan: #35b3a4;
-        --card-bg: #1a1d21; --card-fg: #d1d2d3; --card-muted: #9a9b9e;
-        --card-line: #35383d; --card-link: #6aaae4;
-      }
-    }
+
     .sketch-fig .paper {
       background: var(--paper);
       background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
@@ -261,9 +252,7 @@
       margin: 26px 0 32px;
       --slow: #cf4f2e; --fast: #0e8074;
     }
-    @media (prefers-color-scheme: dark) {
-      .matrix { --slow: #f0795a; --fast: #35b3a4; }
-    }
+
     .matrix .col-head, .matrix .row-head {
       font-family: var(--font-head); font-size: 0.68rem; font-weight: 700;
       letter-spacing: 0.11em; text-transform: uppercase; color: var(--muted);
@@ -311,6 +300,8 @@
 <body>
   <div class="post-layout">
     <aside class="toc" aria-label="Table of contents">
+      <a class="bk-ghost" href="index.html#board"><span class="arw">←</span> Full playbook</a>
+
       <p class="toc-title">Contents</p>
       <ul>
         <li><a href="#urgency">1. Urgency</a></li>
@@ -322,7 +313,7 @@
 
     <main class="post-main">
       <article class="post">
-        <p class="post-eyebrow"><time datetime="2026-08-06">August 6, 2026</time> &middot; 6 min read</p>
+        <p class="post-eyebrow">6 min read</p>
         <h1 class="post-title">Not Every Decision Deserves a Meeting</h1>
 
         <p>

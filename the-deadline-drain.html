@@ -26,14 +26,7 @@
       --track: rgba(120,90,50,.42); --wk: #b28a5c;
       --blue: #2563eb; --loss: #cf4f2e; --good: #2f8f4e; --warn: #c07818; --plan: #0e8074;
     }
-    @media (prefers-color-scheme: dark) {
-      .sketch-fig {
-        --paper: #1c1a13; --paper-dot: rgba(220,200,160,.13);
-        --ink: #ece5d5; --ink-soft: rgba(210,190,155,.58);
-        --track: rgba(210,180,130,.35); --wk: #c99b67;
-        --blue: #6f9bff; --loss: #f0795a; --good: #6ecf95; --warn: #e8a24e; --plan: #35b3a4;
-      }
-    }
+
     .sketch-fig .paper {
       background: var(--paper);
       background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
@@ -87,9 +80,7 @@
       margin: 20px 0 30px; padding: 0;
       --hazard: #cf4f2e;
     }
-    @media (prefers-color-scheme: dark) {
-      .reasons { --hazard: #f0795a; }
-    }
+
     .reasons li {
       position: relative; padding-left: 46px; margin: 16px 0;
       line-height: 1.62;
@@ -116,9 +107,7 @@
       margin: 20px 0 30px; padding: 0;
       --tbgood: #0e8074;
     }
-    @media (prefers-color-scheme: dark) {
-      .timebox { --tbgood: #35b3a4; }
-    }
+
     .timebox li {
       position: relative; padding-left: 46px; margin: 16px 0;
       line-height: 1.62;
@@ -173,9 +162,7 @@
       counter-reset: q; margin: 22px 0 32px; font-size: 0.97rem;
       --tbgood: #0e8074;
     }
-    @media (prefers-color-scheme: dark) {
-      .qualities { --tbgood: #35b3a4; }
-    }
+
     .qualities thead th {
       text-align: left;
       font-family: var(--font-head); font-weight: 700;
@@ -252,6 +239,8 @@
 <body>
   <div class="post-layout">
     <aside class="toc" aria-label="Table of contents">
+      <a class="bk-ghost" href="index.html#board"><span class="arw">←</span> Full playbook</a>
+
       <p class="toc-title">Contents</p>
       <ul>
         <li><a href="#phase-1">Phase 1: Everyone loves it!</a></li>
@@ -267,7 +256,7 @@
 
     <main class="post-main">
       <article class="post">
-        <p class="post-eyebrow"><time datetime="2026-08-04">August 4, 2026</time> &middot; 7 min read</p>
+        <p class="post-eyebrow">7 min read</p>
         <h1 class="post-title">Deadline Drain: Why Deadlines Slow Teams Down, and What to Do Instead</h1>
 
         <p>

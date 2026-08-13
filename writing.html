@@ -39,10 +39,6 @@
       border: 1px solid var(--border);
       box-shadow: 0 6px 18px -8px rgba(15, 23, 42, .35);
     }
-    @media (prefers-color-scheme: dark) {
-      .rail-photo { box-shadow: 0 6px 18px -8px rgba(0, 0, 0, .8); }
-    }
-
     .rail-name {
       font-family: var(--font-head);
       font-size: 1.44rem;
@@ -168,18 +164,7 @@
       overflow: hidden;
       transition: border-color .18s ease, transform .18s ease;
     }
-    @media (prefers-color-scheme: dark) {
-      .thumb {
-        --paper: #1c1a13;
-        --paper-dot: rgba(220, 200, 160, .13);
-        --edge: rgba(201, 155, 103, .38);
-        --ink: #ece5d5;
-        --ink-soft: rgba(210, 190, 155, .42);
-        --plan: #35b3a4;
-        --loss: #f0795a;
-        --good: #6ecf95;
-      }
-    }
+
     .post > a:hover .thumb {
       border-color: color-mix(in srgb, var(--accent) 55%, transparent);
       transform: translateY(-2px);

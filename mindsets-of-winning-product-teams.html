@@ -34,9 +34,7 @@
       gap: 14px; margin: 22px 0 30px;
       --gb-good: #2f8f4e; --gb-bad: #cf4f2e;
     }
-    @media (prefers-color-scheme: dark) {
-      .gb { --gb-good: #6ecf95; --gb-bad: #f0795a; }
-    }
+
     .gb-card {
       --c: var(--gb-bad);
       border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
@@ -68,9 +66,7 @@
       font-size: 0.98rem; line-height: 1.5;
       --s-good: #2f8f4e; --s-bad: #cf4f2e;
     }
-    @media (prefers-color-scheme: dark) {
-      .summary { --s-good: #6ecf95; --s-bad: #f0795a; }
-    }
+
     .summary th, .summary td {
       text-align: left; vertical-align: baseline;
       padding: 9px 14px;
@@ -110,6 +106,8 @@
 <body>
   <div class="post-layout">
     <aside class="toc" aria-label="Table of contents">
+      <a class="bk-ghost" href="index.html#board"><span class="arw">←</span> Full playbook</a>
+
       <p class="toc-title">Contents</p>
       <ul>
         <li><a href="#at-a-glance">All sixteen at a glance</a></li>
@@ -137,7 +135,7 @@
 
     <main class="post-main">
       <article class="post">
-        <p class="post-eyebrow">Essay &middot; <time datetime="2026-08-03">August 3, 2026</time> &middot; 8 min read</p>
+        <p class="post-eyebrow">8 min read</p>
         <h1 class="post-title">Mindsets of Winning Product Teams</h1>
 
         <p>
@@ -184,7 +182,7 @@
             Ownership does not just span product spec to passing tests. It starts with defining the
             user problem, then designing the solution, implementing it, measuring the impact, and
             iterating on it. The person who works this way is called a
-            <a href="/product-engineering.html">product engineer</a>.
+            <a href="product-engineering.html">product engineer</a>.
           </p>
           <p>
             When one person can carry an idea from user interview to shipped feature, there are no
@@ -243,7 +241,7 @@
           </p>
           <p>
             (More on how to size those bets in
-            <a href="/size-your-bets-by-your-level-of-conviction.html">Size Your Bets by Your Level of
+            <a href="size-your-bets-by-your-level-of-conviction.html">Size Your Bets by Your Level of
             Conviction</a>.)
           </p>
 
