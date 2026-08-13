@@ -9,6 +9,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&display=swap" />
+  <script>
+    // ?style=paper|slate|studio — set before first paint so the page
+    // never flashes the wrong palette
+    (function () {
+      var STYLES = ["paper", "slate", "studio", "blueprint", "sunrise", "canvas",
+                    "mint", "bloom", "citrus",
+                    "slate-harbor", "slate-stone", "slate-graph",
+                    "sunrise-dawn", "sunrise-amber", "sunrise-coast"];
+      var want = (location.search.match(/[?&]style=([^&]*)/) || [])[1];
+      want = want ? decodeURIComponent(want) : "";
+      document.documentElement.setAttribute(
+        "data-style", STYLES.indexOf(want) > -1 ? want : STYLES[0]);
+    })();
+  </script>
   <style>
     /* ============================================================
        Home page: who I am, what the playbook is, and the board.
@@ -22,6 +36,8 @@
        framework, no build step.
        ============================================================ */
 
+    /* The board keeps its own palette in every style: it is a sheet
+       of white paper, and the page is the surface it lies on. */
     :root {
       --paper: #FFFFFF;
       --ink: #141414;
@@ -30,78 +46,355 @@
       --sticky-soft: #FFF5C2;
       --marker: 'Permanent Marker', 'Marker Felt', 'Comic Sans MS', cursive;
       --hand: 'Patrick Hand', 'Segoe Print', 'Bradley Hand', cursive;
+
+      /* hero type colours, taken from ashmaurya.com: near-black
+         headline over a mid-grey subtitle. The dark styles below
+         hand these back to their own palette. */
+      --hero-title: #171614;
+      --hero-sub: #484848;
     }
 
-    /* ---- top bar: sits on the page's own background, ruled off
-           edge to edge while its contents line up with the fold ---- */
+    /* ============================================================
+       Three page styles, chosen with ?style=. Each one redefines
+       the site's tokens from style.css, so it beats both the light
+       defaults and the dark-mode block there. Add a style by
+       copying a block and listing its name in the head script.
+       ============================================================ */
+
+    /* PAPER — warm desk the board is lying on, faint dot grid */
+    :root[data-style="paper"] {
+      --bg: #F8F4EC;
+      --fg: #423B31;
+      --heading: #1E1A15;
+      --muted: #7D7466;
+      --accent: #0F7A6E;
+      --border: rgba(150, 128, 96, .32);
+      --page-art: radial-gradient(rgba(124, 104, 70, .17) 1.15px, transparent 1.15px);
+      --page-art-size: 22px 22px;
+      --card-ring: rgba(92, 72, 44, .18);
+      --card-shadow: 0 28px 60px -36px rgba(86, 64, 32, .6);
+      --card-radius: 16px;
+    }
+
+    /* SLATE — cool editorial, light washing down from the top */
+    :root[data-style="slate"] {
+      --bg: #E9EDF3;
+      --fg: #414B59;
+      --heading: #0F141C;
+      --muted: #6C7787;
+      --accent: #3552C7;
+      --border: rgba(24, 38, 64, .14);
+      --page-art: linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0));
+      --page-art-size: 100% 420px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(16, 22, 32, .09);
+      --card-shadow: 0 34px 70px -38px rgba(20, 32, 54, .5);
+      --card-radius: 20px;
+    }
+
+    /* STUDIO — dark room, board lit like a whiteboard */
+    :root[data-style="studio"] {
+      --hero-title: var(--heading);
+      --hero-sub: var(--fg);
+      --bg: #0E1116;
+      --fg: #C2C9D4;
+      --heading: #F3F6FA;
+      --muted: #868FA0;
+      --accent: #2DD4BF;
+      --border: #222A34;
+      --page-art: radial-gradient(880px 560px at 20% 2%, rgba(45, 212, 191, .16), transparent 66%);
+      --page-art-size: 100% 900px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(255, 255, 255, .10);
+      --card-shadow: 0 40px 90px -40px rgba(0, 0, 0, .9);
+      --card-radius: 16px;
+    }
+
+    /* BLUEPRINT — drafting board, the sheet pinned to a ruled grid */
+    :root[data-style="blueprint"] {
+      --hero-title: var(--heading);
+      --hero-sub: var(--fg);
+      --bg: #0C1A2B;
+      --fg: #AFC2D8;
+      --heading: #EAF2FA;
+      --muted: #7E93AC;
+      --accent: #4EC3E0;
+      --border: #1E3450;
+      --page-art:
+        repeating-linear-gradient(0deg, rgba(126, 186, 232, .085) 0 1px, transparent 1px 44px),
+        repeating-linear-gradient(90deg, rgba(126, 186, 232, .085) 0 1px, transparent 1px 44px);
+      --card-ring: rgba(255, 255, 255, .13);
+      --card-shadow: 0 40px 90px -44px rgba(0, 0, 0, .95);
+      --card-radius: 14px;
+    }
+
+    /* SUNRISE — warm light coming in from the top left */
+    :root[data-style="sunrise"] {
+      --bg: #FDF1E7;
+      --fg: #4A3B33;
+      --heading: #241812;
+      --muted: #8A7264;
+      --accent: #C6452A;
+      --border: rgba(180, 120, 90, .28);
+      --page-art: radial-gradient(1100px 640px at 10% -12%, rgba(255, 173, 116, .6), transparent 62%);
+      --page-art-size: 100% 940px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(120, 70, 40, .14);
+      --card-shadow: 0 30px 64px -36px rgba(140, 80, 40, .5);
+      --card-radius: 18px;
+    }
+
+    /* CANVAS — a coloured wall, the board hung on it like a poster */
+    :root[data-style="canvas"] {
+      --hero-title: var(--heading);
+      --hero-sub: var(--fg);
+      --bg: #123A32;
+      --fg: #C3D6CE;
+      --heading: #F2F8F4;
+      --muted: #86A398;
+      --accent: #F0B429;
+      --border: #1E5045;
+      --page-art: radial-gradient(1000px 700px at 82% -4%, rgba(255, 255, 255, .075), transparent 64%);
+      --page-art-size: 100% 1000px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(255, 255, 255, .15);
+      --card-shadow: 0 44px 90px -40px rgba(0, 0, 0, .75);
+      --card-radius: 18px;
+    }
+
+    /* MINT — fresh green field, light breaking over the top right */
+    :root[data-style="mint"] {
+      --bg: #E8F5EE;
+      --fg: #38473F;
+      --heading: #0D1F17;
+      --muted: #6B8378;
+      --accent: #0E7A56;
+      --border: rgba(20, 80, 55, .16);
+      --page-art:
+        radial-gradient(900px 620px at 92% 0%, rgba(255, 255, 255, .9), transparent 62%),
+        radial-gradient(820px 620px at 2% 46%, rgba(58, 190, 138, .3), transparent 68%);
+      --page-art-size: 100% 1100px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(16, 70, 50, .14);
+      --card-shadow: 0 30px 66px -38px rgba(10, 60, 40, .45);
+      --card-radius: 18px;
+    }
+
+    /* BLOOM — two soft colour fields washing across a near-white page */
+    :root[data-style="bloom"] {
+      --bg: #FAF8FF;
+      --fg: #4A4358;
+      --heading: #1B1430;
+      --muted: #7D7590;
+      --accent: #7A45D8;
+      --border: rgba(80, 50, 130, .16);
+      --page-art:
+        radial-gradient(840px 580px at 2% -10%, rgba(168, 130, 255, .42), transparent 62%),
+        radial-gradient(780px 540px at 98% 4%, rgba(255, 148, 170, .36), transparent 62%);
+      --page-art-size: 100% 1000px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(60, 30, 110, .12);
+      --card-shadow: 0 34px 72px -38px rgba(70, 40, 130, .45);
+      --card-radius: 20px;
+    }
+
+    /* CITRUS — sunny paper, picking up the board's own sticky yellow */
+    :root[data-style="citrus"] {
+      --bg: #FFF6DC;
+      --fg: #4B4330;
+      --heading: #221C0C;
+      --muted: #8B7F5F;
+      --accent: #0E7C6B;
+      --border: rgba(150, 120, 40, .26);
+      --page-art:
+        radial-gradient(920px 620px at 94% -8%, rgba(255, 202, 84, .55), transparent 60%),
+        linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+      --page-art-size: 100% 1000px, 100% 420px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(120, 95, 20, .18);
+      --card-shadow: 0 30px 64px -36px rgba(120, 90, 20, .45);
+      --card-radius: 16px;
+    }
+
+    /* --- three takes on SLATE --- */
+
+    /* HARBOR — bluer and brighter, light off the water */
+    :root[data-style="slate-harbor"] {
+      --bg: #EDF2FA;
+      --fg: #3A4657;
+      --heading: #0C1524;
+      --muted: #66748A;
+      --accent: #2F6FE0;
+      --border: rgba(20, 45, 90, .13);
+      /* the blue field is kept low and light: it sat behind the
+         pitch before, taking the contrast out from under the text */
+      --page-art:
+        radial-gradient(900px 600px at 88% -6%, rgba(255, 255, 255, .95), transparent 62%),
+        radial-gradient(860px 600px at -8% 82%, rgba(76, 140, 230, .2), transparent 66%);
+      --page-art-size: 100% 1100px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(16, 40, 80, .12);
+      --card-shadow: 0 34px 70px -38px rgba(18, 40, 82, .5);
+      --card-radius: 20px;
+    }
+
+    /* STONE — the same restraint, warmed up, with terracotta */
+    :root[data-style="slate-stone"] {
+      --bg: #EDE9E2;
+      --fg: #4A453D;
+      --heading: #1B1813;
+      --muted: #857D71;
+      --accent: #A8543A;
+      --border: rgba(120, 100, 75, .26);
+      --page-art:
+        radial-gradient(950px 620px at 92% -10%, rgba(255, 255, 255, .9), transparent 60%),
+        radial-gradient(840px 600px at 4% 72%, rgba(190, 150, 110, .3), transparent 66%);
+      --page-art-size: 100% 1100px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(90, 70, 45, .16);
+      --card-shadow: 0 30px 66px -38px rgba(90, 70, 45, .45);
+      --card-radius: 18px;
+    }
+
+    /* GRAPH — deeper slate on ruled paper, so the sheet lifts off it */
+    :root[data-style="slate-graph"] {
+      --bg: #DEE5F0;
+      --fg: #3D4757;
+      --heading: #0B1220;
+      --muted: #67738A;
+      --accent: #1F4FBF;
+      --border: rgba(16, 36, 72, .16);
+      --page-art:
+        repeating-linear-gradient(0deg, rgba(40, 80, 140, .075) 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(90deg, rgba(40, 80, 140, .075) 0 1px, transparent 1px 40px),
+        radial-gradient(900px 560px at 84% -8%, rgba(255, 255, 255, .85), transparent 60%);
+      --page-art-size: auto, auto, 100% 900px;
+      --page-art-repeat: repeat, repeat, no-repeat;
+      --card-ring: rgba(16, 36, 72, .14);
+      --card-shadow: 0 34px 70px -38px rgba(18, 40, 82, .5);
+      --card-radius: 14px;
+    }
+
+    /* --- three takes on SUNRISE --- */
+
+    /* DAWN — pink on one side, amber on the other */
+    :root[data-style="sunrise-dawn"] {
+      --bg: #FFF0EC;
+      --fg: #4E3A38;
+      --heading: #26130F;
+      --muted: #8E7069;
+      --accent: #D6455F;
+      --border: rgba(180, 110, 110, .26);
+      --page-art:
+        radial-gradient(880px 600px at 4% -10%, rgba(255, 150, 175, .48), transparent 62%),
+        radial-gradient(840px 560px at 96% 2%, rgba(255, 196, 120, .55), transparent 62%);
+      --page-art-size: 100% 1000px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(130, 60, 60, .13);
+      --card-shadow: 0 32px 68px -38px rgba(150, 70, 70, .45);
+      --card-radius: 20px;
+    }
+
+    /* AMBER — the sun higher and hotter, straight overhead */
+    :root[data-style="sunrise-amber"] {
+      --bg: #FCEED8;
+      --fg: #4C3E28;
+      --heading: #241A08;
+      --muted: #8B7955;
+      --accent: #B4521C;
+      --border: rgba(160, 110, 40, .28);
+      --page-art:
+        radial-gradient(1000px 640px at 50% -14%, rgba(255, 186, 74, .6), transparent 62%),
+        linear-gradient(180deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0));
+      --page-art-size: 100% 1000px, 100% 400px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(130, 90, 25, .18);
+      --card-shadow: 0 30px 64px -36px rgba(130, 90, 25, .45);
+      --card-radius: 16px;
+    }
+
+    /* COAST — warm ground, cool sea air, teal to answer the peach */
+    :root[data-style="sunrise-coast"] {
+      --bg: #FDF3EA;
+      --fg: #45403A;
+      --heading: #1B1712;
+      --muted: #877E71;
+      --accent: #0E6E72;
+      --border: rgba(140, 115, 85, .26);
+      --page-art:
+        radial-gradient(900px 600px at 6% -8%, rgba(255, 190, 140, .5), transparent 60%),
+        radial-gradient(780px 560px at 98% 10%, rgba(90, 200, 200, .26), transparent 64%);
+      --page-art-size: 100% 1000px;
+      --page-art-repeat: no-repeat;
+      --card-ring: rgba(100, 80, 55, .15);
+      --card-shadow: 0 30px 66px -38px rgba(110, 80, 50, .45);
+      --card-radius: 18px;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: var(--page-art, none);
+      background-size: var(--page-art-size, auto);
+      background-repeat: var(--page-art-repeat, repeat);
+      background-position: top center;
+    }
+
+    /* ---- top bar ---- */
     .topnav { border-bottom: 1px solid var(--border); }
     .topnav-inner {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      max-width: 1760px;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 15px 44px;
-    }
-    .nav-photo {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      object-fit: cover;
-      display: block;
-      border: 1px solid var(--border);
+      padding: 20px 24px;
     }
     .nav-name {
       font-family: var(--font-head);
       font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: -0.015em;
+      font-size: 1.25rem;
+      letter-spacing: -0.01em;
       color: var(--heading);
+      white-space: nowrap;
     }
 
-    /* ---- the fold: the pitch on the left, the board on the right ---- */
-    .top {
-      display: grid;
-      /* the board's column is content-sized and the pair is centred,
-         so shrinking the board never opens a gap beside the pitch */
-      grid-template-columns: 336px auto;
-      justify-content: center;
-      gap: 48px;
-      align-items: start;
-      max-width: 1760px;
+    /* ---- hero: text left, portrait right ---- */
+    .hero {
+      padding: 96px 0 72px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-inner {
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 30px 44px 0;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
     }
-    /* the board is the taller of the two, so the pitch rides in the
-       middle of it — the row's top stays put either way, which is
-       what the board's own sizing measures against */
-    .rail { align-self: center; }
-
-    .kicker {
-      font-family: var(--font-head);
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: var(--accent);
-      margin: 0 0 14px;
+    .hero-text { max-width: 620px; }
+    .hero-text h1 {
+      font-size: clamp(2.75rem, 2rem + 3.75vw, 4rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--hero-title);
+      margin: 0 0 24px;
     }
-    .kicker .sep { color: var(--muted); margin: 0 7px; }
-
-    .rail h1 {
-      font-family: var(--font-head);
-      font-size: 2.35rem;
-      font-weight: 700;
-      line-height: 1.08;
-      letter-spacing: -0.03em;
-      color: var(--heading);
-      margin: 0 0 16px;
-    }
-    .lede {
+    .hero-subtitle {
+      font-size: clamp(1.25rem, 1.1rem + .75vw, 1.5rem);
+      line-height: 1.5;
+      color: var(--hero-sub);
       margin: 0;
-      font-size: 1.02rem;
-      line-height: 1.66;
-      color: var(--fg);
+    }
+    .hero-photo { flex: none; }
+    .hero-photo img {
+      width: 280px;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
     }
 
     .cta {
@@ -125,6 +418,17 @@
       background: var(--accent);
       color: var(--bg);
       text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .topnav-inner { padding: 16px 20px; }
+      .hero { padding: 56px 0 48px; }
+      .hero-inner {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 32px;
+      }
+      .hero-photo img { width: 160px; height: 160px; }
     }
 
     /* ---- the note about the playbook, below the fold ---- */
@@ -159,8 +463,13 @@
       box-decoration-break: clone;
     }
 
-    /* ---- the board ---- */
-    .exhibit { min-width: 0; }
+    /* ---- the board: its own band under the hero. Wider than the
+           1080 text column, because it is a figure, not prose ---- */
+    .exhibit {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 64px 24px 0;
+    }
 
     .paper {
       position: relative;
@@ -171,18 +480,15 @@
       background: var(--paper);
       color: var(--ink);
       font-family: var(--hand);
-      border-radius: 16px;
+      border-radius: var(--card-radius, 16px);
       /* the edge is a ring rather than a border: a border would eat
          into the content box and leave the board a couple of pixels
          wider than the space it is given, which shows up as a stray
          scrollbar */
-      box-shadow: 0 0 0 1px var(--border), 0 18px 44px -30px rgba(15, 23, 42, .5);
+      box-shadow: 0 0 0 1px var(--card-ring), var(--card-shadow);
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
-    }
-    @media (prefers-color-scheme: dark) {
-      .paper { box-shadow: 0 0 0 1px #2f2f33, 0 18px 44px -26px rgba(0, 0, 0, .9); }
     }
 
     /* sized by script: as wide and tall as the scaled board. The
@@ -216,17 +522,19 @@
     }
     .foot p { margin: 0; }
 
-    /* one column: the pitch first, then the board */
-    @media (max-width: 899px) {
-      .topnav-inner { padding: 13px 24px; }
-      .top {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 30px;
-        padding: 28px 24px 0;
-      }
-      .rail h1 { font-size: 2rem; }
-      .lede { max-width: 38em; }
-      .note { padding-top: 56px; padding-left: 24px; padding-right: 24px; }
+    /* style switcher — the query string is the real control, this is
+       just a way to flick through them. Delete the row and the three
+       rules below once a style is settled on. */
+    .styles { margin-top: 8px; }
+    .styles b { font-weight: 400; color: var(--muted); opacity: .8; }
+    .styles a { color: var(--muted); margin-right: 14px; white-space: nowrap; }
+    .styles a:hover { color: var(--accent); text-decoration: none; }
+    .styles a.on { color: var(--heading); font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .exhibit { padding: 44px 20px 0; }
+      .note { padding: 52px 20px 0; }
+      .foot { padding-left: 20px; padding-right: 20px; }
     }
 
     /* ---- entrance animations, held until the board scrolls into view ---- */
@@ -445,35 +753,33 @@
 
   <div class="topnav">
     <div class="topnav-inner">
-      <img class="nav-photo" src="sam-photo.jpg" alt="Sam Turner" width="38" height="38" />
       <span class="nav-name">Sam Turner</span>
     </div>
   </div>
 
-  <div class="top">
-    <header class="rail">
-      <p class="kicker">Product Engineer <span class="sep">·</span> Ex-Technical Founder</p>
-      <h1>Turn a big idea into paying customers.</h1>
-      <p class="lede">
-        I build products with small teams and write down what actually works.
-        This is the playbook I use: eight steps to de-risk the idea, then a
-        weekly sprint you run until it lands.
-      </p>
-      <p class="cta">
-        <a class="btn" href="writing.html">Read the writing →</a>
-        <a href="#playbook">Why I made this ↓</a>
-      </p>
-    </header>
-
-    <section class="exhibit" id="exhibit" aria-label="The Product Playbook board">
-      <div class="paper" id="paper">
-        <div class="scaler" id="scaler">
-          <div class="world" id="world"></div>
-        </div>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <h1>Product Engineer. Author of Ship&nbsp;Confidently.</h1>
+        <p class="hero-subtitle">
+          I turn ambiguous product problems into shipped, measured outcomes.
+          Co-founder and CTO of Lira, previously Square.
+        </p>
       </div>
-      <p class="scroll-hint" id="scroll-hint" hidden>Scroll sideways to see the whole board →</p>
-    </section>
-  </div>
+      <div class="hero-photo">
+        <img src="sam-photo.jpg" alt="Sam Turner" width="280" height="280" />
+      </div>
+    </div>
+  </header>
+
+  <section class="exhibit" id="exhibit" aria-label="The Product Playbook board">
+    <div class="paper" id="paper">
+      <div class="scaler" id="scaler">
+        <div class="world" id="world"></div>
+      </div>
+    </div>
+    <p class="scroll-hint" id="scroll-hint" hidden>Scroll sideways to see the whole board →</p>
+  </section>
 
   <section class="note" id="playbook">
     <h2>The Product Playbook</h2>
@@ -494,6 +800,27 @@
 
   <footer class="foot">
     <p>&copy; 2026 Sam Turner. Built with plain HTML and hosted on GitHub Pages.</p>
+    <p class="styles"><b>Style:</b>
+      <a href="?style=paper">Paper</a>
+      <a href="?style=slate">Slate</a>
+      <a href="?style=studio">Studio</a>
+      <a href="?style=blueprint">Blueprint</a>
+      <a href="?style=sunrise">Sunrise</a>
+      <a href="?style=canvas">Canvas</a>
+      <a href="?style=mint">Mint</a>
+      <a href="?style=bloom">Bloom</a>
+      <a href="?style=citrus">Citrus</a>
+    </p>
+    <p class="styles"><b>Slate:</b>
+      <a href="?style=slate-harbor">Harbor</a>
+      <a href="?style=slate-stone">Stone</a>
+      <a href="?style=slate-graph">Graph</a>
+    </p>
+    <p class="styles"><b>Sunrise:</b>
+      <a href="?style=sunrise-dawn">Dawn</a>
+      <a href="?style=sunrise-amber">Amber</a>
+      <a href="?style=sunrise-coast">Coast</a>
+    </p>
   </footer>
 
   <script>
@@ -989,8 +1316,6 @@
       return html;
     }
 
-    var topEl = document.querySelector(".top");
-    var rail = document.querySelector(".rail");
     var exhibit = document.getElementById("exhibit");
     var paper = document.getElementById("paper");
     var scaler = document.getElementById("scaler");
@@ -1002,15 +1327,13 @@
     world.innerHTML = render();
 
     // ------------------------------------------------------------
-    // Fit the board beside the photo, whole, without scrolling:
-    // one scale on the world and a scaler box sized to match, so
-    // the page reserves exactly the room the board needs.
+    // Fit the board to its band: one scale on the world and a
+    // scaler box sized to match, so the page reserves exactly the
+    // room the board needs. Below MIN_K the lettering gives out,
+    // so it holds that size and the card scrolls sideways instead.
     //
-    // Beside the rail the board is boxed in by the room left in
-    // the viewport, height included. Stacked under it on a narrow
-    // screen there is no fold to stay inside, so only the width
-    // counts. Either way it stops shrinking at MIN_K, where the
-    // lettering gives out, and the card scrolls sideways instead.
+    // The width is measured off the section, never off the card,
+    // so sizing the card cannot feed back into the next pass.
     //
     // VIEW is the part of the world that is actually drawn on —
     // the START banner overhangs x = 0, and nothing reaches the
@@ -1020,31 +1343,13 @@
 
     var VIEW = { x0: -42, x1: 1322 };
     var VIEW_W = VIEW.x1 - VIEW.x0;
-    var MIN_K_BESIDE = 0.5;
-    var MIN_K_STACKED = 0.68;
-    var FOLD_GAP = 28; // breathing room left under the board
-
-    var beside = window.matchMedia("(min-width: 900px)");
+    var MIN_K = 0.68;
 
     function layout() {
-      // every measurement here is of something the board cannot
-      // resize — the shell, the fixed pitch column, the viewport —
-      // so sizing the card never feeds back into the next pass
-      var k, floor;
-
-      if (beside.matches) {
-        var cs = getComputedStyle(topEl);
-        var room = topEl.clientWidth - parseFloat(cs.paddingLeft) -
-          parseFloat(cs.paddingRight) - rail.offsetWidth -
-          (parseFloat(cs.columnGap) || 0);
-        var top = paper.getBoundingClientRect().top + window.pageYOffset;
-        k = Math.min(1, room / VIEW_W, (window.innerHeight - top - FOLD_GAP) / WORLD.h);
-        floor = MIN_K_BESIDE;
-      } else {
-        k = Math.min(1, exhibit.clientWidth / VIEW_W);
-        floor = MIN_K_STACKED;
-      }
-      k = Math.max(floor, k);
+      var cs = getComputedStyle(exhibit);
+      var room = exhibit.clientWidth -
+        parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      var k = Math.max(MIN_K, Math.min(1, room / VIEW_W));
 
       var boardW = Math.ceil(VIEW_W * k);
       world.style.transform = "translate(" + (-VIEW.x0 * k).toFixed(2) + "px,0) scale(" + k + ")";
@@ -1062,6 +1367,11 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(layout);
     }
+
+    // mark the live style in the footer switcher
+    var current = document.documentElement.getAttribute("data-style");
+    var onLink = document.querySelector('.styles a[href="?style=' + current + '"]');
+    if (onLink) onLink.className = "on";
 
     // Hold the ink until the board is actually on screen.
     function draw() { paper.classList.add("in"); }
