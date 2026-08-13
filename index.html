@@ -9,20 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&display=swap" />
-  <script>
-    // ?style=paper|slate|studio — set before first paint so the page
-    // never flashes the wrong palette
-    (function () {
-      var STYLES = ["paper", "slate", "studio", "blueprint", "sunrise", "canvas",
-                    "mint", "bloom", "citrus",
-                    "slate-harbor", "slate-stone", "slate-graph",
-                    "sunrise-dawn", "sunrise-amber", "sunrise-coast"];
-      var want = (location.search.match(/[?&]style=([^&]*)/) || [])[1];
-      want = want ? decodeURIComponent(want) : "";
-      document.documentElement.setAttribute(
-        "data-style", STYLES.indexOf(want) > -1 ? want : STYLES[0]);
-    })();
-  </script>
   <style>
     /* ============================================================
        Home page: who I am, what the playbook is, and the board.
@@ -38,6 +24,10 @@
 
     /* The board keeps its own palette in every style: it is a sheet
        of white paper, and the page is the surface it lies on. */
+    /* The board keeps its own palette: it is a sheet of white paper,
+       and the page is the surface it lies on. Everything else is the
+       page's own — Harbor: a light, bluer slate. These override the
+       tokens style.css defines, including its dark-mode block. */
     :root {
       --paper: #FFFFFF;
       --ink: #141414;
@@ -48,178 +38,10 @@
       --hand: 'Patrick Hand', 'Segoe Print', 'Bradley Hand', cursive;
 
       /* hero type colours, taken from ashmaurya.com: near-black
-         headline over a mid-grey subtitle. The dark styles below
-         hand these back to their own palette. */
+         headline over a mid-grey subtitle */
       --hero-title: #171614;
       --hero-sub: #484848;
-    }
 
-    /* ============================================================
-       Three page styles, chosen with ?style=. Each one redefines
-       the site's tokens from style.css, so it beats both the light
-       defaults and the dark-mode block there. Add a style by
-       copying a block and listing its name in the head script.
-       ============================================================ */
-
-    /* PAPER — warm desk the board is lying on, faint dot grid */
-    :root[data-style="paper"] {
-      --bg: #F8F4EC;
-      --fg: #423B31;
-      --heading: #1E1A15;
-      --muted: #7D7466;
-      --accent: #0F7A6E;
-      --border: rgba(150, 128, 96, .32);
-      --page-art: radial-gradient(rgba(124, 104, 70, .17) 1.15px, transparent 1.15px);
-      --page-art-size: 22px 22px;
-      --card-ring: rgba(92, 72, 44, .18);
-      --card-shadow: 0 28px 60px -36px rgba(86, 64, 32, .6);
-      --card-radius: 16px;
-    }
-
-    /* SLATE — cool editorial, light washing down from the top */
-    :root[data-style="slate"] {
-      --bg: #E9EDF3;
-      --fg: #414B59;
-      --heading: #0F141C;
-      --muted: #6C7787;
-      --accent: #3552C7;
-      --border: rgba(24, 38, 64, .14);
-      --page-art: linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0));
-      --page-art-size: 100% 420px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(16, 22, 32, .09);
-      --card-shadow: 0 34px 70px -38px rgba(20, 32, 54, .5);
-      --card-radius: 20px;
-    }
-
-    /* STUDIO — dark room, board lit like a whiteboard */
-    :root[data-style="studio"] {
-      --hero-title: var(--heading);
-      --hero-sub: var(--fg);
-      --bg: #0E1116;
-      --fg: #C2C9D4;
-      --heading: #F3F6FA;
-      --muted: #868FA0;
-      --accent: #2DD4BF;
-      --border: #222A34;
-      --page-art: radial-gradient(880px 560px at 20% 2%, rgba(45, 212, 191, .16), transparent 66%);
-      --page-art-size: 100% 900px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(255, 255, 255, .10);
-      --card-shadow: 0 40px 90px -40px rgba(0, 0, 0, .9);
-      --card-radius: 16px;
-    }
-
-    /* BLUEPRINT — drafting board, the sheet pinned to a ruled grid */
-    :root[data-style="blueprint"] {
-      --hero-title: var(--heading);
-      --hero-sub: var(--fg);
-      --bg: #0C1A2B;
-      --fg: #AFC2D8;
-      --heading: #EAF2FA;
-      --muted: #7E93AC;
-      --accent: #4EC3E0;
-      --border: #1E3450;
-      --page-art:
-        repeating-linear-gradient(0deg, rgba(126, 186, 232, .085) 0 1px, transparent 1px 44px),
-        repeating-linear-gradient(90deg, rgba(126, 186, 232, .085) 0 1px, transparent 1px 44px);
-      --card-ring: rgba(255, 255, 255, .13);
-      --card-shadow: 0 40px 90px -44px rgba(0, 0, 0, .95);
-      --card-radius: 14px;
-    }
-
-    /* SUNRISE — warm light coming in from the top left */
-    :root[data-style="sunrise"] {
-      --bg: #FDF1E7;
-      --fg: #4A3B33;
-      --heading: #241812;
-      --muted: #8A7264;
-      --accent: #C6452A;
-      --border: rgba(180, 120, 90, .28);
-      --page-art: radial-gradient(1100px 640px at 10% -12%, rgba(255, 173, 116, .6), transparent 62%);
-      --page-art-size: 100% 940px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(120, 70, 40, .14);
-      --card-shadow: 0 30px 64px -36px rgba(140, 80, 40, .5);
-      --card-radius: 18px;
-    }
-
-    /* CANVAS — a coloured wall, the board hung on it like a poster */
-    :root[data-style="canvas"] {
-      --hero-title: var(--heading);
-      --hero-sub: var(--fg);
-      --bg: #123A32;
-      --fg: #C3D6CE;
-      --heading: #F2F8F4;
-      --muted: #86A398;
-      --accent: #F0B429;
-      --border: #1E5045;
-      --page-art: radial-gradient(1000px 700px at 82% -4%, rgba(255, 255, 255, .075), transparent 64%);
-      --page-art-size: 100% 1000px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(255, 255, 255, .15);
-      --card-shadow: 0 44px 90px -40px rgba(0, 0, 0, .75);
-      --card-radius: 18px;
-    }
-
-    /* MINT — fresh green field, light breaking over the top right */
-    :root[data-style="mint"] {
-      --bg: #E8F5EE;
-      --fg: #38473F;
-      --heading: #0D1F17;
-      --muted: #6B8378;
-      --accent: #0E7A56;
-      --border: rgba(20, 80, 55, .16);
-      --page-art:
-        radial-gradient(900px 620px at 92% 0%, rgba(255, 255, 255, .9), transparent 62%),
-        radial-gradient(820px 620px at 2% 46%, rgba(58, 190, 138, .3), transparent 68%);
-      --page-art-size: 100% 1100px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(16, 70, 50, .14);
-      --card-shadow: 0 30px 66px -38px rgba(10, 60, 40, .45);
-      --card-radius: 18px;
-    }
-
-    /* BLOOM — two soft colour fields washing across a near-white page */
-    :root[data-style="bloom"] {
-      --bg: #FAF8FF;
-      --fg: #4A4358;
-      --heading: #1B1430;
-      --muted: #7D7590;
-      --accent: #7A45D8;
-      --border: rgba(80, 50, 130, .16);
-      --page-art:
-        radial-gradient(840px 580px at 2% -10%, rgba(168, 130, 255, .42), transparent 62%),
-        radial-gradient(780px 540px at 98% 4%, rgba(255, 148, 170, .36), transparent 62%);
-      --page-art-size: 100% 1000px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(60, 30, 110, .12);
-      --card-shadow: 0 34px 72px -38px rgba(70, 40, 130, .45);
-      --card-radius: 20px;
-    }
-
-    /* CITRUS — sunny paper, picking up the board's own sticky yellow */
-    :root[data-style="citrus"] {
-      --bg: #FFF6DC;
-      --fg: #4B4330;
-      --heading: #221C0C;
-      --muted: #8B7F5F;
-      --accent: #0E7C6B;
-      --border: rgba(150, 120, 40, .26);
-      --page-art:
-        radial-gradient(920px 620px at 94% -8%, rgba(255, 202, 84, .55), transparent 60%),
-        linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
-      --page-art-size: 100% 1000px, 100% 420px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(120, 95, 20, .18);
-      --card-shadow: 0 30px 64px -36px rgba(120, 90, 20, .45);
-      --card-radius: 16px;
-    }
-
-    /* --- three takes on SLATE --- */
-
-    /* HARBOR — bluer and brighter, light off the water */
-    :root[data-style="slate-harbor"] {
       --bg: #EDF2FA;
       --fg: #3A4657;
       --heading: #0C1524;
@@ -236,99 +58,6 @@
       --card-ring: rgba(16, 40, 80, .12);
       --card-shadow: 0 34px 70px -38px rgba(18, 40, 82, .5);
       --card-radius: 20px;
-    }
-
-    /* STONE — the same restraint, warmed up, with terracotta */
-    :root[data-style="slate-stone"] {
-      --bg: #EDE9E2;
-      --fg: #4A453D;
-      --heading: #1B1813;
-      --muted: #857D71;
-      --accent: #A8543A;
-      --border: rgba(120, 100, 75, .26);
-      --page-art:
-        radial-gradient(950px 620px at 92% -10%, rgba(255, 255, 255, .9), transparent 60%),
-        radial-gradient(840px 600px at 4% 72%, rgba(190, 150, 110, .3), transparent 66%);
-      --page-art-size: 100% 1100px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(90, 70, 45, .16);
-      --card-shadow: 0 30px 66px -38px rgba(90, 70, 45, .45);
-      --card-radius: 18px;
-    }
-
-    /* GRAPH — deeper slate on ruled paper, so the sheet lifts off it */
-    :root[data-style="slate-graph"] {
-      --bg: #DEE5F0;
-      --fg: #3D4757;
-      --heading: #0B1220;
-      --muted: #67738A;
-      --accent: #1F4FBF;
-      --border: rgba(16, 36, 72, .16);
-      --page-art:
-        repeating-linear-gradient(0deg, rgba(40, 80, 140, .075) 0 1px, transparent 1px 40px),
-        repeating-linear-gradient(90deg, rgba(40, 80, 140, .075) 0 1px, transparent 1px 40px),
-        radial-gradient(900px 560px at 84% -8%, rgba(255, 255, 255, .85), transparent 60%);
-      --page-art-size: auto, auto, 100% 900px;
-      --page-art-repeat: repeat, repeat, no-repeat;
-      --card-ring: rgba(16, 36, 72, .14);
-      --card-shadow: 0 34px 70px -38px rgba(18, 40, 82, .5);
-      --card-radius: 14px;
-    }
-
-    /* --- three takes on SUNRISE --- */
-
-    /* DAWN — pink on one side, amber on the other */
-    :root[data-style="sunrise-dawn"] {
-      --bg: #FFF0EC;
-      --fg: #4E3A38;
-      --heading: #26130F;
-      --muted: #8E7069;
-      --accent: #D6455F;
-      --border: rgba(180, 110, 110, .26);
-      --page-art:
-        radial-gradient(880px 600px at 4% -10%, rgba(255, 150, 175, .48), transparent 62%),
-        radial-gradient(840px 560px at 96% 2%, rgba(255, 196, 120, .55), transparent 62%);
-      --page-art-size: 100% 1000px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(130, 60, 60, .13);
-      --card-shadow: 0 32px 68px -38px rgba(150, 70, 70, .45);
-      --card-radius: 20px;
-    }
-
-    /* AMBER — the sun higher and hotter, straight overhead */
-    :root[data-style="sunrise-amber"] {
-      --bg: #FCEED8;
-      --fg: #4C3E28;
-      --heading: #241A08;
-      --muted: #8B7955;
-      --accent: #B4521C;
-      --border: rgba(160, 110, 40, .28);
-      --page-art:
-        radial-gradient(1000px 640px at 50% -14%, rgba(255, 186, 74, .6), transparent 62%),
-        linear-gradient(180deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0));
-      --page-art-size: 100% 1000px, 100% 400px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(130, 90, 25, .18);
-      --card-shadow: 0 30px 64px -36px rgba(130, 90, 25, .45);
-      --card-radius: 16px;
-    }
-
-    /* COAST — warm ground, cool sea air, teal to answer the peach */
-    :root[data-style="sunrise-coast"] {
-      --bg: #FDF3EA;
-      --fg: #45403A;
-      --heading: #1B1712;
-      --muted: #877E71;
-      --accent: #0E6E72;
-      --border: rgba(140, 115, 85, .26);
-      --page-art:
-        radial-gradient(900px 600px at 6% -8%, rgba(255, 190, 140, .5), transparent 60%),
-        radial-gradient(780px 560px at 98% 10%, rgba(90, 200, 200, .26), transparent 64%);
-      --page-art-size: 100% 1000px;
-      --page-art-repeat: no-repeat;
-      --card-ring: rgba(100, 80, 55, .15);
-      --card-shadow: 0 30px 66px -38px rgba(110, 80, 50, .45);
-      --card-radius: 18px;
     }
 
     body {
@@ -431,25 +160,6 @@
       .hero-photo img { width: 160px; height: 160px; }
     }
 
-    /* ---- the note about the playbook, below the fold ---- */
-    .note {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 76px 32px 0;
-      scroll-margin-top: 32px;
-    }
-    .note h2 {
-      font-family: var(--font-head);
-      font-size: 1.62rem;
-      font-weight: 700;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      color: var(--heading);
-      margin: 0 0 16px;
-    }
-    .note p { margin: 0 0 16px; font-size: 1rem; line-height: 1.72; }
-    .note p:last-child { margin-bottom: 0; }
-
     /* the one highlighter stroke on the page, borrowed from the board */
     .hl {
       background: linear-gradient(104deg,
@@ -463,12 +173,141 @@
       box-decoration-break: clone;
     }
 
-    /* ---- the board: its own band under the hero. Wider than the
-           1080 text column, because it is a figure, not prose ---- */
-    .exhibit {
-      max-width: 1240px;
+    /* ---- the book: cover on the left, what's in it on the right.
+           The cover is the door to the board. ---- */
+    .book {
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 64px 24px 0;
+      padding: 72px 24px 0;
+      scroll-margin-top: 24px;
+    }
+    .book-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 56px;
+    }
+
+    .cover-btn {
+      flex: none;
+      display: block;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-align: center;
+      font: inherit;
+      color: inherit;
+    }
+    .cover {
+      display: block;
+      width: 300px;
+      height: auto;
+      border-radius: 3px;
+      box-shadow: 0 14px 30px -10px rgba(20, 20, 20, .45);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .cover-hint {
+      display: block;
+      /* clear of the cover's shadow, hover included */
+      margin-top: 26px;
+      font-family: var(--font-head);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .cover-btn:hover .cover,
+    .cover-btn:focus-visible .cover {
+      transform: translateY(-6px) rotate(-0.8deg);
+      box-shadow: 0 24px 40px -14px rgba(20, 20, 20, .5);
+    }
+    .cover-btn:focus-visible { outline: none; }
+    .cover-btn:focus-visible .cover { outline: 2px solid var(--accent); outline-offset: 6px; }
+
+    .book-head {
+      font-family: var(--font-head);
+      font-size: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--hero-title);
+      margin: 0 0 26px;
+    }
+
+    .book-note { max-width: 34em; }
+    .book-note h3 {
+      font-family: var(--font-head);
+      font-size: 1.08rem;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.015em;
+      color: var(--heading);
+      margin: 26px 0 7px;
+    }
+    .book-note h3:first-child { margin-top: 0; }
+    .book-note p { margin: 0; font-size: 1rem; line-height: 1.72; }
+    .book-cta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      margin: 24px 0 0 !important;
+      font-size: 0.92rem;
+    }
+    .btn {
+      font-family: var(--font-head);
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--accent);
+      background: none;
+      border: 1.5px solid var(--accent);
+      border-radius: 999px;
+      padding: 9px 19px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+    }
+
+    /* ---- the preview: the board, opened out of the cover ---- */
+    .preview {
+      border: none;
+      padding: 0;
+      margin: auto;
+      background: none;
+      max-width: 96vw;
+      max-height: 96vh;
+      /* if the board cannot be made to fit, the preview scrolls */
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+    .preview::backdrop {
+      background: rgba(14, 16, 20, .74);
+    }
+    .preview-close {
+      /* fixed, so it stays reachable even if the preview scrolls */
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 2;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--card-ring);
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
+    }
+    .preview .scroll-hint { color: rgba(255, 255, 255, .72); }
+
+    @media (max-width: 899px) {
+      .book-inner { flex-direction: column; align-items: flex-start; gap: 34px; }
+      .cover { width: 240px; }
     }
 
     .paper {
@@ -522,18 +361,8 @@
     }
     .foot p { margin: 0; }
 
-    /* style switcher — the query string is the real control, this is
-       just a way to flick through them. Delete the row and the three
-       rules below once a style is settled on. */
-    .styles { margin-top: 8px; }
-    .styles b { font-weight: 400; color: var(--muted); opacity: .8; }
-    .styles a { color: var(--muted); margin-right: 14px; white-space: nowrap; }
-    .styles a:hover { color: var(--accent); text-decoration: none; }
-    .styles a.on { color: var(--heading); font-weight: 700; }
-
     @media (max-width: 768px) {
-      .exhibit { padding: 44px 20px 0; }
-      .note { padding: 52px 20px 0; }
+      .book { padding: 52px 20px 0; }
       .foot { padding-left: 20px; padding-right: 20px; }
     }
 
@@ -772,55 +601,109 @@
     </div>
   </header>
 
-  <section class="exhibit" id="exhibit" aria-label="The Product Playbook board">
+  <section class="book" id="playbook">
+    <div class="book-inner">
+      <button type="button" class="cover-btn" id="cover-btn" aria-haspopup="dialog">
+      <svg class="cover" viewBox="0 0 600 900" role="img"
+        aria-label="Ship Confidently, a playbook for lean AI-native teams to de-risk big ideas, fast. By Sam Turner.">
+        <rect width="600" height="900" fill="#211E19"/>
+        <g stroke="#3B372E" stroke-width="1.4" opacity=".28" fill="none">
+    <path d="M -10.0 120.0 L 52.0 120.1 L 114.0 118.6 L 176.0 119.7 L 238.0 119.1 L 300.0 120.1 L 362.0 119.5 L 424.0 118.4 L 486.0 117.0 L 548.0 118.7 L 610.0 118.0"/>
+    <path d="M -10.0 188.0 L 52.0 186.8 L 114.0 187.9 L 176.0 187.3 L 238.0 188.3 L 300.0 187.7 L 362.0 186.6 L 424.0 185.2 L 486.0 186.9 L 548.0 184.0 L 610.0 186.0"/>
+    <path d="M -10.0 256.0 L 52.0 256.1 L 114.0 255.5 L 176.0 256.5 L 238.0 255.9 L 300.0 254.8 L 362.0 253.4 L 424.0 255.1 L 486.0 252.2 L 548.0 254.0 L 610.0 254.0"/>
+    <path d="M -10.0 324.0 L 52.0 323.7 L 114.0 324.7 L 176.0 324.1 L 238.0 323.0 L 300.0 321.6 L 362.0 323.3 L 424.0 320.4 L 486.0 322.2 L 548.0 319.8 L 610.0 322.0"/>
+    <path d="M -10.0 392.0 L 52.0 392.9 L 114.0 392.3 L 176.0 391.2 L 238.0 389.8 L 300.0 391.5 L 362.0 388.6 L 424.0 390.4 L 486.0 388.0 L 548.0 389.3 L 610.0 390.0"/>
+    <path d="M -10.0 460.0 L 52.0 460.5 L 114.0 459.4 L 176.0 458.0 L 238.0 459.7 L 300.0 456.8 L 362.0 458.6 L 424.0 456.2 L 486.0 457.5 L 548.0 460.5 L 610.0 458.0"/>
+    <path d="M -10.0 528.0 L 52.0 527.6 L 114.0 526.2 L 176.0 527.9 L 238.0 525.0 L 300.0 526.8 L 362.0 524.4 L 424.0 525.7 L 486.0 528.7 L 548.0 524.7 L 610.0 526.0"/>
+    <path d="M -10.0 596.0 L 52.0 594.4 L 114.0 596.1 L 176.0 593.2 L 238.0 595.0 L 300.0 592.6 L 362.0 593.9 L 424.0 596.9 L 486.0 592.9 L 548.0 592.1 L 610.0 594.0"/>
+    <path d="M -10.0 664.0 L 52.0 664.3 L 114.0 661.4 L 176.0 663.2 L 238.0 660.8 L 300.0 662.1 L 362.0 665.1 L 424.0 661.1 L 486.0 660.3 L 548.0 661.9 L 610.0 662.0"/>
+    <path d="M -10.0 732.0 L 52.0 729.6 L 114.0 731.4 L 176.0 729.0 L 238.0 730.3 L 300.0 733.3 L 362.0 729.3 L 424.0 728.5 L 486.0 730.1 L 548.0 729.8 L 610.0 730.0"/>
+    <path d="M -10.0 800.0 L 52.0 799.6 L 114.0 797.2 L 176.0 798.5 L 238.0 801.5 L 300.0 797.5 L 362.0 796.7 L 424.0 798.3 L 486.0 798.0 L 548.0 800.1 L 610.0 798.0"/>
+    <path d="M -10.0 868.0 L 52.0 865.4 L 114.0 866.7 L 176.0 869.7 L 238.0 865.7 L 300.0 864.9 L 362.0 866.5 L 424.0 866.2 L 486.0 868.3 L 548.0 866.3 L 610.0 866.0"/>
+        </g>
+        <text x="300" y="78" text-anchor="middle" fill="#FFFFFF" opacity=".92"
+          font-size="19" font-family="'Patrick Hand', cursive" letter-spacing=".42em">SAM TURNER</text>
+        <text x="300" y="242" text-anchor="middle" fill="#FFFFFF" font-size="132"
+          font-family="'Permanent Marker', cursive" letter-spacing=".01em" transform="rotate(-1.2, 300, 242)">SHIP</text>
+        <text x="300" y="322" text-anchor="middle" fill="#FFE45C" font-size="60"
+          font-family="'Permanent Marker', cursive" letter-spacing=".03em" transform="rotate(-1.2, 300, 322)">CONFIDENTLY</text>
+        <path d="M 190.0 356.0 L 263.3 355.6 L 336.6 352.5 L 410.0 353.0" fill="none"
+          stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" opacity=".9"/>
+        <path d="M 224 600 C 292 572, 346 558, 384 530 C 414 508, 428 496, 438 482"
+          fill="none" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="13 14"
+          stroke-linecap="round" opacity=".95"/>
+        <path d="M 363.2 549.0 Q 363.2 549.0 362.0 551.6 Q 360.8 554.2 359.5 556.7 Q 358.2 559.2 355.6 560.7 Q 353.0 562.1 350.1 561.6 Q 347.2 561.1 344.2 560.6 Q 341.2 560.1 340.1 557.2 Q 339.0 554.3 337.7 551.6 Q 336.4 549.0 336.9 546.0 Q 337.3 542.9 339.3 540.4 Q 341.2 538.0 344.1 537.1 Q 347.1 536.2 350.1 535.7 Q 353.2 535.2 355.4 537.3 Q 357.6 539.5 359.1 541.7 Q 360.7 543.9 361.9 546.4 Z"
+          fill="#211E19" stroke="#FFFFFF" stroke-width="3.4"/>
+        <path d="M 345 549 L 349 553.5 L 356 544" fill="none" stroke="#FFFFFF"
+          stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(462, 456) rotate(-34)">
+          <path d="M -26 3 L 26 -18 L 6 22 L -1 8 Z" fill="#FFFFFF"
+            stroke="#3B372E" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M -1 8 L 26 -18 L 2 10 L 2 19 Z" fill="#D8D5CE"
+            stroke="#3B372E" stroke-width="1.6" stroke-linejoin="round"/>
+        </g>
+        <g fill="#FFE45C">
+          <path transform="translate(520, 408)" d="M 0 -10 L 2.80 -2.80 L 10 0 L 2.80 2.80 L 0 10 L -2.80 2.80 L -10 0 L -2.80 -2.80 Z"/>
+          <path transform="translate(545, 486) rotate(14)" d="M 0 -7.5 L 2.10 -2.10 L 7.5 0 L 2.10 2.10 L 0 7.5 L -2.10 2.10 L -7.5 0 L -2.10 -2.10 Z"/>
+          <path transform="translate(478, 536) rotate(28)" d="M 0 -6 L 1.68 -1.68 L 6 0 L 1.68 1.68 L 0 6 L -1.68 1.68 L -6 0 L -1.68 -1.68 Z"/>
+        </g>
+        <g transform="translate(118, 596) scale(1.75)" fill="none" stroke="#FFFFFF"
+          stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 45.4 44.0 Q 45.4 44.0 45.4 46.3 Q 45.4 48.5 44.0 50.4 Q 42.7 52.4 40.5 53.3 Q 38.3 54.3 36.1 53.7 Q 33.9 53.1 32.1 52.2 Q 30.2 51.3 28.5 49.9 Q 26.7 48.5 25.9 46.2 Q 25.1 44.0 26.3 41.9 Q 27.5 39.9 28.8 38.2 Q 30.1 36.6 31.9 35.5 Q 33.8 34.4 36.1 33.9 Q 38.4 33.5 40.0 35.2 Q 41.7 36.9 43.4 38.2 Q 45.1 39.6 45.3 41.8 Z" fill="#211E19"/>
+          <path d="M 29 36 Q 32 31 36 34 M 36 34 Q 39 30 44 35" stroke-width="2.2"/>
+          <circle cx="32.5" cy="42.5" r="1.5" fill="#FFFFFF" stroke="none"/>
+          <circle cx="39.5" cy="42.5" r="1.5" fill="#FFFFFF" stroke="none"/>
+          <path d="M 32.5 48 Q 36 51 39.5 48" stroke-width="2.2"/>
+          <path d="M 28 55 L 44 55 L 47.5 76 L 24.5 76 Z" fill="#211E19"/>
+          <path d="M 28 62 L 44 62" stroke-width="1.7" opacity=".5"/>
+          <path d="M 31 76 L 27 100 M 41 76 L 45 100"/>
+          <path d="M 27 100 L 20 100 M 45 100 L 52 100"/>
+          <path d="M 28 59 L 17 70 L 24 74"/>
+          <path d="M 44 58 L 58 44 L 61 40"/>
+        </g>
+        <path d="M 96.0 776.0 L 170.7 776.8 L 245.3 774.5 L 320.0 773.0" fill="none"
+          stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+        <text x="300" y="828" text-anchor="middle" fill="#FFFFFF" font-size="26"
+          font-family="'Patrick Hand', cursive">A playbook for lean AI-native teams</text>
+        <text x="300" y="862" text-anchor="middle" fill="#FFFFFF" font-size="26"
+          font-family="'Patrick Hand', cursive">to de-risk big ideas, fast.</text>
+      </svg>
+        <span class="cover-hint">Look inside →</span>
+      </button>
+
+      <div class="book-note">
+        <h2 class="book-head">I wrote a book</h2>
+        <h3>What it is</h3>
+        <p>
+          Honest lessons from ten years of building products, the wins and the misses both. It's packed with real experiences, so you can decide what works for you.
+        </p>
+
+        <h3>Why I wrote it</h3>
+        <p>
+          Partly because I love sharpening this craft. Mostly so others can start further ahead instead of learning it all the hard way.
+        </p>
+
+        <h3>Who it's for</h3>
+        <p>
+          It's aimed at B2B SaaS teams, but the method isn't picky. If you're building a
+          product and want to get there faster and with better odds, it's for you.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <dialog class="preview" id="preview" aria-label="The Product Playbook">
+    <button type="button" class="preview-close" id="preview-close" aria-label="Close">×</button>
     <div class="paper" id="paper">
       <div class="scaler" id="scaler">
         <div class="world" id="world"></div>
       </div>
     </div>
     <p class="scroll-hint" id="scroll-hint" hidden>Scroll sideways to see the whole board →</p>
-  </section>
-
-  <section class="note" id="playbook">
-    <h2>The Product Playbook</h2>
-    <p>
-      The board above is the method I use to take a big, risky idea and turn it into
-      something people pay for. It has two halves: eight steps that
-      <span class="hl">de-risk the idea before you build it</span>, and a weekly sprint you
-      run on repeat — one lap a week — until the product lands.
-    </p>
-    <p>
-      I drew it because most of the advice I found was either strategy with no instructions,
-      or process with no evidence behind it. This is the version I wish someone had handed
-      me: everything I'd actually do, in the order I'd do it, on one page. The steps I've
-      written about link out to the essay; the rest are on their way.
-    </p>
-    <p><a href="writing.html">Read all the writing →</a></p>
-  </section>
+  </dialog>
 
   <footer class="foot">
     <p>&copy; 2026 Sam Turner. Built with plain HTML and hosted on GitHub Pages.</p>
-    <p class="styles"><b>Style:</b>
-      <a href="?style=paper">Paper</a>
-      <a href="?style=slate">Slate</a>
-      <a href="?style=studio">Studio</a>
-      <a href="?style=blueprint">Blueprint</a>
-      <a href="?style=sunrise">Sunrise</a>
-      <a href="?style=canvas">Canvas</a>
-      <a href="?style=mint">Mint</a>
-      <a href="?style=bloom">Bloom</a>
-      <a href="?style=citrus">Citrus</a>
-    </p>
-    <p class="styles"><b>Slate:</b>
-      <a href="?style=slate-harbor">Harbor</a>
-      <a href="?style=slate-stone">Stone</a>
-      <a href="?style=slate-graph">Graph</a>
-    </p>
-    <p class="styles"><b>Sunrise:</b>
-      <a href="?style=sunrise-dawn">Dawn</a>
-      <a href="?style=sunrise-amber">Amber</a>
-      <a href="?style=sunrise-coast">Coast</a>
-    </p>
   </footer>
 
   <script>
@@ -1316,7 +1199,6 @@
       return html;
     }
 
-    var exhibit = document.getElementById("exhibit");
     var paper = document.getElementById("paper");
     var scaler = document.getElementById("scaler");
     var world = document.getElementById("world");
@@ -1327,13 +1209,12 @@
     world.innerHTML = render();
 
     // ------------------------------------------------------------
-    // Fit the board to its band: one scale on the world and a
-    // scaler box sized to match, so the page reserves exactly the
-    // room the board needs. Below MIN_K the lettering gives out,
-    // so it holds that size and the card scrolls sideways instead.
-    //
-    // The width is measured off the section, never off the card,
-    // so sizing the card cannot feed back into the next pass.
+    // Fit the board to the room the preview has: one scale on the
+    // world and a scaler box sized to match. The room is taken from
+    // the viewport rather than measured off the dialog, so sizing
+    // the card cannot feed back into the next pass. Below MIN_K the
+    // lettering gives out, so it holds that size and the card
+    // scrolls sideways inside the preview instead.
     //
     // VIEW is the part of the world that is actually drawn on —
     // the START banner overhangs x = 0, and nothing reaches the
@@ -1343,49 +1224,68 @@
 
     var VIEW = { x0: -42, x1: 1322 };
     var VIEW_W = VIEW.x1 - VIEW.x0;
-    var MIN_K = 0.68;
+    // the preview's job is to show the whole board, so it is allowed
+    // to go smaller than it would on a page before it gives up
+    var MIN_K = 0.5;
 
     function layout() {
-      var cs = getComputedStyle(exhibit);
-      var room = exhibit.clientWidth -
-        parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-      var k = Math.max(MIN_K, Math.min(1, room / VIEW_W));
+      var roomW = Math.min(window.innerWidth * 0.96, 1560) - 20;
+      var roomH = window.innerHeight * 0.94 - 40; // room for the hint line
+      var k = Math.max(MIN_K, Math.min(1, roomW / VIEW_W, roomH / WORLD.h));
 
       var boardW = Math.ceil(VIEW_W * k);
       world.style.transform = "translate(" + (-VIEW.x0 * k).toFixed(2) + "px,0) scale(" + k + ")";
       scaler.style.width = boardW + "px";
       scaler.style.height = Math.ceil(WORLD.h * k) + "px";
-      paper.style.maxWidth = boardW + "px";
+      paper.style.maxWidth = Math.min(boardW, roomW) + "px";
       scrollHint.hidden = paper.scrollWidth <= paper.clientWidth + 1;
     }
 
-    layout();
-    window.addEventListener("resize", layout);
+    // ------------------------------------------------------------
+    // The cover is the door: opening it draws the board.
+    // ------------------------------------------------------------
+
+    var preview = document.getElementById("preview");
+    var drawn = false;
+
+    function openPreview() {
+      layout();
+      preview.showModal();
+      document.body.style.overflow = "hidden";
+      layout(); // the card is only measurable once it is on screen
+      if (!drawn) {
+        drawn = true;
+        paper.classList.add("in");
+      }
+    }
+
+    // the page behind a modal dialog still scrolls in most browsers
+    preview.addEventListener("close", function () {
+      document.body.style.overflow = "";
+    });
+
+    document.getElementById("cover-btn").addEventListener("click", openPreview);
+    Array.prototype.forEach.call(document.querySelectorAll(".open-board"), function (b) {
+      b.addEventListener("click", openPreview);
+    });
+    document.getElementById("preview-close").addEventListener("click", function () {
+      preview.close();
+    });
+    // click on the backdrop — anywhere outside the card — closes it
+    preview.addEventListener("click", function (e) {
+      if (e.target === preview) preview.close();
+    });
+
+    window.addEventListener("resize", function () {
+      if (preview.open) layout();
+    });
 
     // Web fonts land after first paint and change how wide the
     // labels sit; re-measure once they are in.
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(layout);
+      document.fonts.ready.then(function () { if (preview.open) layout(); });
     }
 
-    // mark the live style in the footer switcher
-    var current = document.documentElement.getAttribute("data-style");
-    var onLink = document.querySelector('.styles a[href="?style=' + current + '"]');
-    if (onLink) onLink.className = "on";
-
-    // Hold the ink until the board is actually on screen.
-    function draw() { paper.classList.add("in"); }
-    if ("IntersectionObserver" in window) {
-      var io = new IntersectionObserver(function (entries) {
-        if (entries[0].isIntersecting) {
-          draw();
-          io.disconnect();
-        }
-      }, { threshold: 0.12 });
-      io.observe(paper);
-    } else {
-      draw();
-    }
   })();
   </script>
 </body>
