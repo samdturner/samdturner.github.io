@@ -22,16 +22,14 @@
        framework, no build step.
        ============================================================ */
 
-    /* The board keeps its own palette in every style: it is a sheet
-       of white paper, and the page is the surface it lies on. */
     /* The board keeps its own palette: it is a sheet of white paper,
        and the page is the surface it lies on. Everything else is the
-       page's own — Harbor: a light, bluer slate. These override the
+       page's own — HARBOR, the default slate. These override the
        tokens style.css defines, including its dark-mode block. */
     :root {
       --paper: #FFFFFF;
-      --ink: #141414;
-      --ink-soft: #5C5C5C;
+      --ink: #211E19;       /* the cover's ink */
+      --ink-soft: #5E574C;
       --sticky: #FFE45C;
       --sticky-soft: #FFF5C2;
       --marker: 'Permanent Marker', 'Marker Felt', 'Comic Sans MS', cursive;
@@ -42,22 +40,25 @@
       --hero-title: #171614;
       --hero-sub: #484848;
 
-      --bg: #EDF2FA;
+      --bg: #E6ECF7;
       --fg: #3A4657;
       --heading: #0C1524;
       --muted: #66748A;
       --accent: #2F6FE0;
       --border: rgba(20, 45, 90, .13);
-      /* the blue field is kept low and light: it sat behind the
-         pitch before, taking the contrast out from under the text */
+      /* fog washing down from under the bar */
       --page-art:
-        radial-gradient(900px 600px at 88% -6%, rgba(255, 255, 255, .95), transparent 62%),
-        radial-gradient(860px 600px at -8% 82%, rgba(76, 140, 230, .2), transparent 66%);
-      --page-art-size: 100% 1100px;
+        linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, 0));
+      --page-art-size: 100% 520px;
       --page-art-repeat: no-repeat;
-      --card-ring: rgba(16, 40, 80, .12);
+      --card-ring: rgba(16, 40, 80, .1);
       --card-shadow: 0 34px 70px -38px rgba(18, 40, 82, .5);
       --card-radius: 20px;
+
+      /* the top bar is its own surface, but only just: a few points
+         off the page, told apart by its hairline rather than by
+         contrast (after ashmaurya.com) */
+      --nav-bg: #fefefe;
     }
 
     body {
@@ -69,7 +70,12 @@
     }
 
     /* ---- top bar ---- */
-    .topnav { border-bottom: 1px solid var(--border); }
+    .topnav {
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      z-index: 3;
+    }
     .topnav-inner {
       display: flex;
       align-items: baseline;
@@ -431,6 +437,7 @@
     }
     .foot p { margin: 0; }
 
+
     @media (max-width: 768px) {
       .book { padding: 52px 20px 0; }
       .foot { padding-left: 20px; padding-right: 20px; }
@@ -450,8 +457,8 @@
     /* ranged left off the sprint frame's edge, x = ZONE.x */
     .title-block {
       position: absolute;
-      left: 150px;
-      top: 112px;
+      left: 128px;
+      top: 88px;
       transform: translateY(-50%);
       text-align: left;
       z-index: 2;
@@ -464,7 +471,7 @@
        screenshot of the board */
     .board-by {
       font-family: var(--marker);
-      font-size: 17px;
+      font-size: 15px;
       letter-spacing: .14em;
       color: var(--ink-soft);
       margin: 0 0 11px;
@@ -486,12 +493,22 @@
       line-height: 1;
       transform: rotate(-0.6deg);
     }
-    .t1, .t2 { font-family: var(--marker); font-size: 50px; letter-spacing: .04em; }
-    .t2 { color: #2A9D8F; margin-left: .2em; }
-    .title-sub { font-size: 23px; margin: 10px 0 0; }
+    .t1, .t2 { font-family: var(--marker); font-size: 38px; letter-spacing: .04em; }
+    /* the cover puts its accent on this word in yellow; on white paper
+       that becomes the same highlighter stroke the page uses */
+    .t2 {
+      color: var(--ink);
+      margin-left: .24em;
+      padding: 0 8px 2px;
+      border-radius: 4px;
+      background: linear-gradient(104deg,
+        rgba(255, 222, 51, 0) 1%, rgba(255, 222, 51, .78) 3%,
+        rgba(255, 222, 51, .7) 96%, rgba(255, 222, 51, 0) 98%);
+    }
+    .title-sub { font-size: 19px; margin: 9px 0 0; }
 
     /* ---- the board below the title band ---- */
-    .board { position: absolute; left: 0; top: 160px; }
+    .board { position: absolute; left: 0; top: 132px; }
     .board > svg { position: absolute; inset: 0; overflow: visible; }
 
     .dividers { opacity: 0; transition: opacity .8s ease 1s; }
@@ -610,15 +627,15 @@
       z-index: 1;
     }
     .move-row {
-      width: 200px;
-      min-height: 38px;
+      width: 218px;
+      min-height: 40px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       padding: 2px;
     }
     .move-row svg { flex-shrink: 0; }
-    .move-row span { font-size: 17px; line-height: 1.1; text-align: left; }
+    .move-row span { font-size: 19.5px; line-height: 1.15; text-align: left; }
 
     /* ---- advanced strip ---- */
     .adv-label {
@@ -629,18 +646,18 @@
     }
     .adv-label-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
     .adv-label-row span { font-family: var(--marker); font-size: 21px; }
-    .adv-label-sub { font-size: 15.5px; color: var(--ink-soft); margin-top: 1px; }
+    .adv-label-sub { font-size: 18px; color: var(--ink-soft); margin-top: 1px; }
     .adv-item {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: 204px;
+      width: 214px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
     .adv-item > svg { flex-shrink: 0; }
-    .adv-item .chip { font-size: 15px; line-height: 1.15; padding: 1px 8px 3px; }
-    .adv-item .plain { font-size: 15.5px; line-height: 1.12; text-align: left; }
+    .adv-item .chip { font-size: 20px; line-height: 1.15; padding: 2px 9px 4px; }
+    .adv-item .plain { font-size: 20px; line-height: 1.14; text-align: left; }
 
     @media (prefers-reduced-motion: reduce) {
       .paper .ink, .paper .scribble { opacity: 1; animation: none; }
@@ -765,7 +782,7 @@
 
   <section class="shelf">
     <h2 class="shelf-head">Books that shaped how I think</h2>
-    <p class="shelf-lead">The ones I keep coming back to, and the ones I hand to people most often.</p>
+    <p class="shelf-lead">The ones I keep coming back to and recommend people most often.</p>
     <ul class="recs">
       <li class="rec">
         <img class="rec-cover" src="covers/the-mom-test.jpg" alt="" width="259" height="400" loading="lazy" />
@@ -842,14 +859,14 @@
 
     var STEPS = [
       { id: "icp", n: 1, x: 250, y: 150, icon: "target", title: "Define your ICP", url: null },
-      { id: "will-pay", n: 2, x: 550, y: 150, icon: "coins", title: "Validate people will pay", url: null },
-      { id: "demand", n: 3, x: 850, y: 150, icon: "magnet", title: "Validate you can capture demand", url: null },
-      { id: "jtbd", n: 4, x: 1150, y: 150, icon: "briefcase", title: "Map out the JTBD",
+      { id: "will-pay", n: 2, x: 580, y: 150, icon: "coins", title: "Validate people will pay", url: null },
+      { id: "demand", n: 3, x: 910, y: 150, icon: "magnet", title: "Validate you can capture demand", url: null },
+      { id: "jtbd", n: 4, x: 1240, y: 150, icon: "briefcase", title: "Map out the JTBD",
         full: "Map out the job to be done", url: "nobody-wants-your-software.html" },
-      { id: "low-fi", n: 5, x: 1150, y: 345, icon: "pencil", title: "Find the value prop that lands", url: null },
-      { id: "mindsets", n: 6, x: 850, y: 345, icon: "bulb", title: "Adopt mindsets of a winning team",
+      { id: "low-fi", n: 5, x: 1240, y: 345, icon: "pencil", title: "Find the value prop that lands", url: null },
+      { id: "mindsets", n: 6, x: 910, y: 345, icon: "bulb", title: "Adopt mindsets of a winning team",
         url: "mindsets-of-winning-product-teams.html" },
-      { id: "factory", n: 7, x: 550, y: 345, icon: "factory", title: "Setup your customer factory", url: null },
+      { id: "factory", n: 7, x: 580, y: 345, icon: "factory", title: "Setup your customer factory", url: null },
       { id: "team", n: 8, x: 250, y: 345, icon: "team", title: "Set up your team to ship absurdly fast",
         url: "product-engineering.html" }
     ];
@@ -857,15 +874,15 @@
     var SPRINT = "weekly-sprint-playbook.html";
 
     var DAYS = [
-      { id: "day-1", n: 1, word: "Understand", url: SPRINT, x: 260, icon: "bars",
+      { id: "day-1", n: 1, word: "Understand", url: SPRINT, x: 246, icon: "bars",
         moves: ["Quantitative review", "User interviews"] },
-      { id: "day-2", n: 2, word: "Prioritize", url: SPRINT, x: 475, icon: "funnel",
+      { id: "day-2", n: 2, word: "Prioritize", url: SPRINT, x: 509, icon: "funnel",
         moves: ["Synthesize learnings", "Feature prioritization"] },
-      { id: "day-3", n: 3, word: "Build", url: SPRINT, x: 690, icon: "hammer",
+      { id: "day-3", n: 3, word: "Build", url: SPRINT, x: 772, icon: "hammer",
         moves: ["Set a time box", "Low fidelity sketch", "Go high fidelity", "Build"] },
-      { id: "day-4", n: 4, word: "Build more", url: SPRINT, x: 905, icon: "loop",
+      { id: "day-4", n: 4, word: "Build more", url: SPRINT, x: 1035, icon: "loop",
         moves: ["Repeat the build loop", "Prep the launch", "Schedule user interviews", "Plan user interviews"] },
-      { id: "day-5", n: 5, word: "Ship", url: SPRINT, x: 1120, icon: "plane",
+      { id: "day-5", n: 5, word: "Ship", url: SPRINT, x: 1298, icon: "plane",
         moves: ["Finish building", "QA", "Configure analytics", "Ship"] }
     ];
 
@@ -873,7 +890,7 @@
     // is mastered, to go even faster.
     var ADVANCED = [
       { id: "adv-quality", label: "Make quality decisions", icon: "medal", url: null },
-      { id: "adv-meetings", label: "Decide without meetings", icon: "nomeeting",
+      { id: "adv-meetings", label: "Reduce meeting overhead", icon: "nomeeting",
         url: "not-every-decision-deserves-a-meeting.html" },
       { id: "adv-bets", label: "Size your bets", icon: "dice",
         url: "size-your-bets-by-your-level-of-conviction.html" },
@@ -881,11 +898,11 @@
         url: "https://www.linkedin.com/pulse/aim-cost-effective-code-over-clean-sam-turner/" }
     ];
 
-    var WORLD = { w: 1470, h: 1300 };
-    var ZONE = { x: 150, y: 490, w: 1095, h: 500 };
+    var WORLD = { w: 1560, h: 1272 };
+    var ZONE = { x: 128, y: 490, w: 1290, h: 500 };
     var DAY_Y = 562;
     var MOVE_Y0 = 628;
-    var MOVE_DY = 48;
+    var MOVE_DY = 50;
     var zoneBot = ZONE.y + ZONE.h;
 
     // ------------------------------------------------------------
@@ -1156,13 +1173,13 @@
 
     var pathPoints = [[186, 150]]
       .concat(STEPS.slice(0, 4).map(function (s) { return [s.x, s.y]; }))
-      .concat([[1290, 150], [1290, 345]])
+      .concat([[1420, 150], [1420, 345]])
       .concat(STEPS.slice(4).map(function (s) { return [s.x, s.y]; }))
-      .concat([[100, 345], [100, 528], [144, 528]]);
+      .concat([[84, 345], [84, 528], [122, 528]]);
 
     var ROUTE_ARROWS = [
-      [400, 152, 4], [1000, 148, -4], [1286, 252, 90], [1000, 348, 184],
-      [400, 342, 176], [104, 440, 90], [128, 528, 0]
+      [415, 152, 4], [1075, 148, -4], [1416, 252, 90], [1075, 348, 184],
+      [415, 342, 176], [88, 440, 90], [112, 528, 0]
     ];
 
     function boardSvg() {
@@ -1188,17 +1205,17 @@
       // column dividers
       out += '<g class="dividers" stroke="' + I + '" fill="none">';
       DAYS.slice(0, 4).forEach(function (d, i) {
-        out += '<path d="' + sketchyLine(d.x + 107, ZONE.y + 52, d.x + 107, ZONE.y + 344, 70 + i) +
+        out += '<path d="' + sketchyLine(d.x + 131, ZONE.y + 52, d.x + 131, ZONE.y + 344, 70 + i) +
           '" stroke-width="3" stroke-dasharray="8 10"/>';
       });
       out += "</g>";
 
       // lap-back swoop
       out += '<g class="ink" style="animation-delay:1.2s" fill="none">';
-      out += '<path d="M 1120 ' + (zoneBot + 4) + " C 1122 " + (zoneBot + 62) + ", 1046 " + (zoneBot + 78) +
-        ", 900 " + (zoneBot + 80) + " L 480 " + (zoneBot + 82) + " C 342 " + (zoneBot + 82) + ", 264 " +
-        (zoneBot + 66) + ", 261 " + (zoneBot + 14) + '" stroke="' + I + '" stroke-width="5" stroke-linecap="round" opacity=".95"/>';
-      out += '<path d="M 246 ' + (zoneBot + 42) + " L 261 " + (zoneBot + 8) + " L 280 " + (zoneBot + 40) +
+      out += '<path d="M 1298 ' + (zoneBot + 4) + " C 1300 " + (zoneBot + 62) + ", 1200 " + (zoneBot + 78) +
+        ", 1030 " + (zoneBot + 80) + " L 500 " + (zoneBot + 82) + " C 340 " + (zoneBot + 82) + ", 249 " +
+        (zoneBot + 66) + ", 246 " + (zoneBot + 14) + '" stroke="' + I + '" stroke-width="5" stroke-linecap="round" opacity=".95"/>';
+      out += '<path d="M 231 ' + (zoneBot + 42) + " L 246 " + (zoneBot + 8) + " L 265 " + (zoneBot + 40) +
         '" stroke="' + I + '" stroke-width="5" stroke-linecap="round" fill="none"/>';
       out += "</g>";
 
@@ -1258,7 +1275,7 @@
         out += '<div class="move scribble" style="left:' + d.x + "px;top:" + (MOVE_Y0 + j * MOVE_DY) + "px;" +
           delay(1.05 + i * 0.07 + j * 0.05) + '">' +
           '<div class="move-row" style="transform:rotate(' + tilt + 'deg)">' +
-          '<svg width="22" height="22" viewBox="-2 -2 23 23" aria-hidden="true">' + box + "</svg>" +
+          '<svg width="20" height="20" viewBox="-2 -2 23 23" aria-hidden="true">' + box + "</svg>" +
           "<span>" + m + "</span>" +
           "</div></div>";
       });
@@ -1283,7 +1300,7 @@
             ' aria-label="' + a.label + '"><span class="chip">' + a.label + " →</span></a>"
           : '<span class="plain">' + a.label + "</span>";
 
-        out += '<div class="adv-item scribble" style="left:' + (452 + idx * 212) + "px;top:908px;" +
+        out += '<div class="adv-item scribble" style="left:' + (460 + idx * 280) + "px;top:908px;" +
           delay(1.35 + idx * 0.08) + '">' + badge + body + "</div>";
       });
 
@@ -1294,9 +1311,9 @@
       var html = "";
 
       // header rule under the title section, run out to the board's width
-      html += '<svg width="1148" height="12" viewBox="0 0 1148 12" aria-hidden="true" ' +
-        'style="position:absolute;left:150px;top:212px;pointer-events:none">' +
-        '<path d="' + sketchyLine(3, 6, 1145, 5, 987, 2) + '" fill="none" stroke="' + I +
+      html += '<svg width="1294" height="12" viewBox="0 0 1294 12" aria-hidden="true" ' +
+        'style="position:absolute;left:128px;top:158px;pointer-events:none">' +
+        '<path d="' + sketchyLine(3, 6, 1290, 5, 987, 2) + '" fill="none" stroke="' + I +
         '" stroke-width="3" stroke-linecap="round" opacity=".8"/></svg>';
 
       // board title: name, then the two-tone stack + mascot
@@ -1316,7 +1333,7 @@
       html += STEPS.map(stepNode).join("");
       html += '<h2 class="sprint-header" style="left:' + (ZONE.x + ZONE.w / 2) + "px;top:" + (ZONE.y - 2) +
         'px">THE WEEKLY SPRINT</h2>';
-      html += '<div class="lap-label ink" style="left:695px;top:' + (zoneBot + 106) + "px;" + delay(1.25) + '">' +
+      html += '<div class="lap-label ink" style="left:773px;top:' + (zoneBot + 106) + "px;" + delay(1.25) + '">' +
         "repeat! <b>ONE LAP = ONE WEEK</b> · as many laps as it takes</div>";
       html += DAYS.map(dayColumn).join("");
       html += advancedStrip();
@@ -1342,14 +1359,16 @@
     // lettering gives out, so it holds that size and the card
     // scrolls sideways inside the preview instead.
     //
-    // VIEW is the part of the world that is actually drawn on —
-    // the START banner overhangs x = 0, and nothing reaches the
-    // world's right edge — so the card is trimmed to it rather
-    // than to WORLD, which would leave a gutter down one side.
+    // VIEW is the window of the world the card shows. The drawing
+    // runs from x = -20 (the START banner overhangs) to about
+    // x = 1425, so VIEW is that plus a margin on every side — which
+    // is what gives the card its padding. Trimming to WORLD instead
+    // would leave a gutter down one side and none down the other.
     // ------------------------------------------------------------
 
-    var VIEW = { x0: -42, x1: 1322 };
+    var VIEW = { x0: -95, x1: 1500, y0: -20, y1: 1276 };
     var VIEW_W = VIEW.x1 - VIEW.x0;
+    var VIEW_H = VIEW.y1 - VIEW.y0;
     // the preview's job is to show the whole board, so it is allowed
     // to go smaller than it would on a page before it gives up
     var MIN_K = 0.5;
@@ -1357,12 +1376,13 @@
     function layout() {
       var roomW = Math.min(window.innerWidth * 0.96, 1560) - 20;
       var roomH = window.innerHeight * 0.94 - 40; // room for the hint line
-      var k = Math.max(MIN_K, Math.min(1, roomW / VIEW_W, roomH / WORLD.h));
+      var k = Math.max(MIN_K, Math.min(1, roomW / VIEW_W, roomH / VIEW_H));
 
       var boardW = Math.ceil(VIEW_W * k);
-      world.style.transform = "translate(" + (-VIEW.x0 * k).toFixed(2) + "px,0) scale(" + k + ")";
+      world.style.transform = "translate(" + (-VIEW.x0 * k).toFixed(2) + "px," +
+        (-VIEW.y0 * k).toFixed(2) + "px) scale(" + k + ")";
       scaler.style.width = boardW + "px";
-      scaler.style.height = Math.ceil(WORLD.h * k) + "px";
+      scaler.style.height = Math.ceil(VIEW_H * k) + "px";
       paper.style.maxWidth = Math.min(boardW, roomW) + "px";
       scrollHint.hidden = paper.scrollWidth <= paper.clientWidth + 1;
     }
