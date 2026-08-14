@@ -168,6 +168,19 @@
         gap: 32px;
       }
       .hero-photo img { width: 160px; height: 160px; }
+      .shelf { padding: 60px 20px 0; }
+    }
+
+    /* Phones: the headline's floor of 2.75rem is wider than the screen
+       once "Ship Confidently" is held together, so it scales with the
+       viewport instead. Above this it is the desktop clamp, untouched. */
+    @media (max-width: 540px) {
+      .hero-text h1 { font-size: clamp(1.85rem, 7.6vw, 2.6rem); }
+      .hero-inner { padding: 0 20px; }
+      .book { gap: 0; }
+      .book-inner { gap: 28px; }
+      .cover { width: 200px; }
+      .recs { gap: 30px 20px; }
     }
 
     /* the one highlighter stroke on the page, borrowed from the board */
@@ -850,7 +863,7 @@
   </dialog>
 
   <footer class="foot">
-    <p>&copy; 2026 Sam Turner. Built with plain HTML and hosted on GitHub Pages.</p>
+    <p>&copy; 2026 Sam Turner</p>
   </footer>
 
   <script>
