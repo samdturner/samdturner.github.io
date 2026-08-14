@@ -1399,16 +1399,34 @@
       preview.showModal();
       document.body.style.overflow = "hidden";
       layout(); // the card is only measurable once it is on screen
+      // the URL carries the open board, so a refresh or a shared link
+      // lands on it. replaceState, to match the way closing clears it
+      if (location.hash !== "#board") {
+        history.replaceState(null, "", location.pathname + location.search + "#board");
+      }
       if (!drawn) {
         drawn = true;
         paper.classList.add("in");
       }
     }
 
-    // the page behind a modal dialog still scrolls in most browsers
-    preview.addEventListener("close", function () {
+    function closePreview() {
+      preview.close();
+      afterClose();
+    }
+
+    function afterClose() {
+      // the page behind a modal dialog still scrolls in most browsers
       document.body.style.overflow = "";
-    });
+      // drop the #board that opened it, so a refresh does not reopen it.
+      // replaceState rather than location.hash: no history entry, no jump
+      if (location.hash === "#board") {
+        history.replaceState(null, "", location.pathname + location.search);
+      }
+    }
+
+    // Esc closes the dialog without going through closePreview
+    preview.addEventListener("close", afterClose);
 
     document.getElementById("cover-btn").addEventListener("click", openPreview);
     // articles link back with #board, meaning "open the playbook again"
@@ -1416,12 +1434,10 @@
     Array.prototype.forEach.call(document.querySelectorAll(".open-board"), function (b) {
       b.addEventListener("click", openPreview);
     });
-    document.getElementById("preview-close").addEventListener("click", function () {
-      preview.close();
-    });
+    document.getElementById("preview-close").addEventListener("click", closePreview);
     // click on the backdrop — anywhere outside the card — closes it
     preview.addEventListener("click", function (e) {
-      if (e.target === preview) preview.close();
+      if (e.target === preview) closePreview();
     });
 
     window.addEventListener("resize", function () {
