@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make High Quality Decisions</title>
+  <meta name="description" content="A lightweight decision process for a small team, adapted from SPADE — and the six days we spent using it to choose our real-time voice technology." />
+  <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ---- section numbers ---- */
+    .sec-num {
+      display: block;
+      font-family: var(--font-head);
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 7px;
+    }
+
+    /* ---- Sketchbook figures ---- */
+    .sketch-fig {
+      margin: 36px 0;
+      --hand: "Bradley Hand","Chalkboard SE","Comic Sans MS",cursive;
+      --paper: #fbf7ee; --paper-dot: rgba(120,110,90,.20);
+      --ink: #2b2620; --ink-soft: rgba(90,70,45,.62);
+      --wk: #b28a5c;
+      --blue: #2563eb; --loss: #cf4f2e; --good: #2f8f4e; --warn: #c07818; --plan: #0e8074;
+    }
+
+    .sketch-fig .paper {
+      background: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 1.4px, transparent 1.4px);
+      background-size: 22px 22px;
+      border: 1px solid color-mix(in srgb, var(--wk) 42%, transparent);
+      border-radius: 16px; padding: 20px 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.10);
+    }
+    .sketch-fig figcaption {
+      margin-top: 14px; text-align: center; color: var(--muted);
+      font-size: 0.9rem; font-style: italic; line-height: 1.5;
+    }
+    .sketch-fig .fig-svg { width: 100%; height: auto; display: block; max-width: 560px; margin: 0 auto; }
+    .sketch-fig.wide .fig-svg { max-width: 100%; }
+    @media (min-width: 1180px) {
+      .sketch-fig.wide { margin-left: -36px; margin-right: -36px; }
+    }
+    .sketch-fig .fill-paper { fill: var(--paper); }
+    .sketch-fig .fill-faint { fill: color-mix(in srgb, var(--ink) 7%, transparent); }
+    .sketch-fig .lbl { font-family: var(--hand); font-weight: 700; fill: var(--ink); }
+    .sketch-fig .lbl.soft  { fill: var(--ink-soft); }
+    .sketch-fig .lbl.loss  { fill: var(--loss); }
+    .sketch-fig .lbl.good  { fill: var(--good); }
+    .sketch-fig .lbl.plan  { fill: var(--plan); }
+    .sketch-fig .lbl.warn  { fill: var(--warn); }
+    .sketch-fig .lbl.blue  { fill: var(--blue); }
+    .sketch-fig .fill-plan { fill: color-mix(in srgb, var(--plan) 8%, transparent); }
+    .sketch-fig .fill-warn { fill: color-mix(in srgb, var(--warn) 10%, transparent); }
+    .sketch-fig .fill-blue { fill: color-mix(in srgb, var(--blue) 8%, transparent); }
+    .sketch-fig .fill-good { fill: color-mix(in srgb, var(--good) 12%, transparent); }
+
+    /* the quadrant this post is about */
+    .sketch-fig .fill-focus { fill: color-mix(in srgb, var(--loss) 13%, transparent); }
+
+    /* ---- the numbered principles ---- */
+    .principles { counter-reset: pr; list-style: none; margin: 22px 0 32px; padding: 0; }
+    .principles li {
+      position: relative; padding-left: 46px; margin: 18px 0; line-height: 1.62;
+    }
+    .principles li::before {
+      counter-increment: pr; content: counter(pr);
+      position: absolute; left: 0; top: 3px;
+      width: 28px; height: 28px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--accent); color: var(--bg);
+      font-family: var(--font-head); font-weight: 700; font-size: 0.8rem; line-height: 1;
+    }
+    .principles strong { color: var(--heading); }
+
+    /* ---- the three blind-test rounds ---- */
+    .rounds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+    @media (max-width: 760px) { .rounds { grid-template-columns: 1fr; } }
+
+    .round {
+      background: #fff;
+      border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.09);
+      padding: 13px 14px 15px;
+      min-width: 0;
+    }
+    .rd-head {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+      margin: 0 0 11px; padding-bottom: 9px;
+      border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    }
+    .rd-n {
+      font-family: var(--hand); font-weight: 700; font-size: 1.28rem;
+      line-height: 1.1; color: var(--ink);
+    }
+    .rd-worst {
+      font-family: var(--font-head); font-size: 0.62rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    .notes { list-style: none; margin: 0; padding: 0; }
+    .notes li {
+      display: grid; grid-template-columns: 24px 1fr; gap: 9px;
+      margin: 0 0 11px; align-items: start;
+      font-size: 0.87rem; line-height: 1.42; color: var(--ink);
+    }
+    .notes li:last-child { margin-bottom: 0; }
+    .sev {
+      flex: none; width: 24px; height: 24px; border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.78rem; line-height: 1;
+      color: #fff; background: var(--c);
+    }
+    .sev.s1 { --c: #9aa07f; } .sev.s2 { --c: var(--good); }
+    .sev.s3 { --c: var(--warn); }
+    .sev.s4 { --c: var(--loss); } .sev.s5 { --c: #96331a; }
+
+    .sev-key {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+      margin: 16px 0 2px; padding-left: 2px;
+      font-size: 0.8rem; color: var(--ink-soft);
+    }
+    .sev-key .k {
+      font-family: var(--font-head); font-size: 0.62rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.11em;
+    }
+    .sev-key .sev { width: 21px; height: 21px; font-size: 0.7rem; }
+
+    /* ---- takeaways with a bolded lead ---- */
+    .takeaways { margin: 18px 0 26px; padding-left: 1.15em; }
+    .takeaways li { margin: 12px 0; padding-left: 4px; line-height: 1.62; }
+    .takeaways li::marker { color: var(--muted); }
+    .takeaways strong { color: var(--heading); }
+  </style>
+</head>
+<body>
+  <div class="post-layout">
+    <aside class="toc" aria-label="Table of contents">
+      <a class="bk-ghost" href="index.html#board"><span class="arw">←</span> Full playbook</a>
+
+      <p class="toc-title">Contents</p>
+      <ul>
+        <li><a href="#principles">The principles</a></li>
+        <li><a href="#spade">Where this comes from</a></li>
+        <li><a href="#example">Example: choosing our voice tech</a></li>
+        <li class="sub"><a href="#step-1">1. Research nine options</a></li>
+        <li class="sub"><a href="#step-2">2. Blind tests</a></li>
+        <li class="sub"><a href="#step-3">3. Real users</a></li>
+        <li><a href="#decision">The decision</a></li>
+        <li><a href="#six-days">It took six days</a></li>
+        <li><a href="#takeaways">Takeaways</a></li>
+      </ul>
+    </aside>
+
+    <main class="post-main">
+      <article class="post">
+        <p class="post-eyebrow">7 min read</p>
+        <h1 class="post-title">Make High Quality Decisions</h1>
+
+        <p>
+          Moving fast matters. It's how you find product market fit before you run out of runway. Most
+          choices are reversible, so the right move is to decide fast, adjust, and keep moving. I've
+          written about how we make those quick calls in
+          <a href="not-every-decision-deserves-a-meeting.html">Not Every Decision Deserves a Meeting</a>.
+        </p>
+        <p>
+          But a small number of decisions are important and hard to reverse. Choose your core technology
+          wrong, and you don't adjust, you rebuild and lose months. For these decisions, you need to
+          balance speed and care. As Robert Martin put it, "the only way to go fast, is to go well."
+        </p>
+        <p>
+          This post covers the framework we use at Lira for important, irreversible decisions. Then I'll
+          walk through a real example, how we chose our real-time voice technology.
+        </p>
+
+        <p>
+          Two things decide how much process a decision deserves: how much it matters, and whether you
+          can walk it back.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 880 440" role="img" aria-label="A 2x2 plotted on two axes. The vertical axis runs from less important at the bottom to more important at the top. The horizontal axis runs from reversible on the left to hard to reverse on the right. Top left, decide fast then watch. Top right, boxed, slow down to go fast. Bottom left, just decide. Bottom right, timebox it. A handwritten note on the right reads this post is about these decisions, with an arrow pointing at the top right quadrant.">
+                <defs>
+                  <filter id="b-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="920" height="500"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                  <filter id="b-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="920" height="500"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="8" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
+                </defs>
+
+                <!-- the axes -->
+                <g filter="url(#b-rough)" stroke="var(--ink)" stroke-width="4" stroke-linecap="round">
+                  <line x1="345" y1="372" x2="345" y2="54"/>
+                  <line x1="96"  y1="212" x2="596" y2="212"/>
+                </g>
+                <g filter="url(#b-rough2)" fill="var(--ink)">
+                  <path d="M 345 36 L 335 58 L 355 58 Z"/>
+                  <path d="M 614 212 L 592 202 L 592 222 Z"/>
+                </g>
+
+                <!-- the poles -->
+                <g class="lbl" font-size="19" letter-spacing="2">
+                  <text x="345" y="24" text-anchor="middle">MORE IMPORTANT</text>
+                  <text x="345" y="404" text-anchor="middle">LESS IMPORTANT</text>
+                  <text x="98" y="240">REVERSIBLE</text>
+                  <text x="596" y="240" text-anchor="end">HARD TO REVERSE</text>
+                </g>
+
+                <!-- the quadrant this post is about -->
+                <g filter="url(#b-rough2)">
+                  <rect x="366" y="76" width="232" height="96" rx="16" class="fill-focus" stroke="var(--loss)" stroke-width="3.4"/>
+                </g>
+
+                <!-- the four treatments -->
+                <g text-anchor="middle">
+                  <text x="216" y="116" class="lbl plan" font-size="23">Decide fast, then watch</text>
+                  <text x="216" y="146" class="lbl soft" font-size="19">Ship, measure, adjust.</text>
+
+                  <text x="482" y="116" class="lbl loss" font-size="23">Slow down to go fast</text>
+                  <text x="482" y="146" class="lbl soft" font-size="19">Wrong costs you months.</text>
+
+                  <text x="216" y="304" class="lbl" font-size="23">Just decide</text>
+                  <text x="216" y="334" class="lbl soft" font-size="19">Whoever's closest picks.</text>
+
+                  <text x="482" y="304" class="lbl" font-size="23">Timebox it</text>
+                  <text x="482" y="334" class="lbl soft" font-size="19">Sanity check, then commit.</text>
+                </g>
+
+                <!-- the note -->
+                <g class="lbl" font-size="21">
+                  <text x="646" y="104">This post is about</text>
+                  <text x="646" y="132">these decisions</text>
+                </g>
+                <g filter="url(#b-rough2)" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M 664 154 C 640 178, 620 170, 606 142"/>
+                  <path d="M 600 158 Q 603 148 604 138 Q 613 145 623 146"/>
+                </g>
+            </svg>
+                    </div>
+          <figcaption>
+            Three of the four quadrants want speed. Only one earns the process, and that's the one this
+            post is about.
+          </figcaption>
+        </figure>
+
+        <h2 id="principles">The principles</h2>
+
+        <ol class="principles">
+          <li>
+            <strong>Set the context.</strong> Before anything else, write down what's happening in the
+            business. Why is this decision on the table now? What constraints exist? A decision only
+            makes sense inside its context.
+          </li>
+          <li>
+            <strong>Define your goal.</strong> Know what a good outcome looks like before you compare
+            anything. If you can't state the goal, you're not ready to evaluate options.
+          </li>
+          <li>
+            <strong>Decide who decides.</strong> Assign a single owner. Decisions without an owner
+            drift, get relitigated, or never happen at all.
+          </li>
+          <li>
+            <strong>Lay out the options.</strong> List every realistic option, including the boring
+            ones.
+          </li>
+          <li>
+            <strong>For each option, write the pros, cons, risks, and unknowns.</strong> Writing it
+            down forces clarity. The gaps in your knowledge become visible, and those gaps are usually
+            where bad decisions hide.
+          </li>
+          <li>
+            <strong>Drive down the unknowns until you have conviction.</strong> Run spikes. Talk to
+            vendors. Test your assumptions. Keep going until you're confident about the best option.
+          </li>
+          <li>
+            <strong>Decide.</strong> Once you have conviction, commit and move.
+          </li>
+        </ol>
+
+        <h2 id="spade">Where this comes from</h2>
+        <p>
+          This process is adapted from SPADE, a decision-making framework used at Square. SPADE stands
+          for Setting, People, Alternatives, Decide, Explain. We used it often there, and it stuck with
+          me. What we run at Lira is a lighter-weight version, adapted for a two person team where the
+          decider and the builders are the same people.
+        </p>
+
+        <h2 id="example">Example: choosing our real-time voice technology</h2>
+
+        <h3>The context</h3>
+        <p>
+          This was April 2025. Real-time voice technology was very new, and the landscape was shifting
+          month to month. New options were launching constantly and pricing kept changing.
+        </p>
+        <p>
+          At the same time, we had just deployed Instruct, our training product, to its first customer.
+          We were getting signal that a sales training product might perform well, and we were exploring
+          a pivot from a general purpose training product to a sales specific one. Realistic voice role
+          play would be the core of that product. So the voice technology choice mattered a lot.
+        </p>
+
+        <h3>The goal</h3>
+        <p>
+          We needed a voice experience real enough that a sales rep would practice against it and
+          forget, at least a little, that they were talking to an AI.
+        </p>
+
+        <h3>Who decided</h3>
+        <p>
+          I owned the decision. My co-founder Wenyu was involved in reviewing it, but one person owned
+          driving it to a conclusion.
+        </p>
+
+        <h3>The requirements</h3>
+        <p>
+          This was tricky because the requirements pulled in three directions at once.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 1080 430" role="img" aria-label="A board with three groups of requirement cards. Technical: latency, concurrency limits, and scope to build. Business: cost, cost at scale, and cash flow. User: voice realism, voice emotion, and response intelligence.">
+              <defs>
+                <filter id="req-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="500"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
+                <filter id="req-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="500"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+              </defs>
+
+              <!-- the three groups -->
+              <g filter="url(#req-rough)" stroke-width="3.5" stroke-dasharray="12 10" fill="none">
+                <rect x="40"  y="34" width="310" height="356" rx="18" class="fill-plan" stroke="var(--plan)"/>
+                <rect x="385" y="34" width="310" height="356" rx="18" class="fill-warn" stroke="var(--warn)"/>
+                <rect x="730" y="34" width="310" height="356" rx="18" class="fill-blue" stroke="var(--blue)"/>
+              </g>
+
+              <g text-anchor="middle" font-size="23" letter-spacing="2.4">
+                <text x="195" y="78" class="lbl plan">TECHNICAL</text>
+                <text x="540" y="78" class="lbl warn">BUSINESS</text>
+                <text x="885" y="78" class="lbl blue">USER</text>
+              </g>
+
+              <!-- the cards -->
+              <g filter="url(#req-rough2)" class="fill-paper" stroke="var(--ink-soft)" stroke-width="2.5">
+                <rect x="70"  y="108" width="250" height="74" rx="10"/>
+                <rect x="70"  y="200" width="250" height="74" rx="10"/>
+                <rect x="70"  y="292" width="250" height="74" rx="10"/>
+                <rect x="415" y="108" width="250" height="74" rx="10"/>
+                <rect x="415" y="200" width="250" height="74" rx="10"/>
+                <rect x="415" y="292" width="250" height="74" rx="10"/>
+                <rect x="760" y="108" width="250" height="74" rx="10"/>
+                <rect x="760" y="200" width="250" height="74" rx="10"/>
+                <rect x="760" y="292" width="250" height="74" rx="10"/>
+              </g>
+
+              <g text-anchor="middle">
+                <text x="195" y="153" class="lbl" font-size="24">Latency</text>
+
+                <text x="195" y="245" class="lbl" font-size="24">Concurrency limits</text>
+
+                <text x="195" y="325" class="lbl" font-size="24">Scope to build</text>
+                <text x="195" y="351" class="lbl soft" font-size="17">how much is ours to make</text>
+
+                <text x="540" y="153" class="lbl" font-size="24">Cost</text>
+
+                <text x="540" y="233" class="lbl" font-size="24">Cost at scale</text>
+                <text x="540" y="259" class="lbl soft" font-size="17">demo price &#8800; volume price</text>
+
+                <text x="540" y="337" class="lbl" font-size="24">Cash flow</text>
+
+                <text x="885" y="141" class="lbl" font-size="24">Voice realism</text>
+                <text x="885" y="167" class="lbl soft" font-size="17">does it sound human</text>
+
+                <text x="885" y="233" class="lbl" font-size="24">Voice emotion</text>
+                <text x="885" y="259" class="lbl soft" font-size="17">does it react like a person</text>
+
+                <text x="885" y="325" class="lbl" font-size="24">Response intelligence</text>
+                <text x="885" y="351" class="lbl soft" font-size="17">are the words believable</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            Every requirement on one board, before a single option was compared. This board kept
+            growing for the rest of the week.
+          </figcaption>
+        </figure>
+
+        <p>
+          Three of these deserve a note. <strong>Scope</strong> is really a question about how much of
+          the stack you own: an all-in-one agent platform hands you a lot, a stitched-together pipeline
+          hands you control and a build list. <strong>Cost at scale</strong> matters because a price
+          that works for a demo can quietly kill you at volume. And the <strong>user</strong> column is
+          the one specs can't answer, which is why most of the week went there.
+        </p>
+
+        <h2 id="step-1"><span class="sec-num">Step 1</span>Research nine options</h2>
+        <p>
+          We started wide. The list was GPT-4o, GPT-4o mini, ElevenLabs Conversational AI, Deepgram
+          Voice Agent, Deepgram plus ElevenLabs, Gemini 2.5 Flash, LiveKit, Vapi, and Retell.
+        </p>
+        <p>
+          For each one, we mapped the same criteria on a board. Time to implement. Product quality,
+          covering voice realism, voice emotion, response intelligence, and latency. Scalability,
+          covering rate limits, concurrency limits, and pricing scalability. Cost per hour of
+          interactivity. And unknowns, the questions we couldn't answer yet.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 1080 740" role="img" aria-label="An evaluation board. Nine options are listed down the left: GPT-4o, GPT-4o mini, ElevenLabs Conversational AI, Deepgram Voice Agent, Deepgram plus ElevenLabs, Gemini 2.5 Flash, LiveKit, Vapi and Retell. Five columns run across: time to build, quality, scale, cost per hour and unknowns. Every cell is filled in. Gemini 2.5 Flash and Retell are struck through. Notes below record the cuts: Gemini could not output audio, Retell cost too much, three more fell out on latency and concurrency, leaving a short list of four.">
+              <defs>
+                <filter id="brd-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="800"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <filter id="brd-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="800"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
+
+                <!-- filled-in cells: a few strokes of handwriting -->
+                <g id="sqA"><line x1="-48" y1="-9" x2="30" y2="-9"/><line x1="-48" y1="9" x2="6" y2="9"/></g>
+                <g id="sqB"><line x1="-38" y1="-9" x2="42" y2="-9"/><line x1="-38" y1="9" x2="20" y2="9"/></g>
+                <g id="sqC"><line x1="-44" y1="-9" x2="14" y2="-9"/><line x1="-44" y1="9" x2="38" y2="9"/></g>
+              </defs>
+
+              <!-- column headings -->
+              <g text-anchor="middle" class="lbl soft" font-size="17" letter-spacing="1.6">
+                <text x="419" y="86">TIME TO BUILD</text>
+                <text x="557" y="86">QUALITY</text>
+                <text x="695" y="86">SCALE</text>
+                <text x="833" y="86">COST / HR</text>
+                <text x="971" y="86">UNKNOWNS</text>
+              </g>
+
+              <!-- the ruling -->
+              <g filter="url(#brd-rough)" stroke="var(--ink)" stroke-width="3" stroke-linecap="round">
+                <line x1="36" y1="104" x2="1044" y2="104"/>
+                <line x1="36" y1="570" x2="1044" y2="570"/>
+              </g>
+              <g filter="url(#brd-rough2)" stroke="var(--ink-soft)" stroke-width="1.8" stroke-dasharray="8 8">
+                <line x1="350" y1="112" x2="350" y2="562"/>
+                <line x1="488" y1="112" x2="488" y2="562"/>
+                <line x1="626" y1="112" x2="626" y2="562"/>
+                <line x1="764" y1="112" x2="764" y2="562"/>
+                <line x1="902" y1="112" x2="902" y2="562"/>
+              </g>
+
+              <!-- the nine options -->
+              <g class="lbl" font-size="21">
+                <text x="44" y="144">GPT-4o</text>
+                <text x="44" y="194">GPT-4o mini</text>
+                <text x="44" y="244">ElevenLabs Conv. AI</text>
+                <text x="44" y="294">Deepgram Voice Agent</text>
+                <text x="44" y="344">Deepgram + ElevenLabs</text>
+                <text x="44" y="394">Gemini 2.5 Flash</text>
+                <text x="44" y="444">LiveKit</text>
+                <text x="44" y="494">Vapi</text>
+                <text x="44" y="544">Retell</text>
+              </g>
+
+              <!-- every cell filled in -->
+              <g filter="url(#brd-rough2)" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round">
+                <use href="#sqA" x="419" y="137"/><use href="#sqB" x="557" y="137"/><use href="#sqC" x="695" y="137"/><use href="#sqB" x="833" y="137"/>
+                <use href="#sqB" x="419" y="187"/><use href="#sqC" x="557" y="187"/><use href="#sqA" x="695" y="187"/><use href="#sqC" x="833" y="187"/>
+                <use href="#sqC" x="419" y="237"/><use href="#sqA" x="557" y="237"/><use href="#sqB" x="695" y="237"/><use href="#sqA" x="833" y="237"/>
+                <use href="#sqA" x="419" y="287"/><use href="#sqC" x="557" y="287"/><use href="#sqC" x="695" y="287"/><use href="#sqB" x="833" y="287"/>
+                <use href="#sqB" x="419" y="337"/><use href="#sqA" x="557" y="337"/><use href="#sqA" x="695" y="337"/><use href="#sqC" x="833" y="337"/>
+                <use href="#sqC" x="419" y="387"/><use href="#sqB" x="557" y="387"/><use href="#sqB" x="695" y="387"/><use href="#sqA" x="833" y="387"/>
+                <use href="#sqA" x="419" y="437"/><use href="#sqA" x="557" y="437"/><use href="#sqC" x="695" y="437"/><use href="#sqB" x="833" y="437"/>
+                <use href="#sqB" x="419" y="487"/><use href="#sqC" x="557" y="487"/><use href="#sqA" x="695" y="487"/><use href="#sqA" x="833" y="487"/>
+                <use href="#sqC" x="419" y="537"/><use href="#sqB" x="557" y="537"/><use href="#sqB" x="695" y="537"/><use href="#sqC" x="833" y="537"/>
+              </g>
+
+              <!-- the questions we could not answer yet -->
+              <g text-anchor="middle" class="lbl warn" font-size="25" letter-spacing="5">
+                <text x="971" y="146">??</text>
+                <text x="971" y="196">?</text>
+                <text x="971" y="246">???</text>
+                <text x="971" y="296">??</text>
+                <text x="971" y="346">???</text>
+                <text x="971" y="396">?</text>
+                <text x="971" y="446">??</text>
+                <text x="971" y="496">???</text>
+                <text x="971" y="546">?</text>
+              </g>
+
+              <!-- two that ruled themselves out -->
+              <g filter="url(#brd-rough)" stroke="var(--loss)" stroke-width="4" stroke-linecap="round">
+                <line x1="40" y1="387" x2="1040" y2="387"/>
+                <line x1="40" y1="537" x2="1040" y2="537"/>
+              </g>
+
+              <!-- what came off the board -->
+              <g class="lbl loss" font-size="20">
+                <text x="44" y="626">&#10005; Gemini 2.5 Flash &#8212; no audio output at the time</text>
+                <text x="44" y="662">&#10005; Retell &#8212; cost too high for our margins</text>
+                <text x="44" y="698">&#10005; three more &#8212; latency and concurrency risk</text>
+              </g>
+
+              <g filter="url(#brd-rough2)">
+                <rect x="770" y="606" width="270" height="102" rx="16" class="fill-good" stroke="var(--good)" stroke-width="4"/>
+              </g>
+              <g text-anchor="middle">
+                <text x="905" y="648" class="lbl good" font-size="24">SHORT LIST</text>
+                <text x="905" y="684" class="lbl good" font-size="26">4 options</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            The same criteria for every option, including the ones we expected to lose. Two ruled
+            themselves out on the board alone.
+          </figcaption>
+        </figure>
+
+        <p>
+          Some options eliminated themselves. Gemini 2.5 Flash couldn't generate audio output at the
+          time. Retell's cost was too high for our margins. Others fell out on latency or concurrency
+          risks. We ended with a short list of four.
+        </p>
+
+        <h2 id="step-2"><span class="sec-num">Step 2</span>Drive down the unknowns with blind tests</h2>
+        <p>
+          The board answered the technical and business questions. It couldn't answer the user question:
+          which one actually feels real. Specs don't tell you that. So we tested.
+        </p>
+        <p>
+          I set up mock sales role plays with each of the four finalists and ran them with my co-founder,
+          without telling him which option was which. Blind testing mattered because we already had
+          opinions about these vendors, and we wanted to judge the experience, not the brand.
+        </p>
+        <p>
+          We ran three rounds. After each round, we wrote down what worked well and what needed to
+          improve, and we ranked every pain point on a severity scale from one, an observation, up to
+          five, a deal breaker. Then we improved each prototype before the next round.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <div class="rounds">
+
+              <div class="round">
+                <p class="rd-head"><span class="rd-n">Round 1</span><span class="rd-worst">4 prototypes</span></p>
+                <ul class="notes">
+                  <li><span class="sev s4">4</span>Every answer is a paragraph. Real people say "yeah, sure."</li>
+                  <li><span class="sev s4">4</span>Tone doesn't match the words. Cheerful while objecting.</li>
+                  <li><span class="sev s3">3</span>Half a beat too slow to come back.</li>
+                  <li><span class="sev s2">2</span>Sighs before almost every answer.</li>
+                </ul>
+              </div>
+
+              <div class="round">
+                <p class="rd-head"><span class="rd-n">Round 2</span><span class="rd-worst">4 prototypes</span></p>
+                <ul class="notes">
+                  <li><span class="sev s3">3</span>Reuses the same three phrases across the call.</li>
+                  <li><span class="sev s3">3</span>Won't hold the objection. Folds the moment you push.</li>
+                  <li><span class="sev s2">2</span>Talks over an interruption instead of stopping.</li>
+                </ul>
+              </div>
+
+              <div class="round">
+                <p class="rd-head"><span class="rd-n">Round 3</span><span class="rd-worst">4 prototypes</span></p>
+                <ul class="notes">
+                  <li><span class="sev s2">2</span>Flat delivery when it agrees with you.</li>
+                  <li><span class="sev s1">1</span>Slight pause when the topic changes.</li>
+                </ul>
+              </div>
+
+            </div>
+            <p class="sev-key">
+              <span class="k">Severity</span>
+              <span class="sev s1">1</span> an observation
+              <span class="sev s3">3</span> breaks the illusion
+              <span class="sev s5">5</span> deal breaker
+            </p>
+          </div>
+          <figcaption>
+            Same rubric every round. When the worst thing left on the page is a two, you're close.
+          </figcaption>
+        </figure>
+
+        <p>
+          The details that decided realness were smaller than we expected. Whether it sometimes gave
+          short answers instead of paragraphs. Whether its emotional tone matched what it was saying.
+          Whether it repeated the same phrases. One version lost points just for sighing too often.
+          After three rounds, a clear winner had emerged.
+        </p>
+
+        <h2 id="step-3"><span class="sec-num">Step 3</span>Validate with real users</h2>
+        <p>
+          We took the top two options into user interviews. We wanted to know how real each one felt to
+          people in the wild, not just to the two of us who had been staring at them for weeks. Their
+          feedback confirmed what the blind tests showed.
+        </p>
+
+        <h2 id="decision">The decision, and something better than a decision</h2>
+        <p>
+          We chose Vapi. We had conviction because it held up at every stage: on the evaluation board, in
+          the blind tests, and with real users, across the technical, business, and user requirements.
+        </p>
+        <p>
+          But we walked away with more than a decision. Because we prototyped and improved through every
+          round, the winner wasn't a name on a whiteboard. It was working software. Latency was measured.
+          Costs were understood. Realness was validated by real users. All the important requirements
+          were already derisked, so translating the prototype into a product was a short step, not a
+          fresh project.
+        </p>
+
+        <h2 id="six-days">The whole thing took six days</h2>
+        <p>
+          This might sound like a heavy process. It wasn't. From first research to final decision, it
+          took six days.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 1080 400" role="img" aria-label="A six day calendar under a narrowing band. Nine options run through days one and two, research and cutting to a short list. Four run through days three and four, the blind prototyping rounds. Two run through day five, user testing. One remains on day six, the debrief and the decision.">
+              <defs>
+                <filter id="cal-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="460"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
+                <filter id="cal-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="460"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="13" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+              </defs>
+
+              <!-- how many were still standing -->
+              <g class="lbl" font-size="24" text-anchor="middle">
+                <text x="202" y="56">9 options</text>
+                <text x="540" y="56">4</text>
+                <text x="793" y="56">2</text>
+                <text x="962" y="56">1</text>
+              </g>
+
+              <g filter="url(#cal-rough)">
+                <path d="M 40 78 L 1040 96 L 1040 108 L 40 126 Z" class="fill-faint" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+              </g>
+              <g filter="url(#cal-rough2)" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="7 7">
+                <line x1="371" y1="70" x2="371" y2="132"/>
+                <line x1="709" y1="76" x2="709" y2="128"/>
+                <line x1="878" y1="80" x2="878" y2="124"/>
+              </g>
+
+              <!-- the six days -->
+              <g filter="url(#cal-rough2)" class="fill-paper" stroke="var(--ink)" stroke-width="3">
+                <rect x="40"  y="160" width="155" height="140" rx="12"/>
+                <rect x="209" y="160" width="155" height="140" rx="12"/>
+                <rect x="378" y="160" width="155" height="140" rx="12"/>
+                <rect x="547" y="160" width="155" height="140" rx="12"/>
+                <rect x="716" y="160" width="155" height="140" rx="12"/>
+                <rect x="885" y="160" width="155" height="140" rx="12"/>
+              </g>
+
+              <g text-anchor="middle">
+                <g class="lbl soft" font-size="17" letter-spacing="2">
+                  <text x="117.5" y="194">DAY 1</text>
+                  <text x="286.5" y="194">DAY 2</text>
+                  <text x="455.5" y="194">DAY 3</text>
+                  <text x="624.5" y="194">DAY 4</text>
+                  <text x="793.5" y="194">DAY 5</text>
+                  <text x="962.5" y="194">DAY 6</text>
+                </g>
+                <g class="lbl" font-size="21">
+                  <text x="117.5" y="234">Research</text>
+                  <text x="117.5" y="262">nine options</text>
+
+                  <text x="286.5" y="234">Cut to a</text>
+                  <text x="286.5" y="262">short list</text>
+
+                  <text x="455.5" y="234">Blind test</text>
+                  <text x="455.5" y="262">round 1</text>
+
+                  <text x="624.5" y="234">Blind tests</text>
+                  <text x="624.5" y="262">rounds 2 &#38; 3</text>
+
+                  <text x="793.5" y="234">User tests,</text>
+                  <text x="793.5" y="262">top two</text>
+
+                  <text x="962.5" y="234">Debrief</text>
+                  <text x="962.5" y="262">and decide</text>
+                </g>
+              </g>
+
+              <g filter="url(#cal-rough)" fill="none" stroke="var(--plan)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 40 334 L 40 348 L 1040 348 L 1040 334"/>
+              </g>
+              <text x="540" y="384" class="lbl plan" font-size="23" text-anchor="middle">six days, first research to final decision</text>
+            </svg>
+          </div>
+          <figcaption>
+            Every day had a job, and every day something came off the board.
+          </figcaption>
+        </figure>
+
+        <p>
+          Rigor and speed aren't opposites. The structure is what made it fast, because every day had a
+          clear job.
+        </p>
+
+        <h2 id="pivot">The product died, the decision lived</h2>
+        <p>
+          Here's the twist. We ended up not pursuing the sales training product, for reasons unrelated
+          to the voice technology. But the decision still paid off. We use Vapi in Lira today, our job
+          interview prep product. The choice survived a pivot because we made it on fundamentals, not on
+          a single use case.
+        </p>
+
+        <h2 id="takeaways">Takeaways</h2>
+        <ul class="takeaways">
+          <li><strong>Funnel wide, then narrow fast.</strong> Nine options became four, became two, became one.</li>
+          <li><strong>Unknowns are where bad decisions hide.</strong> Spend your spike time there.</li>
+          <li><strong>Blind tests remove bias you don't know you have.</strong></li>
+          <li><strong>Real users are the final judge of user requirements.</strong></li>
+          <li>
+            <strong>A good process can hand you more than a decision.</strong> If you drive down
+            unknowns by building, you end with a derisked prototype instead of a document.
+          </li>
+        </ul>
+        <p>
+          Then decide with conviction, and measure the results.
+        </p>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
