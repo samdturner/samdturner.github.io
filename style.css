@@ -1,30 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #ffffff;
-  --fg: #3f3f46;
-  --heading: #18181b;
-  --muted: #71717a;
-  --accent: #0f766e;
-  --tip: #c2560c;
-  --border: #e6e6e9;
-  --code-bg: #f4f4f5;
+  /* the site's palette, shared with the home page: a light slate
+     with fog washing down from under the top of the page */
+  --bg: #E6ECF7;
+  --fg: #3A4657;
+  --heading: #0C1524;
+  --muted: #66748A;
+  --accent: #2F6FE0;
+  --tip: #B4521C;
+  --border: rgba(20, 45, 90, .13);
+  --code-bg: #DFE6F3;
+  --page-art: linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, 0));
+  --page-art-size: 100% 520px;
+  --page-art-repeat: no-repeat;
   --font-head: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --max-width: 720px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1115;
-    --fg: #c7cad2;
-    --heading: #f3f4f6;
-    --muted: #9195a1;
-    --accent: #2dd4bf;
-    --tip: #fb923c;
-    --border: #262b33;
-    --code-bg: #1a1e24;
-  }
+/* Articles sit on a lighter field than the home page: long-form
+   reading wants more contrast under the text. Falls back to the
+   shared slate where :has() is unsupported. */
+body:has(.post-layout) {
+  --bg: #F2F5FC;
+  --page-art: linear-gradient(180deg, rgba(255, 255, 255, .85), rgba(255, 255, 255, 0));
+  --page-art-size: 100% 420px;
 }
 
 * {
@@ -37,7 +38,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: var(--page-art, none);
+  background-size: var(--page-art-size, auto);
+  background-repeat: var(--page-art-repeat, repeat);
+  background-position: top center;
   color: var(--fg);
   font-family: var(--font-body);
   line-height: 1.72;
@@ -205,6 +210,34 @@ a:hover {
   .toc {
     display: none;
   }
+}
+
+/* Back to the board the article was opened from. It sits inside
+   .toc, whose own `a` rule would otherwise set its display, padding
+   and colour, so it is scoped to .toc to outrank it. */
+.toc .bk-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* .toc scrolls, so it clips: leave the arrow room to slide into */
+  padding-left: 5px;
+  margin: 0 0 26px;
+  border-left: 0;
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.toc .bk-ghost:hover { text-decoration: none; }
+.toc .bk-ghost .arw { transition: transform .15s ease; }
+.toc .bk-ghost:hover .arw { transform: translateX(-3px); }
+
+/* the contents rail is hidden on narrow screens; keep just the link */
+@media (max-width: 900px) {
+  .post-layout > .toc { display: block; position: static; max-height: none; overflow: visible; }
+  .toc > .toc-title, .toc > ul { display: none; }
 }
 
 /* Single post */
