@@ -655,16 +655,16 @@
     .move-row span { font-size: 19.5px; line-height: 1.15; text-align: left; }
 
     /* ---- advanced strip ---- */
-    .adv-label {
+    .boost-label {
       position: absolute;
       transform: translate(-50%, -50%);
       text-align: center;
       width: 168px;
     }
-    .adv-label-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .adv-label-row span { font-family: var(--marker); font-size: 21px; }
-    .adv-label-sub { font-size: 18px; color: var(--ink-soft); margin-top: 1px; }
-    .adv-item {
+    .boost-label-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .boost-label-row span { font-family: var(--marker); font-size: 21px; }
+    .boost-label-sub { font-size: 18px; color: var(--ink-soft); margin-top: 1px; }
+    .boost-item {
       position: absolute;
       transform: translate(-50%, -50%);
       width: 214px;
@@ -672,9 +672,9 @@
       align-items: center;
       gap: 10px;
     }
-    .adv-item > svg { flex-shrink: 0; }
-    .adv-item .chip { font-size: 20px; line-height: 1.15; padding: 2px 9px 4px; }
-    .adv-item .plain { font-size: 20px; line-height: 1.14; text-align: left; }
+    .boost-item > svg { flex-shrink: 0; }
+    .boost-item .chip { font-size: 20px; line-height: 1.15; padding: 2px 9px 4px; }
+    .boost-item .plain { font-size: 20px; line-height: 1.14; text-align: left; }
 
     @media (prefers-reduced-motion: reduce) {
       .paper .ink, .paper .scribble { opacity: 1; animation: none; }
@@ -1302,9 +1302,9 @@
     }
 
     function advancedStrip() {
-      var out = '<div class="adv-label ink" style="left:' + (ZONE.x + 102) + "px;top:908px;" + delay(1.25) + '">' +
-        '<div class="adv-label-row">' + icon("rocket", 30) + "<span>ADVANCED</span></div>" +
-        '<div class="adv-label-sub">go even faster</div>' +
+      var out = '<div class="boost-label ink" style="left:' + (ZONE.x + 102) + "px;top:908px;" + delay(1.25) + '">' +
+        '<div class="boost-label-row">' + icon("rocket", 30) + "<span>ADVANCED</span></div>" +
+        '<div class="boost-label-sub">go even faster</div>' +
         "</div>";
 
       ADVANCED.forEach(function (a, idx) {
@@ -1318,7 +1318,7 @@
             ' aria-label="' + a.label + '"><span class="chip">' + a.label + " →</span></a>"
           : '<span class="plain">' + a.label + "</span>";
 
-        out += '<div class="adv-item scribble" style="left:' + (460 + idx * 280) + "px;top:908px;" +
+        out += '<div class="boost-item scribble" style="left:' + (460 + idx * 280) + "px;top:908px;" +
           delay(1.35 + idx * 0.08) + '">' + badge + body + "</div>";
       });
 

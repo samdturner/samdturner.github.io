@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Make High Quality Decisions</title>
-  <meta name="description" content="A lightweight decision process for a small team, adapted from SPADE — and the six days we spent using it to choose our real-time voice technology." />
+  <meta name="description" content="A lightweight decision process for a small team, adapted from SPADE — and the five days we spent using it to choose our real-time voice technology." />
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="shortcut icon" href="favicon.ico" />
@@ -47,6 +47,13 @@
     .sketch-fig.wide .fig-svg { max-width: 100%; }
     @media (min-width: 1180px) {
       .sketch-fig.wide { margin-left: -36px; margin-right: -36px; }
+      /* the board carries the most text, so it takes the room to its right.
+         The left edge stays clear of the contents rail; the right is clamped
+         so the page never scrolls sideways. */
+      .sketch-fig.board {
+        margin-left: -24px;
+        margin-right: calc(-1 * min(80px, (100vw - 1100px) / 2));
+      }
     }
     .sketch-fig .fill-paper { fill: var(--paper); }
     .sketch-fig .fill-faint { fill: color-mix(in srgb, var(--ink) 7%, transparent); }
@@ -61,6 +68,19 @@
     .sketch-fig .fill-warn { fill: color-mix(in srgb, var(--warn) 10%, transparent); }
     .sketch-fig .fill-blue { fill: color-mix(in srgb, var(--blue) 8%, transparent); }
     .sketch-fig .fill-good { fill: color-mix(in srgb, var(--good) 12%, transparent); }
+
+    /* board chips: how each option scored */
+    .sketch-fig .chip-good { fill: color-mix(in srgb, var(--good) 16%, transparent); }
+    .sketch-fig .chip-warn { fill: color-mix(in srgb, var(--warn) 20%, transparent); }
+    .sketch-fig .chip-loss { fill: color-mix(in srgb, var(--loss) 15%, transparent); }
+    .sketch-fig .chip-none { fill: color-mix(in srgb, var(--ink) 8%, transparent); }
+
+    /* score chips, 1 (a machine) to 5 (real enough) */
+    .sketch-fig .chip-1 { fill: color-mix(in srgb, var(--loss) 30%, transparent); }
+    .sketch-fig .chip-2 { fill: color-mix(in srgb, var(--loss) 15%, transparent); }
+    .sketch-fig .chip-3 { fill: color-mix(in srgb, var(--warn) 24%, transparent); }
+    .sketch-fig .chip-4 { fill: color-mix(in srgb, var(--good) 16%, transparent); }
+    .sketch-fig .chip-5 { fill: color-mix(in srgb, var(--good) 30%, transparent); }
 
     /* the quadrant this post is about */
     .sketch-fig .fill-focus { fill: color-mix(in srgb, var(--loss) 13%, transparent); }
@@ -81,66 +101,101 @@
     }
     .principles strong { color: var(--heading); }
 
-    /* ---- the three blind-test rounds ---- */
-    .rounds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
-    @media (max-width: 760px) { .rounds { grid-template-columns: 1fr; } }
+    /* ---- what came back from the sessions, on stickies ---- */
+    .stickies { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+    @media (max-width: 720px) { .stickies { grid-template-columns: minmax(0, 1fr); gap: 26px; } }
 
-    .round {
-      background: #fff;
-      border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
-      border-radius: 12px;
-      box-shadow: 0 4px 14px rgba(0,0,0,.09);
-      padding: 13px 14px 15px;
-      min-width: 0;
+    .st-col { --c: var(--ink-soft); --note: #f3edd8; min-width: 0; }
+    .st-col.win  { --c: var(--good); --note: #cfe8cd; }
+    .st-col.okay { --c: var(--warn); --note: #f6e4b8; }
+    .st-col.gap  { --c: var(--loss); --note: #f3cfc4; }
+
+    .st-head {
+      margin: 0 0 16px; padding-left: 2px; text-align: center;
+      font-family: var(--font-head); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.13em; color: var(--c);
     }
-    .rd-head {
-      display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
-      margin: 0 0 11px; padding-bottom: 9px;
-      border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    .st-col ul { list-style: none; margin: 0; padding: 0; }
+    .st-col li {
+      background: var(--note);
+      border-radius: 3px;
+      box-shadow: 0 5px 14px rgba(0,0,0,.13);
+      padding: 20px 16px;
+      margin: 0 auto 20px;
+      min-height: 96px;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      font-family: var(--hand); font-weight: 700; font-size: 1.06rem;
+      line-height: 1.32; color: var(--ink);
     }
-    .rd-n {
-      font-family: var(--hand); font-weight: 700; font-size: 1.28rem;
-      line-height: 1.1; color: var(--ink);
+    .st-col li:nth-child(odd)  { transform: rotate(-1.1deg); }
+    .st-col li:nth-child(even) { transform: rotate(1.2deg); }
+
+    /* ---- the cut down: what survived step 1 and what didn't ---- */
+    .cutdown { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 30px; align-items: start; }
+
+    .cd-head {
+      display: flex; align-items: baseline; gap: 9px;
+      margin: 0 0 14px; padding-left: 2px;
+      font-family: var(--font-head); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.13em; color: var(--c);
     }
-    .rd-worst {
-      font-family: var(--font-head); font-size: 0.62rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft);
-      white-space: nowrap;
+    .cd-head b {
+      font-family: var(--hand); font-size: 1.15rem; letter-spacing: 0;
+      text-transform: none; line-height: 1;
     }
 
-    .notes { list-style: none; margin: 0; padding: 0; }
-    .notes li {
-      display: grid; grid-template-columns: 24px 1fr; gap: 9px;
-      margin: 0 0 11px; align-items: start;
-      font-size: 0.87rem; line-height: 1.42; color: var(--ink);
+    .cd-list { list-style: none; margin: 0; padding: 0; }
+    .cd-list li {
+      display: grid; grid-template-columns: 22px minmax(0, 1fr);
+      gap: 10px; align-items: baseline;
+      padding: 11px 2px 12px;
+      border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
     }
-    .notes li:last-child { margin-bottom: 0; }
-    .sev {
-      flex: none; width: 24px; height: 24px; border-radius: 6px;
-      display: inline-flex; align-items: center; justify-content: center;
-      font-family: var(--font-head); font-weight: 700; font-size: 0.78rem; line-height: 1;
-      color: #fff; background: var(--c);
+    .cd-list li:first-child { border-top: 0; padding-top: 0; }
+    .cd-list .mark { color: var(--c); font-size: 1rem; line-height: 1.3; }
+    .cd-list b {
+      display: block; font-family: var(--hand); font-size: 1.06rem;
+      font-weight: 700; color: var(--ink); line-height: 1.25;
     }
-    .sev.s1 { --c: #9aa07f; } .sev.s2 { --c: var(--good); }
-    .sev.s3 { --c: var(--warn); }
-    .sev.s4 { --c: var(--loss); } .sev.s5 { --c: #96331a; }
+    .cd-list .why { display: block; font-size: 0.88rem; line-height: 1.45; color: var(--ink-soft); margin-top: 2px; }
 
-    .sev-key {
-      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-      margin: 16px 0 2px; padding-left: 2px;
-      font-size: 0.8rem; color: var(--ink-soft);
+    .keep { --c: var(--good); min-width: 0; }
+    .cut {
+      --c: var(--loss); min-width: 0;
+      border-left: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+      padding-left: 30px;
     }
-    .sev-key .k {
-      font-family: var(--font-head); font-size: 0.62rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.11em;
+    @media (max-width: 720px) {
+      .cutdown { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+      .cut { border-left: 0; padding-left: 0; padding-top: 20px; border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); }
     }
-    .sev-key .sev { width: 21px; height: 21px; font-size: 0.7rem; }
 
-    /* ---- takeaways with a bolded lead ---- */
-    .takeaways { margin: 18px 0 26px; padding-left: 1.15em; }
-    .takeaways li { margin: 12px 0; padding-left: 4px; line-height: 1.62; }
-    .takeaways li::marker { color: var(--muted); }
-    .takeaways strong { color: var(--heading); }
+    /* ---- hard requirements: the thresholds an option had to clear ---- */
+    .gates { list-style: none; margin: 22px 0 30px; padding: 0; }
+    .gates li {
+      display: grid; grid-template-columns: 168px minmax(0, 1fr);
+      gap: 18px; align-items: baseline;
+      margin: 0 0 14px; padding: 14px 0 0;
+      border-top: 1px solid var(--border);
+    }
+    .gates li:first-child { padding-top: 0; border-top: 0; }
+    .gate-n {
+      font-family: var(--font-head); font-size: 1.06rem; font-weight: 700;
+      letter-spacing: -0.01em; color: #2f8f4e; line-height: 1.3;
+      font-variant-numeric: tabular-nums;
+    }
+    .gate-n small { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+    .gates p { margin: 0; line-height: 1.62; }
+    @media (max-width: 560px) {
+      .gates li { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    }
+
+    /* ---- lists with a bolded lead ---- */
+    .reqs { margin: 18px 0 26px; padding-left: 1.15em; }
+    .reqs li { margin: 12px 0; padding-left: 4px; line-height: 1.62; }
+    .reqs li::marker { color: var(--muted); }
+    .reqs strong { color: var(--heading); }
   </style>
 </head>
 <body>
@@ -153,11 +208,9 @@
         <li><a href="#framework">The framework</a></li>
         <li><a href="#example">Example: choosing our voice tech</a></li>
         <li class="sub"><a href="#step-1">1. Research nine options</a></li>
-        <li class="sub"><a href="#step-2">2. Blind tests</a></li>
+        <li class="sub"><a href="#step-2">2. Blind test the options</a></li>
         <li class="sub"><a href="#step-3">3. Real users</a></li>
-        <li><a href="#decision">The decision</a></li>
-        <li><a href="#six-days">It took six days</a></li>
-        <li><a href="#takeaways">Takeaways</a></li>
+        <li><a href="#six-days">It took five days</a></li>
       </ul>
     </aside>
 
@@ -167,7 +220,7 @@
         <h1 class="post-title">Make High Quality Decisions</h1>
 
         <p>
-          Moving fast matters. It's how you find product market fit before you run out of runway. Most
+          Moving fast matters. It's how you find product market fit before you run out of resources. Most
           choices are reversible, so the right move is to decide fast, adjust, and keep moving. I've
           written about how we make those quick calls in
           <a href="not-every-decision-deserves-a-meeting.html">Not Every Decision Deserves a Meeting</a>.
@@ -286,7 +339,7 @@
           </li>
         </ol>
 
-        <h2 id="example">Example: choosing our real-time voice technology</h2>
+        <h2 id="example">Example: selecting our real-time voice technology</h2>
 
         <h3>The context</h3>
         <p>
@@ -308,22 +361,41 @@
 
         <h3>Who decided</h3>
         <p>
-          I owned the decision. My co-founder Wenyu was involved in reviewing it, but one person owned
+          I owned the decision. My co-founder was involved in reviewing it, but one person owned
           driving it to a conclusion.
         </p>
 
         <h3>The requirements</h3>
         <p>
-          This was tricky because the requirements pulled in three directions at once.
+          There was a long list of requirements a real-time voice solution had to meet, and they spanned
+          three different categories. Some could be answered by reading the documentation. Others
+          could only be answered by prototyping with real users.
         </p>
+
+        <ul class="reqs">
+          <li><strong>Technical.</strong> Latency, concurrency limits, and scope.</li>
+          <li>
+            <strong>Business.</strong> Cost, cost at scale, and cash flow. A price that works for a demo
+            can quietly kill you at volume.
+          </li>
+          <li>
+            <strong>User.</strong> Realness, which breaks into voice realism and response intelligence.
+          </li>
+        </ul>
 
         <figure class="sketch-fig wide">
           <div class="paper">
-            <svg class="fig-svg" viewBox="0 0 1080 430" role="img" aria-label="A board with three groups of requirement cards. Technical: latency, concurrency limits, and scope to build. Business: cost, cost at scale, and cash flow. User: voice realism, voice emotion, and response intelligence.">
+            <svg class="fig-svg" viewBox="0 0 1080 486" role="img" aria-label="A board titled what a real-time voice solution had to do, with three groups of requirement cards. Technical: latency, concurrency limits, and scope to build. Business: cost, cost at scale, and cash flow. User: voice realism, voice emotion, and response intelligence.">
               <defs>
                 <filter id="req-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="500"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
                 <filter id="req-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="500"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
               </defs>
+
+              <!-- what the board is -->
+              <text x="540" y="44" class="lbl" font-size="30" text-anchor="middle">What a real-time voice solution had to do</text>
+              <path filter="url(#req-rough2)" d="M 320 58 Q 540 64, 760 57" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+
+              <g transform="translate(0,56)">
 
               <!-- the three groups -->
               <g filter="url(#req-rough)" stroke-width="3.5" stroke-dasharray="12 10" fill="none">
@@ -348,160 +420,207 @@
                 <rect x="415" y="292" width="250" height="74" rx="10"/>
                 <rect x="760" y="108" width="250" height="74" rx="10"/>
                 <rect x="760" y="200" width="250" height="74" rx="10"/>
-                <rect x="760" y="292" width="250" height="74" rx="10"/>
               </g>
 
               <g text-anchor="middle">
                 <text x="195" y="153" class="lbl" font-size="24">Latency</text>
-
                 <text x="195" y="245" class="lbl" font-size="24">Concurrency limits</text>
-
-                <text x="195" y="325" class="lbl" font-size="24">Scope to build</text>
-                <text x="195" y="351" class="lbl soft" font-size="17">how much is ours to make</text>
+                <text x="195" y="337" class="lbl" font-size="24">Scope to build</text>
 
                 <text x="540" y="153" class="lbl" font-size="24">Cost</text>
-
-                <text x="540" y="233" class="lbl" font-size="24">Cost at scale</text>
-                <text x="540" y="259" class="lbl soft" font-size="17">demo price &#8800; volume price</text>
-
+                <text x="540" y="245" class="lbl" font-size="24">Cost at scale</text>
                 <text x="540" y="337" class="lbl" font-size="24">Cash flow</text>
 
-                <text x="885" y="141" class="lbl" font-size="24">Voice realism</text>
-                <text x="885" y="167" class="lbl soft" font-size="17">does it sound human</text>
-
-                <text x="885" y="233" class="lbl" font-size="24">Voice emotion</text>
-                <text x="885" y="259" class="lbl soft" font-size="17">does it react like a person</text>
-
-                <text x="885" y="325" class="lbl" font-size="24">Response intelligence</text>
-                <text x="885" y="351" class="lbl soft" font-size="17">are the words believable</text>
+                <text x="885" y="153" class="lbl" font-size="24">Voice realism</text>
+                <text x="885" y="245" class="lbl" font-size="24">Response intelligence</text>
               </g>
+                          </g>
             </svg>
           </div>
           <figcaption>
-            Every requirement on one board, before a single option was compared. This board kept
-            growing for the rest of the week.
+            Every requirement on one board, before a single option was compared.
           </figcaption>
         </figure>
 
         <p>
-          Three of these deserve a note. <strong>Scope</strong> is really a question about how much of
-          the stack you own: an all-in-one agent platform hands you a lot, a stitched-together pipeline
-          hands you control and a build list. <strong>Cost at scale</strong> matters because a price
-          that works for a demo can quietly kill you at volume. And the <strong>user</strong> column is
-          the one specs can't answer, which is why most of the week went there.
+          Three of those requirements were hard limits. An option that missed one was out, however good
+          it looked everywhere else.
         </p>
+
+        <ul class="gates">
+          <li>
+            <span class="gate-n">$7 or less<small>per hour</small></span>
+            <p>
+              Cost per hour of interactivity is what we pay every time a rep practices. Past $7 there
+              isn't enough room left between what a session costs us and what a customer will pay for it.
+            </p>
+          </li>
+          <li>
+            <span class="gate-n">10 or more<small>concurrent sessions</small></span>
+            <p>
+              Enough to run user tests without a queue. We assumed that whatever we picked, real scale
+              would be a conversation with the vendor later, so we only needed the early tests to work.
+            </p>
+          </li>
+          <li>
+            <span class="gate-n">5 days or less<small>to build</small></span>
+            <p>
+              We're a lean team and time to market is what validates the product. Days spent assembling
+              basic voice infrastructure are days not spent finding out whether anyone wants it.
+            </p>
+          </li>
+        </ul>
 
         <h2 id="step-1"><span class="sec-num">Step 1</span>Research nine options</h2>
         <p>
           We started wide. The list was GPT-4o, GPT-4o mini, ElevenLabs Conversational AI, Deepgram
-          Voice Agent, Deepgram plus ElevenLabs, Gemini 2.5 Flash, LiveKit, Vapi, and Retell.
+          Voice Agent, Deepgram plus ElevenLabs, Gemini 2.5 Flash, LiveKit, Vapi, and Retell, plus the
+          option of building our own.
         </p>
         <p>
           For each one, we mapped the same criteria on a board. Time to implement. Product quality,
-          covering voice realism, voice emotion, response intelligence, and latency. Scalability,
+          covering voice realism, response intelligence, and latency. Scalability,
           covering rate limits, concurrency limits, and pricing scalability. Cost per hour of
           interactivity. And unknowns, the questions we couldn't answer yet.
         </p>
+        <p>
+          Here is how they stacked up on the technical and business requirements.
+        </p>
 
-        <figure class="sketch-fig wide">
+        <figure class="sketch-fig wide board">
           <div class="paper">
-            <svg class="fig-svg" viewBox="0 0 1080 740" role="img" aria-label="An evaluation board. Nine options are listed down the left: GPT-4o, GPT-4o mini, ElevenLabs Conversational AI, Deepgram Voice Agent, Deepgram plus ElevenLabs, Gemini 2.5 Flash, LiveKit, Vapi and Retell. Five columns run across: time to build, quality, scale, cost per hour and unknowns. Every cell is filled in. Gemini 2.5 Flash and Retell are struck through. Notes below record the cuts: Gemini could not output audio, Retell cost too much, three more fell out on latency and concurrency, leaving a short list of four.">
+            <svg class="fig-svg" viewBox="0 0 1000 561" role="img" aria-label="An evaluation board. Nine options run down the left: GPT-4o, GPT-4o mini, Vapi, ElevenLabs Conversational AI, Deepgram Voice Agent, Gemini 2.5 Flash, LiveKit, Retell, and building our own. Five columns run across, grouped as technical (time to build, latency, concurrency) and business (cost per hour, pricing). Cells are green where the option beats a hard requirement, yellow where it lands exactly on one, and red where it misses. Gemini 2.5 Flash has one red bar across every column reading cannot generate audio output. Cells we never filled in are left blank.">
               <defs>
-                <filter id="brd-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="800"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
-                <filter id="brd-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="800"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
-
-                <!-- filled-in cells: a few strokes of handwriting -->
-                <g id="sqA"><line x1="-48" y1="-9" x2="30" y2="-9"/><line x1="-48" y1="9" x2="6" y2="9"/></g>
-                <g id="sqB"><line x1="-38" y1="-9" x2="42" y2="-9"/><line x1="-38" y1="9" x2="20" y2="9"/></g>
-                <g id="sqC"><line x1="-44" y1="-9" x2="14" y2="-9"/><line x1="-44" y1="9" x2="38" y2="9"/></g>
+                <filter id="brd-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="680"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+                <filter id="brd-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="680"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
               </defs>
 
+              <!-- the two groups of requirements -->
+              <g filter="url(#brd-rough2)" stroke-width="2.6" stroke-dasharray="10 8" fill="none">
+                <rect x="256" y="26" width="433" height="34" rx="9" class="fill-plan" stroke="var(--plan)"/>
+                <rect x="693" y="26" width="288" height="34" rx="9" class="fill-warn" stroke="var(--warn)"/>
+              </g>
+              <g text-anchor="middle" font-size="18" letter-spacing="2.4">
+                <text x="472" y="50" class="lbl plan">TECHNICAL</text>
+                <text x="837" y="50" class="lbl warn">BUSINESS</text>
+              </g>
+
               <!-- column headings -->
-              <g text-anchor="middle" class="lbl soft" font-size="17" letter-spacing="1.6">
-                <text x="419" y="86">TIME TO BUILD</text>
-                <text x="557" y="86">QUALITY</text>
-                <text x="695" y="86">SCALE</text>
-                <text x="833" y="86">COST / HR</text>
-                <text x="971" y="86">UNKNOWNS</text>
+              <g text-anchor="middle" class="lbl soft" font-size="17" letter-spacing="1.2">
+                <text x="328" y="90">TIME TO BUILD</text>
+                <text x="473" y="90">LATENCY</text>
+                <text x="618" y="90">CONCURRENCY</text>
+                <text x="763" y="90">COST / HR</text>
+                <text x="908" y="90">PRICING</text>
               </g>
 
               <!-- the ruling -->
               <g filter="url(#brd-rough)" stroke="var(--ink)" stroke-width="3" stroke-linecap="round">
-                <line x1="36" y1="104" x2="1044" y2="104"/>
-                <line x1="36" y1="570" x2="1044" y2="570"/>
+                <line x1="20" y1="104" x2="984" y2="104"/>
+                <line x1="20" y1="531" x2="984" y2="531"/>
               </g>
               <g filter="url(#brd-rough2)" stroke="var(--ink-soft)" stroke-width="1.8" stroke-dasharray="8 8">
-                <line x1="350" y1="112" x2="350" y2="562"/>
-                <line x1="488" y1="112" x2="488" y2="562"/>
-                <line x1="626" y1="112" x2="626" y2="562"/>
-                <line x1="764" y1="112" x2="764" y2="562"/>
-                <line x1="902" y1="112" x2="902" y2="562"/>
+                <line x1="250" y1="112" x2="250" y2="523"/>
+                <line x1="401" y1="112" x2="401" y2="523"/>
+                <line x1="546" y1="112" x2="546" y2="523"/>
+                <line x1="691" y1="112" x2="691" y2="523"/>
+                <line x1="836" y1="112" x2="836" y2="523"/>
               </g>
 
-              <!-- the nine options -->
-              <g class="lbl" font-size="21">
-                <text x="44" y="144">GPT-4o</text>
-                <text x="44" y="194">GPT-4o mini</text>
-                <text x="44" y="244">ElevenLabs Conv. AI</text>
-                <text x="44" y="294">Deepgram Voice Agent</text>
-                <text x="44" y="344">Deepgram + ElevenLabs</text>
-                <text x="44" y="394">Gemini 2.5 Flash</text>
-                <text x="44" y="444">LiveKit</text>
-                <text x="44" y="494">Vapi</text>
-                <text x="44" y="544">Retell</text>
+              <!-- the options -->
+              <g class="lbl">
+                <text x="24" y="139" class="lbl soft" font-size="18">1</text>
+                <text x="52" y="139" font-size="20">GPT-4o</text>
+                <text x="24" y="185" class="lbl soft" font-size="18">2</text>
+                <text x="52" y="185" font-size="20">GPT-4o mini</text>
+                <text x="24" y="231" class="lbl soft" font-size="18">3</text>
+                <text x="52" y="231" font-size="20">Vapi</text>
+                <text x="24" y="277" class="lbl soft" font-size="18">4</text>
+                <text x="52" y="277" font-size="20">ElevenLabs Conv. AI</text>
+                <text x="24" y="323" class="lbl soft" font-size="18">5</text>
+                <text x="52" y="323" font-size="20">Deepgram Voice Agent</text>
+                <text x="24" y="369" class="lbl soft" font-size="18">6</text>
+                <text x="52" y="369" font-size="20">Gemini 2.5 Flash</text>
+                <text x="24" y="415" class="lbl soft" font-size="18">7</text>
+                <text x="52" y="415" font-size="20">LiveKit</text>
+                <text x="24" y="461" class="lbl soft" font-size="18">8</text>
+                <text x="52" y="461" font-size="20">Retell</text>
+                <text x="24" y="507" class="lbl soft" font-size="18">9</text>
+                <text x="52" y="507" font-size="20">Build our own</text>
               </g>
 
-              <!-- every cell filled in -->
-              <g filter="url(#brd-rough2)" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round">
-                <use href="#sqA" x="419" y="137"/><use href="#sqB" x="557" y="137"/><use href="#sqC" x="695" y="137"/><use href="#sqB" x="833" y="137"/>
-                <use href="#sqB" x="419" y="187"/><use href="#sqC" x="557" y="187"/><use href="#sqA" x="695" y="187"/><use href="#sqC" x="833" y="187"/>
-                <use href="#sqC" x="419" y="237"/><use href="#sqA" x="557" y="237"/><use href="#sqB" x="695" y="237"/><use href="#sqA" x="833" y="237"/>
-                <use href="#sqA" x="419" y="287"/><use href="#sqC" x="557" y="287"/><use href="#sqC" x="695" y="287"/><use href="#sqB" x="833" y="287"/>
-                <use href="#sqB" x="419" y="337"/><use href="#sqA" x="557" y="337"/><use href="#sqA" x="695" y="337"/><use href="#sqC" x="833" y="337"/>
-                <use href="#sqC" x="419" y="387"/><use href="#sqB" x="557" y="387"/><use href="#sqB" x="695" y="387"/><use href="#sqA" x="833" y="387"/>
-                <use href="#sqA" x="419" y="437"/><use href="#sqA" x="557" y="437"/><use href="#sqC" x="695" y="437"/><use href="#sqB" x="833" y="437"/>
-                <use href="#sqB" x="419" y="487"/><use href="#sqC" x="557" y="487"/><use href="#sqA" x="695" y="487"/><use href="#sqA" x="833" y="487"/>
-                <use href="#sqC" x="419" y="537"/><use href="#sqB" x="557" y="537"/><use href="#sqB" x="695" y="537"/><use href="#sqC" x="833" y="537"/>
-              </g>
-
-              <!-- the questions we could not answer yet -->
-              <g text-anchor="middle" class="lbl warn" font-size="25" letter-spacing="5">
-                <text x="971" y="146">??</text>
-                <text x="971" y="196">?</text>
-                <text x="971" y="246">???</text>
-                <text x="971" y="296">??</text>
-                <text x="971" y="346">???</text>
-                <text x="971" y="396">?</text>
-                <text x="971" y="446">??</text>
-                <text x="971" y="496">???</text>
-                <text x="971" y="546">?</text>
-              </g>
-
-              <!-- two that ruled themselves out -->
-              <g filter="url(#brd-rough)" stroke="var(--loss)" stroke-width="4" stroke-linecap="round">
-                <line x1="40" y1="387" x2="1040" y2="387"/>
-                <line x1="40" y1="537" x2="1040" y2="537"/>
-              </g>
-
-              <!-- what came off the board -->
-              <g class="lbl loss" font-size="20">
-                <text x="44" y="626">&#10005; Gemini 2.5 Flash &#8212; no audio output at the time</text>
-                <text x="44" y="662">&#10005; Retell &#8212; cost too high for our margins</text>
-                <text x="44" y="698">&#10005; three more &#8212; latency and concurrency risk</text>
-              </g>
-
-              <g filter="url(#brd-rough2)">
-                <rect x="770" y="606" width="270" height="102" rx="16" class="fill-good" stroke="var(--good)" stroke-width="4"/>
-              </g>
-              <g text-anchor="middle">
-                <text x="905" y="648" class="lbl good" font-size="24">SHORT LIST</text>
-                <text x="905" y="684" class="lbl good" font-size="26">4 options</text>
-              </g>
+              <!-- what we found -->
+              <rect x="263" y="115" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="328" y="139" class="lbl good" font-size="18" text-anchor="middle">Very low</text>
+              <text x="473" y="139" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <rect x="553" y="115" width="130" height="34" rx="9" class="chip-none"/>
+                <text x="618" y="139" class="lbl soft" font-size="18" text-anchor="middle">Unclear</text>
+              <rect x="698" y="115" width="130" height="34" rx="9" class="chip-warn"/>
+                <text x="763" y="139" class="lbl warn" font-size="18" text-anchor="middle">$7 / hr</text>
+              <rect x="843" y="115" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="908" y="139" class="lbl good" font-size="18" text-anchor="middle">Pay as you go</text>
+              <rect x="263" y="161" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="328" y="185" class="lbl good" font-size="18" text-anchor="middle">Very low</text>
+              <text x="473" y="185" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <rect x="553" y="161" width="130" height="34" rx="9" class="chip-none"/>
+                <text x="618" y="185" class="lbl soft" font-size="18" text-anchor="middle">Unclear</text>
+              <rect x="698" y="161" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="763" y="185" class="lbl good" font-size="18" text-anchor="middle">$1.75 / hr</text>
+              <rect x="843" y="161" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="908" y="185" class="lbl good" font-size="18" text-anchor="middle">Pay as you go</text>
+              <rect x="263" y="207" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="328" y="231" class="lbl good" font-size="18" text-anchor="middle">Very low</text>
+              <rect x="408" y="207" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="473" y="231" class="lbl good" font-size="18" text-anchor="middle">2.2–3.2s</text>
+              <rect x="553" y="207" width="130" height="34" rx="9" class="chip-warn"/>
+                <text x="618" y="231" class="lbl warn" font-size="18" text-anchor="middle">10 by default</text>
+              <rect x="698" y="207" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="763" y="231" class="lbl good" font-size="18" text-anchor="middle">$4.55 / hr</text>
+              <rect x="843" y="207" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="908" y="231" class="lbl good" font-size="18" text-anchor="middle">Pay as you go</text>
+              <rect x="263" y="253" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="328" y="277" class="lbl good" font-size="18" text-anchor="middle">Very low</text>
+              <text x="473" y="277" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <rect x="553" y="253" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="618" y="277" class="lbl good" font-size="18" text-anchor="middle">20 calls</text>
+              <rect x="698" y="253" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="763" y="277" class="lbl good" font-size="18" text-anchor="middle">$6 / hr</text>
+              <rect x="843" y="253" width="130" height="34" rx="9" class="chip-warn"/>
+                <text x="908" y="277" class="lbl warn" font-size="17" text-anchor="middle">Buy extra mins</text>
+              <rect x="263" y="299" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="328" y="323" class="lbl good" font-size="18" text-anchor="middle">Very low</text>
+              <text x="473" y="323" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <rect x="553" y="299" width="130" height="34" rx="9" class="chip-loss"/>
+                <text x="618" y="323" class="lbl loss" font-size="18" text-anchor="middle">5 calls</text>
+              <rect x="698" y="299" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="763" y="323" class="lbl good" font-size="18" text-anchor="middle">$4.50 / hr</text>
+              <rect x="843" y="299" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="908" y="323" class="lbl good" font-size="18" text-anchor="middle">Pay as you go</text>
+              <rect x="256" y="345" width="725" height="34" rx="9" class="chip-loss"/>
+                <text x="618" y="369" class="lbl loss" font-size="20" text-anchor="middle">Cannot generate audio output</text>
+              <rect x="263" y="391" width="130" height="34" rx="9" class="chip-warn"/>
+                <text x="328" y="415" class="lbl warn" font-size="18" text-anchor="middle">Medium</text>
+              <text x="473" y="415" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <text x="618" y="415" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <text x="763" y="415" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <text x="908" y="415" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <text x="328" y="461" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <text x="473" y="461" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <text x="618" y="461" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <rect x="698" y="437" width="130" height="34" rx="9" class="chip-loss"/>
+                <text x="763" y="461" class="lbl loss" font-size="18" text-anchor="middle">$10 / hr</text>
+              <text x="908" y="461" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <rect x="263" y="483" width="130" height="34" rx="9" class="chip-loss"/>
+                <text x="328" y="507" class="lbl loss" font-size="18" text-anchor="middle">High</text>
+              <text x="473" y="507" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <text x="618" y="507" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
+              <rect x="698" y="483" width="130" height="34" rx="9" class="chip-good"/>
+                <text x="763" y="507" class="lbl good" font-size="18" text-anchor="middle">$3 / hr</text>
+              <text x="908" y="507" class="lbl soft" font-size="20" text-anchor="middle" opacity=".4">&#8212;</text>
             </svg>
           </div>
           <figcaption>
-            The same criteria for every option, including the ones we expected to lose. Two ruled
-            themselves out on the board alone.
+            Every option against the technical and business requirements.
           </figcaption>
         </figure>
 
@@ -511,201 +630,473 @@
           risks. We ended with a short list of four.
         </p>
 
-        <h2 id="step-2"><span class="sec-num">Step 2</span>Drive down the unknowns with blind tests</h2>
-        <p>
-          The board answered the technical and business questions. It couldn't answer the user question:
-          which one actually feels real. Specs don't tell you that. So we tested.
-        </p>
-        <p>
-          I set up mock sales role plays with each of the four finalists and ran them with my co-founder,
-          without telling him which option was which. Blind testing mattered because we already had
-          opinions about these vendors, and we wanted to judge the experience, not the brand.
-        </p>
-        <p>
-          We ran three rounds. After each round, we wrote down what worked well and what needed to
-          improve, and we ranked every pain point on a severity scale from one, an observation, up to
-          five, a deal breaker. Then we improved each prototype before the next round.
-        </p>
-
         <figure class="sketch-fig wide">
           <div class="paper">
-            <div class="rounds">
+            <div class="cutdown">
 
-              <div class="round">
-                <p class="rd-head"><span class="rd-n">Round 1</span><span class="rd-worst">4 prototypes</span></p>
-                <ul class="notes">
-                  <li><span class="sev s4">4</span>Every answer is a paragraph. Real people say "yeah, sure."</li>
-                  <li><span class="sev s4">4</span>Tone doesn't match the words. Cheerful while objecting.</li>
-                  <li><span class="sev s3">3</span>Half a beat too slow to come back.</li>
-                  <li><span class="sev s2">2</span>Sighs before almost every answer.</li>
+              <div class="keep">
+                <p class="cd-head">Short list <b>4</b></p>
+                <ul class="cd-list">
+                  <li><span class="mark">&#10003;</span><b>GPT-4o</b></li>
+                  <li><span class="mark">&#10003;</span><b>GPT-4o mini</b></li>
+                  <li><span class="mark">&#10003;</span><b>ElevenLabs Conversational AI</b></li>
+                  <li><span class="mark">&#10003;</span><b>Vapi</b></li>
                 </ul>
               </div>
 
-              <div class="round">
-                <p class="rd-head"><span class="rd-n">Round 2</span><span class="rd-worst">4 prototypes</span></p>
-                <ul class="notes">
-                  <li><span class="sev s3">3</span>Reuses the same three phrases across the call.</li>
-                  <li><span class="sev s3">3</span>Won't hold the objection. Folds the moment you push.</li>
-                  <li><span class="sev s2">2</span>Talks over an interruption instead of stopping.</li>
-                </ul>
-              </div>
-
-              <div class="round">
-                <p class="rd-head"><span class="rd-n">Round 3</span><span class="rd-worst">4 prototypes</span></p>
-                <ul class="notes">
-                  <li><span class="sev s2">2</span>Flat delivery when it agrees with you.</li>
-                  <li><span class="sev s1">1</span>Slight pause when the topic changes.</li>
+              <div class="cut">
+                <p class="cd-head">Cut <b>5</b></p>
+                <ul class="cd-list">
+                  <li>
+                    <span class="mark">&#10005;</span>
+                    <span>
+                      <b>Gemini 2.5 Flash</b>
+                      <span class="why">Couldn't generate audio output at the time.</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="mark">&#10005;</span>
+                    <span>
+                      <b>Deepgram Voice Agent</b>
+                      <span class="why">Five concurrent calls, half of what we needed for user tests.</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="mark">&#10005;</span>
+                    <span>
+                      <b>Retell</b>
+                      <span class="why">$10 an hour, above our $7 limit.</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="mark">&#10005;</span>
+                    <span>
+                      <b>LiveKit</b>
+                      <span class="why">More for us to assemble, and latency looked like a risk.</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="mark">&#10005;</span>
+                    <span>
+                      <b>Build our own</b>
+                      <span class="why">Weeks of infrastructure work, not the five days we had.</span>
+                    </span>
+                  </li>
                 </ul>
               </div>
 
             </div>
-            <p class="sev-key">
-              <span class="k">Severity</span>
-              <span class="sev s1">1</span> an observation
-              <span class="sev s3">3</span> breaks the illusion
-              <span class="sev s5">5</span> deal breaker
-            </p>
           </div>
           <figcaption>
-            Same rubric every round. When the worst thing left on the page is a two, you're close.
+            Five options were out before we prototyped anything.
+          </figcaption>
+        </figure>
+
+        <h2 id="step-2"><span class="sec-num">Step 2</span>Test the options against the user requirements</h2>
+        <p>
+          The research answered the technical and business questions. It couldn't tell us which option
+          actually felt real. So we tested.
+        </p>
+        <p>
+          I set up mock sales role plays with each of the four finalists and ran them with my co-founder.
+          He didn't know which option was which. Blind testing mattered because we already had opinions
+          about these vendors. We wanted to judge the experience without being biased by the brand.
+        </p>
+        <p>
+          We ran three test rounds. After each round we scored every prototype out of five on the two user
+          requirements, voice realism and response intelligence. Then we improved each prototype before the next round.
+        </p>
+
+        <figure class="sketch-fig wide board">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 1000 450" role="img" aria-label="A board titled how real each option felt, scored 1 to 5. Three small tables, one per test, each scoring the four short-listed options on voice realism and response intelligence, with what we learned noted under each test. Vapi, which was running Gemini 2.5 Flash, rises from three and three in test one to five and five in test three.">
+              <defs>
+                <filter id="sa-r" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="510"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/></filter>
+                <filter id="sa-r2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="510"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="12" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
+              </defs>
+
+              <!-- what the board is -->
+              <text x="500" y="44" class="lbl" font-size="28" text-anchor="middle">How real each option felt, scored 1 to 5</text>
+              <path filter="url(#sa-r2)" d="M 268 58 Q 500 64, 732 57" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- test 1 -->
+              <text x="170" y="106" class="lbl" font-size="21" text-anchor="middle" letter-spacing="2">TEST 1</text>
+              <g class="lbl" font-size="14" text-anchor="middle" letter-spacing="0.6">
+                <text x="196" y="152">REALISM</text>
+                <text x="282" y="152">RESPONSE</text>
+              </g>
+              <g filter="url(#sa-r)" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round">
+                <line x1="26" y1="164" x2="314" y2="164"/>
+                <line x1="26" y1="368" x2="314" y2="368"/>
+              </g>
+              <text x="30" y="199" class="lbl" font-size="19">GPT-4o</text>
+              <rect x="169" y="176" width="54" height="32" rx="9" class="chip-2"/>
+                <text x="196" y="200" class="lbl loss" font-size="20" text-anchor="middle">2</text>
+              <rect x="255" y="176" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="282" y="200" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <text x="30" y="243" class="lbl" font-size="19">GPT-4o mini</text>
+              <rect x="169" y="220" width="54" height="32" rx="9" class="chip-2"/>
+                <text x="196" y="244" class="lbl loss" font-size="20" text-anchor="middle">2</text>
+              <rect x="255" y="220" width="54" height="32" rx="9" class="chip-2"/>
+                <text x="282" y="244" class="lbl loss" font-size="20" text-anchor="middle">2</text>
+              <text x="30" y="287" class="lbl" font-size="19">ElevenLabs</text>
+              <rect x="169" y="264" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="196" y="288" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <rect x="255" y="264" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="282" y="288" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <text x="30" y="331" class="lbl" font-size="19">Vapi</text>
+              <text x="30" y="353" class="lbl soft" font-size="15">on Gemini 2.5 Flash</text>
+              <rect x="169" y="308" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="196" y="332" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <rect x="255" y="308" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="282" y="332" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <text x="170" y="400" class="lbl" font-size="13" text-anchor="middle" letter-spacing="1.6">WHAT WE LEARNED</text>
+              <text x="170" y="426" class="lbl" font-size="18" text-anchor="middle">&#8220;Every answer was a paragraph.&#8221;</text>
+
+              <!-- test 2 -->
+              <text x="500" y="106" class="lbl" font-size="21" text-anchor="middle" letter-spacing="2">TEST 2</text>
+              <g class="lbl" font-size="14" text-anchor="middle" letter-spacing="0.6">
+                <text x="526" y="152">REALISM</text>
+                <text x="612" y="152">RESPONSE</text>
+              </g>
+              <g filter="url(#sa-r)" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round">
+                <line x1="356" y1="164" x2="644" y2="164"/>
+                <line x1="356" y1="368" x2="644" y2="368"/>
+              </g>
+              <text x="360" y="199" class="lbl" font-size="19">GPT-4o</text>
+              <rect x="499" y="176" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="526" y="200" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <rect x="585" y="176" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="612" y="200" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <text x="360" y="243" class="lbl" font-size="19">GPT-4o mini</text>
+              <rect x="499" y="220" width="54" height="32" rx="9" class="chip-2"/>
+                <text x="526" y="244" class="lbl loss" font-size="20" text-anchor="middle">2</text>
+              <rect x="585" y="220" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="612" y="244" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <text x="360" y="287" class="lbl" font-size="19">ElevenLabs</text>
+              <rect x="499" y="264" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="526" y="288" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="585" y="264" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="612" y="288" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <text x="360" y="331" class="lbl" font-size="19">Vapi</text>
+              <text x="360" y="353" class="lbl soft" font-size="15">on Gemini 2.5 Flash</text>
+              <rect x="499" y="308" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="526" y="332" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="585" y="308" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="612" y="332" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <text x="500" y="400" class="lbl" font-size="13" text-anchor="middle" letter-spacing="1.6">WHAT WE LEARNED</text>
+              <text x="500" y="426" class="lbl" font-size="18" text-anchor="middle">&#8220;Same three phrases every call.&#8221;</text>
+
+              <!-- test 3 -->
+              <text x="830" y="106" class="lbl" font-size="21" text-anchor="middle" letter-spacing="2">TEST 3</text>
+              <g class="lbl" font-size="14" text-anchor="middle" letter-spacing="0.6">
+                <text x="856" y="152">REALISM</text>
+                <text x="942" y="152">RESPONSE</text>
+              </g>
+              <g filter="url(#sa-r)" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round">
+                <line x1="686" y1="164" x2="974" y2="164"/>
+                <line x1="686" y1="368" x2="974" y2="368"/>
+              </g>
+              <text x="690" y="199" class="lbl" font-size="19">GPT-4o</text>
+              <rect x="829" y="176" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="856" y="200" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="915" y="176" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="942" y="200" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <text x="690" y="243" class="lbl" font-size="19">GPT-4o mini</text>
+              <rect x="829" y="220" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="856" y="244" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <rect x="915" y="220" width="54" height="32" rx="9" class="chip-3"/>
+                <text x="942" y="244" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <text x="690" y="287" class="lbl" font-size="19">ElevenLabs</text>
+              <rect x="829" y="264" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="856" y="288" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="915" y="264" width="54" height="32" rx="9" class="chip-4"/>
+                <text x="942" y="288" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <text x="690" y="331" class="lbl" font-size="19">Vapi</text>
+              <text x="690" y="353" class="lbl soft" font-size="15">on Gemini 2.5 Flash</text>
+              <rect x="829" y="308" width="54" height="32" rx="9" class="chip-5"/>
+                <text x="856" y="332" class="lbl good" font-size="20" text-anchor="middle">5</text>
+              <rect x="915" y="308" width="54" height="32" rx="9" class="chip-5"/>
+                <text x="942" y="332" class="lbl good" font-size="20" text-anchor="middle">5</text>
+              <text x="830" y="400" class="lbl" font-size="13" text-anchor="middle" letter-spacing="1.6">WHAT WE LEARNED</text>
+              <text x="830" y="426" class="lbl" font-size="18" text-anchor="middle">&#8220;Only small stuff left.&#8221;</text>
+
+              <!-- the passes between tests -->
+              <g filter="url(#sa-r)" fill="var(--ink)">
+                <path d="M 340 100 L 320 91 L 320 109 Z"/>
+                <path d="M 670 100 L 650 91 L 650 109 Z"/>
+              </g>
+              <g filter="url(#sa-r)" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round">
+                <line x1="304" y1="100" x2="322" y2="100"/>
+                <line x1="634" y1="100" x2="652" y2="100"/>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            The scores after every test, and what each round taught us.
           </figcaption>
         </figure>
 
         <p>
-          The details that decided realness were smaller than we expected. Whether it sometimes gave
-          short answers instead of paragraphs. Whether its emotional tone matched what it was saying.
-          Whether it repeated the same phrases. One version lost points just for sighing too often.
-          After three rounds, a clear winner had emerged.
+          By the end of the third round we had worked out the kinks, and the best version felt close to real. 
+          We had a clear winner. Vapi scored highest on voice realism and emotion, was the fastest to implement, 
+          and its pay as you go pricing fit our cash flow. Gemini 2.5 Flash made the responses smart at a cost 
+          that worked at scale.
         </p>
 
-        <h2 id="step-3"><span class="sec-num">Step 3</span>Validate with real users</h2>
+        <figure class="sketch-fig wide board">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 1000 356" role="img" aria-label="A board comparing the four short-listed options on the scores and costs that decided it: voice realism and response intelligence out of five, time to build, cost per hour and pricing. Vapi, running Gemini 2.5 Flash, is ringed in green as the pick, with five and five on the user requirements, a very low time to build, four dollars fifty five an hour and pay as you go pricing.">
+              <defs>
+                <filter id="win-r" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="420"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="17" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/></filter>
+                <filter id="win-r2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="420"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="21" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
+              </defs>
+
+              <text x="500" y="44" class="lbl" font-size="28" text-anchor="middle">How Vapi stacked up against the short list</text>
+              <path filter="url(#win-r2)" d="M 262 58 Q 500 64, 738 57" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+
+              <g class="lbl" font-size="14" text-anchor="middle" letter-spacing="0.8">
+                <text x="458" y="98">REALISM</text>
+                <text x="574" y="98">RESPONSE</text>
+                <text x="690" y="98">TIME TO BUILD</text>
+                <text x="806" y="98">COST / HR</text>
+                <text x="922" y="98">PRICING</text>
+              </g>
+              <g filter="url(#win-r)" stroke="var(--ink)" stroke-width="2.8" stroke-linecap="round">
+                <line x1="20" y1="112" x2="984" y2="112"/>
+                <line x1="20" y1="330" x2="984" y2="330"/>
+              </g>
+              <g filter="url(#win-r2)" stroke="var(--ink-soft)" stroke-width="1.6" stroke-dasharray="8 8">
+                <line x1="400" y1="120" x2="400" y2="322"/>
+                <line x1="516" y1="120" x2="516" y2="322"/>
+                <line x1="632" y1="120" x2="632" y2="322"/>
+                <line x1="748" y1="120" x2="748" y2="322"/>
+                <line x1="864" y1="120" x2="864" y2="322"/>
+              </g>
+
+              <!-- the one we picked -->
+              <g filter="url(#win-r2)">
+                <rect x="22" y="256" width="960" height="66" rx="14" fill="color-mix(in srgb, var(--good) 9%, transparent)" stroke="var(--good)" stroke-width="2.8" stroke-dasharray="11 8"/>
+              </g>
+              <text x="24" y="155" class="lbl" font-size="20">GPT-4o</text>
+              <rect x="406" y="132" width="104" height="32" rx="9" class="chip-4"/>
+                <text x="458" y="156" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="522" y="132" width="104" height="32" rx="9" class="chip-4"/>
+                <text x="574" y="156" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="638" y="132" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="690" y="155" class="lbl good" font-size="17" text-anchor="middle">Very low</text>
+              <rect x="754" y="132" width="104" height="32" rx="9" class="chip-warn"/>
+                <text x="806" y="155" class="lbl warn" font-size="17" text-anchor="middle">$7 / hr</text>
+              <rect x="870" y="132" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="922" y="155" class="lbl good" font-size="16" text-anchor="middle">Pay as you go</text>
+              <text x="24" y="199" class="lbl" font-size="20">GPT-4o mini</text>
+              <rect x="406" y="176" width="104" height="32" rx="9" class="chip-3"/>
+                <text x="458" y="200" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <rect x="522" y="176" width="104" height="32" rx="9" class="chip-3"/>
+                <text x="574" y="200" class="lbl warn" font-size="20" text-anchor="middle">3</text>
+              <rect x="638" y="176" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="690" y="199" class="lbl good" font-size="17" text-anchor="middle">Very low</text>
+              <rect x="754" y="176" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="806" y="199" class="lbl good" font-size="17" text-anchor="middle">$1.75 / hr</text>
+              <rect x="870" y="176" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="922" y="199" class="lbl good" font-size="16" text-anchor="middle">Pay as you go</text>
+              <text x="24" y="243" class="lbl" font-size="20">ElevenLabs Conv. AI</text>
+              <rect x="406" y="220" width="104" height="32" rx="9" class="chip-4"/>
+                <text x="458" y="244" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="522" y="220" width="104" height="32" rx="9" class="chip-4"/>
+                <text x="574" y="244" class="lbl good" font-size="20" text-anchor="middle">4</text>
+              <rect x="638" y="220" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="690" y="243" class="lbl good" font-size="17" text-anchor="middle">Very low</text>
+              <rect x="754" y="220" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="806" y="243" class="lbl good" font-size="17" text-anchor="middle">$6 / hr</text>
+              <rect x="870" y="220" width="104" height="32" rx="9" class="chip-warn"/>
+                <text x="922" y="243" class="lbl warn" font-size="16" text-anchor="middle">Buy extra mins</text>
+              <text x="24" y="287" class="lbl" font-size="20">Vapi</text>
+              <rect x="96" y="265" width="94" height="30" rx="9" fill="color-mix(in srgb, var(--good) 22%, transparent)"/>
+                <text x="143" y="287" class="lbl good" font-size="17" text-anchor="middle">the pick</text>
+              <text x="24" y="310" class="lbl soft" font-size="15">on Gemini 2.5 Flash</text>
+              <rect x="406" y="264" width="104" height="32" rx="9" class="chip-5"/>
+                <text x="458" y="288" class="lbl good" font-size="20" text-anchor="middle">5</text>
+              <rect x="522" y="264" width="104" height="32" rx="9" class="chip-5"/>
+                <text x="574" y="288" class="lbl good" font-size="20" text-anchor="middle">5</text>
+              <rect x="638" y="264" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="690" y="287" class="lbl good" font-size="17" text-anchor="middle">Very low</text>
+              <rect x="754" y="264" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="806" y="287" class="lbl good" font-size="17" text-anchor="middle">$4.55 / hr</text>
+              <rect x="870" y="264" width="104" height="32" rx="9" class="chip-good"/>
+                <text x="922" y="287" class="lbl good" font-size="16" text-anchor="middle">Pay as you go</text>
+            </svg>
+          </div>
+          <figcaption>
+            Vapi was the only option that reached five on both user requirements and also met our technical and business requirements.
+          </figcaption>
+        </figure>
+
         <p>
-          We took the top two options into user interviews. We wanted to know how real each one felt to
-          people in the wild, not just to the two of us who had been staring at them for weeks. Their
-          feedback confirmed what the blind tests showed.
+          The pick came with trade-offs. Vapi wasn't the cheapest, GPT-4o mini cost about a third as much. And 
+          raising Vapi's default limit of ten concurrent calls would cost extra. But both were fine at our size, 
+          and neither was a one way door. The bigger caveat was that only the two of us had judged it. So we 
+          treated Vapi as the pick, pending real users.
         </p>
 
-        <h2 id="decision">The decision, and something better than a decision</h2>
+        <h2 id="step-3"><span class="sec-num">Step 3</span>Test with real users</h2>
         <p>
-          We chose Vapi. We had conviction because it held up at every stage: on the evaluation board, in
-          the blind tests, and with real users, across the technical, business, and user requirements.
+          We had a winner, but only two people had judged it, and we built it. The last unknown was
+          whether it would feel real to strangers.
         </p>
         <p>
-          But we walked away with more than a decision. Because we prototyped and improved through every
-          round, the winner wasn't a name on a whiteboard. It was working software. Latency was measured.
-          Costs were understood. Realness was validated by real users. All the important requirements
-          were already derisked, so translating the prototype into a product was a short step, not a
-          fresh project.
+          We recruited four people from the target market, two sales reps and two sales managers. Each
+          one shared their screen and ran a sales role play against our prototype. We still hadn't
+          written any production code. The whole thing ran in Vapi using Gemini 2.5 Flash.
         </p>
 
-        <h2 id="six-days">The whole thing took six days</h2>
         <p>
-          This might sound like a heavy process. It wasn't. From first research to final decision, it
-          took six days.
+          After each session we ran a short debrief. We asked how real the interaction felt and how ready
+          it was to train real people, both on a scale of one to five. Then they rated each part of the
+          experience, voice quality, emotional realism, latency, challenge, and content, from dealbreaker
+          to impressive.
         </p>
 
         <figure class="sketch-fig wide">
           <div class="paper">
-            <svg class="fig-svg" viewBox="0 0 1080 400" role="img" aria-label="A six day calendar under a narrowing band. Nine options run through days one and two, research and cutting to a short list. Four run through days three and four, the blind prototyping rounds. Two run through day five, user testing. One remains on day six, the debrief and the decision.">
-              <defs>
-                <filter id="cal-rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="460"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
-                <filter id="cal-rough2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1120" height="460"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="13" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
-              </defs>
+            <div class="stickies">
 
-              <!-- how many were still standing -->
-              <g class="lbl" font-size="24" text-anchor="middle">
-                <text x="202" y="56">9 options</text>
-                <text x="540" y="56">4</text>
-                <text x="793" y="56">2</text>
-                <text x="962" y="56">1</text>
-              </g>
+              <div class="st-col win">
+                <p class="st-head">Working well</p>
+                <ul>
+                  <li>Latency.</li>
+                  <li>Felt real.</li>
+                  <li>The objections landed.</li>
+                </ul>
+              </div>
 
-              <g filter="url(#cal-rough)">
-                <path d="M 40 78 L 1040 96 L 1040 108 L 40 126 Z" class="fill-faint" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
-              </g>
-              <g filter="url(#cal-rough2)" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="7 7">
-                <line x1="371" y1="70" x2="371" y2="132"/>
-                <line x1="709" y1="76" x2="709" y2="128"/>
-                <line x1="878" y1="80" x2="878" y2="124"/>
-              </g>
+              <div class="st-col okay">
+                <p class="st-head">Good enough</p>
+                <ul>
+                  <li>Voice quality.</li>
+                  <li>Emotional range.</li>
+                </ul>
+              </div>
 
-              <!-- the six days -->
-              <g filter="url(#cal-rough2)" class="fill-paper" stroke="var(--ink)" stroke-width="3">
-                <rect x="40"  y="160" width="155" height="140" rx="12"/>
-                <rect x="209" y="160" width="155" height="140" rx="12"/>
-                <rect x="378" y="160" width="155" height="140" rx="12"/>
-                <rect x="547" y="160" width="155" height="140" rx="12"/>
-                <rect x="716" y="160" width="155" height="140" rx="12"/>
-                <rect x="885" y="160" width="155" height="140" rx="12"/>
-              </g>
+              <div class="st-col gap">
+                <p class="st-head">Room to improve</p>
+                <ul>
+                  <li>Fine tune difficulty level.</li>
+                  <li>Some responses felt too long.</li>
+                </ul>
+              </div>
 
-              <g text-anchor="middle">
-                <g class="lbl soft" font-size="17" letter-spacing="2">
-                  <text x="117.5" y="194">DAY 1</text>
-                  <text x="286.5" y="194">DAY 2</text>
-                  <text x="455.5" y="194">DAY 3</text>
-                  <text x="624.5" y="194">DAY 4</text>
-                  <text x="793.5" y="194">DAY 5</text>
-                  <text x="962.5" y="194">DAY 6</text>
-                </g>
-                <g class="lbl" font-size="21">
-                  <text x="117.5" y="234">Research</text>
-                  <text x="117.5" y="262">nine options</text>
-
-                  <text x="286.5" y="234">Cut to a</text>
-                  <text x="286.5" y="262">short list</text>
-
-                  <text x="455.5" y="234">Blind test</text>
-                  <text x="455.5" y="262">round 1</text>
-
-                  <text x="624.5" y="234">Blind tests</text>
-                  <text x="624.5" y="262">rounds 2 &#38; 3</text>
-
-                  <text x="793.5" y="234">User tests,</text>
-                  <text x="793.5" y="262">top two</text>
-
-                  <text x="962.5" y="234">Debrief</text>
-                  <text x="962.5" y="262">and decide</text>
-                </g>
-              </g>
-
-              <g filter="url(#cal-rough)" fill="none" stroke="var(--plan)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M 40 334 L 40 348 L 1040 348 L 1040 334"/>
-              </g>
-              <text x="540" y="384" class="lbl plan" font-size="23" text-anchor="middle">six days, first research to final decision</text>
-            </svg>
+            </div>
           </div>
           <figcaption>
-            Every day had a job, and every day something came off the board.
+            Everything the four sessions gave us, sorted three ways.
           </figcaption>
         </figure>
 
         <p>
-          Rigor and speed aren't opposites. The structure is what made it fast, because every day had a
-          clear job.
+          The sessions confirmed the blind tests. Ratings landed at mostly realistic. Latency impressed
+          people. And they told us where the gaps were, like wanting to be able to change to difficulty level.
         </p>
+
+        <h2 id="six-days">The whole thing took five days</h2>
+        <p>
+          This might sound like a heavy process. It wasn't. From first research to final decision, it took 
+          about five days. What made it fast was focus. Every day we drove down unknowns, getting clearer 
+          on how each option stacked up against the requirements. By Friday we had enough information to 
+          make a confident decision.
+        </p>
+
+        <figure class="sketch-fig wide">
+          <div class="paper">
+            <svg class="fig-svg" viewBox="0 0 1000 336" role="img" aria-label="A working week, day by day. Monday and Tuesday are both spent researching the ten options, and Tuesday ends with cutting to a short list. Wednesday: build four prototypes, then the first blind test. Thursday: blind tests two and three. Friday: user tests with four people, then debrief and decide.">
+              <defs>
+                <filter id="cal-r" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="400"><feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/></filter>
+                <filter id="cal-r2" filterUnits="userSpaceOnUse" x="-20" y="-20" width="1040" height="400"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="35" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
+              </defs>
+
+              <!-- what the week was for -->
+              <text x="500" y="46" class="lbl" font-size="28" text-anchor="middle">Choosing our voice technology, day by day</text>
+              <path filter="url(#cal-r2)" d="M 254 60 Q 500 66, 746 59" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- MON -->
+              <g filter="url(#cal-r)">
+                <rect x="26" y="86" width="180" height="42" rx="10" class="fill-faint" stroke="var(--ink)" stroke-width="2.6"/>
+                <rect x="26" y="128" width="180" height="180" rx="10" class="fill-paper" stroke="var(--ink)" stroke-width="2.6"/>
+              </g>
+              <text x="116" y="115" class="lbl" font-size="19" text-anchor="middle" letter-spacing="2">MON</text>
+              <rect x="37" y="150" width="158" height="62" rx="9" class="fill-plan"/>
+                <text x="116" y="176" class="lbl plan" font-size="19" text-anchor="middle">Research ten</text>
+                <text x="116" y="200" class="lbl plan" font-size="19" text-anchor="middle">options</text>
+
+              <!-- TUE -->
+              <g filter="url(#cal-r)">
+                <rect x="218" y="86" width="180" height="42" rx="10" class="fill-faint" stroke="var(--ink)" stroke-width="2.6"/>
+                <rect x="218" y="128" width="180" height="180" rx="10" class="fill-paper" stroke="var(--ink)" stroke-width="2.6"/>
+              </g>
+              <text x="308" y="115" class="lbl" font-size="19" text-anchor="middle" letter-spacing="2">TUE</text>
+              <rect x="229" y="150" width="158" height="62" rx="9" class="fill-plan"/>
+                <text x="308" y="176" class="lbl plan" font-size="19" text-anchor="middle">Research ten</text>
+                <text x="308" y="200" class="lbl plan" font-size="19" text-anchor="middle">options</text>
+              <rect x="229" y="224" width="158" height="62" rx="9" class="fill-plan"/>
+                <text x="308" y="250" class="lbl plan" font-size="19" text-anchor="middle">Cut to a</text>
+                <text x="308" y="274" class="lbl plan" font-size="19" text-anchor="middle">short list</text>
+
+              <!-- WED -->
+              <g filter="url(#cal-r)">
+                <rect x="410" y="86" width="180" height="42" rx="10" class="fill-faint" stroke="var(--ink)" stroke-width="2.6"/>
+                <rect x="410" y="128" width="180" height="180" rx="10" class="fill-paper" stroke="var(--ink)" stroke-width="2.6"/>
+              </g>
+              <text x="500" y="115" class="lbl" font-size="19" text-anchor="middle" letter-spacing="2">WED</text>
+              <rect x="421" y="150" width="158" height="62" rx="9" class="fill-warn"/>
+                <text x="500" y="176" class="lbl warn" font-size="19" text-anchor="middle">Build four</text>
+                <text x="500" y="200" class="lbl warn" font-size="19" text-anchor="middle">prototypes</text>
+              <rect x="421" y="224" width="158" height="62" rx="9" class="fill-warn"/>
+                <text x="500" y="250" class="lbl warn" font-size="19" text-anchor="middle">Blind test,</text>
+                <text x="500" y="274" class="lbl warn" font-size="19" text-anchor="middle">round 1</text>
+
+              <!-- THU -->
+              <g filter="url(#cal-r)">
+                <rect x="602" y="86" width="180" height="42" rx="10" class="fill-faint" stroke="var(--ink)" stroke-width="2.6"/>
+                <rect x="602" y="128" width="180" height="180" rx="10" class="fill-paper" stroke="var(--ink)" stroke-width="2.6"/>
+              </g>
+              <text x="692" y="115" class="lbl" font-size="19" text-anchor="middle" letter-spacing="2">THU</text>
+              <rect x="613" y="150" width="158" height="62" rx="9" class="fill-warn"/>
+                <text x="692" y="176" class="lbl warn" font-size="19" text-anchor="middle">Blind test,</text>
+                <text x="692" y="200" class="lbl warn" font-size="19" text-anchor="middle">round 2</text>
+              <rect x="613" y="224" width="158" height="62" rx="9" class="fill-warn"/>
+                <text x="692" y="250" class="lbl warn" font-size="19" text-anchor="middle">Blind test,</text>
+                <text x="692" y="274" class="lbl warn" font-size="19" text-anchor="middle">round 3</text>
+
+              <!-- FRI -->
+              <g filter="url(#cal-r)">
+                <rect x="794" y="86" width="180" height="42" rx="10" class="fill-faint" stroke="var(--ink)" stroke-width="2.6"/>
+                <rect x="794" y="128" width="180" height="180" rx="10" class="fill-paper" stroke="var(--ink)" stroke-width="2.6"/>
+              </g>
+              <text x="884" y="115" class="lbl" font-size="19" text-anchor="middle" letter-spacing="2">FRI</text>
+              <rect x="805" y="150" width="158" height="62" rx="9" class="fill-blue"/>
+                <text x="884" y="176" class="lbl blue" font-size="19" text-anchor="middle">User tests,</text>
+                <text x="884" y="200" class="lbl blue" font-size="19" text-anchor="middle">four people</text>
+              <rect x="805" y="224" width="158" height="62" rx="9" class="fill-good"/>
+                <text x="884" y="250" class="lbl good" font-size="19" text-anchor="middle">Debrief</text>
+                <text x="884" y="274" class="lbl good" font-size="19" text-anchor="middle">and decide</text>
+
+            </svg>
+          </div>
+          <figcaption>
+            One working week, start to finish. Every day, something came off the board.
+          </figcaption>
+        </figure>
 
         <h2 id="pivot">The product died, the decision lived</h2>
         <p>
-          Here's the twist. We ended up not pursuing the sales training product, for reasons unrelated
-          to the voice technology. But the decision still paid off. We use Vapi in Lira today, our job
-          interview prep product. The choice survived a pivot because we made it on fundamentals, not on
-          a single use case.
+          Here's the twist. We never built the sales training product. We killed it soon after,
+          for reasons that had nothing to do with voice technology.
         </p>
-
-        <h2 id="takeaways">Takeaways</h2>
-        <ul class="takeaways">
-          <li><strong>Funnel wide, then narrow fast.</strong> Nine options became four, became two, became one.</li>
-          <li><strong>Unknowns are where bad decisions hide.</strong> Spend your spike time there.</li>
-          <li><strong>Blind tests remove bias you don't know you have.</strong></li>
-          <li><strong>Real users are the final judge of user requirements.</strong></li>
-          <li>
-            <strong>A good process can hand you more than a decision.</strong> If you drive down
-            unknowns by building, you end with a derisked prototype instead of a document.
-          </li>
-        </ul>
         <p>
-          Then decide with conviction, and measure the results.
+          But the decision outlived the product. We use Vapi in Lira today, our job interview prep
+          product. The choice survived a pivot because we made it on fundamentals, real requirements,
+          tested options, and derisked unknowns, not on a single use case. Five days of care bought us 
+          a choice we haven't had to revisit since.
         </p>
       </article>
     </main>
