@@ -664,17 +664,23 @@
     .boost-label-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
     .boost-label-row span { font-family: var(--marker); font-size: 21px; }
     .boost-label-sub { font-size: 18px; color: var(--ink-soft); margin-top: 1px; }
+    /* icon sits on top of the label so five items fit across the strip.
+       fixed height, because scribbleIn centres these on their own box —
+       a shared height is what keeps the five badges on one line */
     .boost-item {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: 214px;
+      width: 200px;
+      height: 126px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
+      justify-content: flex-start;
+      gap: 7px;
     }
     .boost-item > svg { flex-shrink: 0; }
-    .boost-item .chip { font-size: 20px; line-height: 1.15; padding: 2px 9px 4px; }
-    .boost-item .plain { font-size: 20px; line-height: 1.14; text-align: left; }
+    .boost-item .chip { font-size: 21px; line-height: 1.15; padding: 2px 10px 4px; }
+    .boost-item .plain { font-size: 21px; line-height: 1.14; text-align: center; }
 
     @media (prefers-reduced-motion: reduce) {
       .paper .ink, .paper .scribble { opacity: 1; animation: none; }
@@ -896,7 +902,7 @@
       { id: "day-2", n: 2, word: "Prioritize", url: SPRINT + "#day-2", x: 509, icon: "funnel",
         moves: ["Synthesize learnings", "Feature prioritization"] },
       { id: "day-3", n: 3, word: "Build", url: SPRINT + "#day-3", x: 772, icon: "hammer",
-        moves: ["Set a time box", "Low fidelity sketch", "Go high fidelity", "Build"] },
+        moves: ["Low fidelity sketch", "Go high fidelity", "Build"] },
       { id: "day-4", n: 4, word: "Build more", url: SPRINT + "#day-4", x: 1035, icon: "loop",
         moves: ["Repeat the build loop", "Prep the launch", "Schedule user interviews", "Plan user interviews"] },
       { id: "day-5", n: 5, word: "Ship", url: SPRINT + "#day-5", x: 1298, icon: "plane",
@@ -906,6 +912,8 @@
     // Advanced concepts — layered on once the basic weekly sprint
     // is mastered, to go even faster.
     var ADVANCED = [
+      { id: "adv-timebox", label: "Use time boxes, not deadlines", icon: "hourglass",
+        url: "the-deadline-drain.html" },
       { id: "adv-quality", label: "Make quality decisions", icon: "medal",
         url: "make-high-quality-decisions.html" },
       { id: "adv-meetings", label: "Reduce meeting overhead", icon: "nomeeting",
@@ -917,7 +925,7 @@
     ];
 
     var WORLD = { w: 1560, h: 1272 };
-    var ZONE = { x: 128, y: 490, w: 1290, h: 500 };
+    var ZONE = { x: 128, y: 490, w: 1290, h: 516 };
     var DAY_Y = 562;
     var MOVE_Y0 = 628;
     var MOVE_DY = 50;
@@ -1138,6 +1146,14 @@
         '<path d="M 8 -9 L 17 0 L 8 9" fill="none" stroke="' + TEAL + '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>' +
         '<path d="M 3.5 -12 L -3.5 12" fill="none" stroke="' + GOLD + '" stroke-width="3.6" stroke-linecap="round"/>',
 
+      hourglass:
+        '<path d="M -11 -15 L 11 -15 L 1.6 -1.6 L 1.6 1.6 L 11 15 L -11 15 L -1.6 1.6 L -1.6 -1.6 Z" fill="' + P + '" stroke="' + I + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<path d="M -7.6 -11.5 L 7.6 -11.5 L 0.8 -2 L -0.8 -2 Z" fill="' + GOLD + '"/>' +
+        '<path d="M -7.4 12 Q 0 2.5 7.4 12 Z" fill="' + GOLD + '"/>' +
+        '<line x1="0" y1="-0.5" x2="0" y2="8" stroke="' + GOLD + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<rect x="-15" y="-20" width="30" height="5" rx="1.6" fill="' + BLUE + '" stroke="' + I + '" stroke-width="2.2"/>' +
+        '<rect x="-15" y="15" width="30" height="5" rx="1.6" fill="' + BLUE + '" stroke="' + I + '" stroke-width="2.2"/>',
+
       team:
         '<path d="M -18 17 Q -18 1 -9 1 Q 0 1 0 17 Z" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2" stroke-linejoin="round"/>' +
         '<circle cx="-9" cy="-8" r="6.6" fill="' + RED + '" stroke="' + I + '" stroke-width="2.2"/>' +
@@ -1223,7 +1239,7 @@
       // column dividers
       out += '<g class="dividers" stroke="' + I + '" fill="none">';
       DAYS.slice(0, 4).forEach(function (d, i) {
-        out += '<path d="' + sketchyLine(d.x + 131, ZONE.y + 52, d.x + 131, ZONE.y + 344, 70 + i) +
+        out += '<path d="' + sketchyLine(d.x + 131, ZONE.y + 52, d.x + 131, ZONE.y + 324, 70 + i) +
           '" stroke-width="3" stroke-dasharray="8 10"/>';
       });
       out += "</g>";
@@ -1238,7 +1254,7 @@
       out += "</g>";
 
       // the line above the advanced strip
-      out += '<path d="' + sketchyLine(ZONE.x + 16, 852, ZONE.x + ZONE.w - 16, 849, 731, 2.5) +
+      out += '<path d="' + sketchyLine(ZONE.x + 16, 820, ZONE.x + ZONE.w - 16, 817, 731, 2.5) +
         '" stroke="' + I + '" stroke-width="3.5" stroke-linecap="round" opacity=".85" fill="none"/>';
 
       return out + "</svg>";
@@ -1302,15 +1318,15 @@
     }
 
     function advancedStrip() {
-      var out = '<div class="boost-label ink" style="left:' + (ZONE.x + 102) + "px;top:908px;" + delay(1.25) + '">' +
+      var out = '<div class="boost-label ink" style="left:' + (ZONE.x + 102) + "px;top:913px;" + delay(1.25) + '">' +
         '<div class="boost-label-row">' + icon("rocket", 30) + "<span>ADVANCED</span></div>" +
         '<div class="boost-label-sub">go even faster</div>' +
         "</div>";
 
       ADVANCED.forEach(function (a, idx) {
-        var badge = '<svg width="48" height="48" viewBox="-24 -24 48 48" aria-hidden="true">' +
-          '<path d="' + sketchyCircle(0, 0, 20.5, 500 + idx * 7, 1.2) + '" fill="' + P + '" stroke="' + I + '" stroke-width="3.2"/>' +
-          icon(a.icon, 29, -14.5, -14.5) + "</svg>";
+        var badge = '<svg width="56" height="56" viewBox="-28 -28 56 56" aria-hidden="true">' +
+          '<path d="' + sketchyCircle(0, 0, 24, 500 + idx * 7, 1.2) + '" fill="' + P + '" stroke="' + I + '" stroke-width="3.4"/>' +
+          icon(a.icon, 34, -17, -17) + "</svg>";
 
         var body = a.url
           ? '<a href="' + a.url + '" class="tilebtn"' +
@@ -1318,7 +1334,7 @@
             ' aria-label="' + a.label + '"><span class="chip">' + a.label + " →</span></a>"
           : '<span class="plain">' + a.label + "</span>";
 
-        out += '<div class="boost-item scribble" style="left:' + (460 + idx * 280) + "px;top:908px;" +
+        out += '<div class="boost-item scribble" style="left:' + (430 + idx * 220) + "px;top:913px;" +
           delay(1.35 + idx * 0.08) + '">' + badge + body + "</div>";
       });
 
