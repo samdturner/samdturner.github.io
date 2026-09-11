@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lira Feedback Engine</title>
+  <meta name="description" content="The deck behind Lira's feedback engine: five small bets over five weeks, and the architecture that graded the interviews." />
+  <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* the deck breaks out of the 720px reading column */
+    .deck-page { max-width: 1120px; }
+    .deck-page .post { max-width: 720px; margin: 0 auto; }
+
+    .ld-frame { margin: 34px 0 8px; }
+
+    /* the controls sit outside the deck so a click on them is not also
+       a click on a slide */
+    .ld-bar {
+      display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+      margin-top: 14px;
+      font-family: var(--font-head);
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .ld-bar button {
+      font: inherit; font-weight: 700;
+      color: var(--fg); background: transparent;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 5px 12px; cursor: pointer; line-height: 1.4;
+    }
+    .ld-bar button:hover { color: var(--accent); border-color: var(--accent); }
+    .ld-count { font-variant-numeric: tabular-nums; min-width: 4.5em; }
+  </style>
+  <style>
+/* ---------------------------------------------------------------
+   Lira feedback engine deck, inlined.
+
+   The deck was written as a full-screen page: global `html`/`body`
+   rules, bare `h1`, and `vw`/`vh` sizing throughout. To sit inside an
+   article it is scoped under #lira-deck, sized by aspect-ratio instead
+   of the viewport, and made a size container so every `cqw`/`cqh`
+   below measures the deck box rather than the browser window.
+   --------------------------------------------------------------- */
+
+#lira-deck{
+  --ink:#111; --ink-2:#555; --ink-3:#8a8a8a; --line:#e2e2e2; --tint:#f4f4f4; --paper:#fff;
+    /* colors used only inside app mockups */
+    --teal:#3a7f8f; --rose:#c4605a; --green:#2f8a3c; --blue:#2f6fd1; --amber:#d98a2b; --chrome:#f4f4f4;
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  /* the deck box is what cqw/cqh measure */
+  container:lira / size;
+  box-sizing:border-box;
+  background:#fff;
+  color:var(--ink);
+  font-family:Figtree,system-ui,sans-serif;
+  font-size:16px;
+  font-weight:400;
+  line-height:1.4;
+  text-align:left;
+  -webkit-font-smoothing:antialiased;
+  border:1px solid rgba(20,45,90,.14);
+  border-radius:14px;
+  box-shadow:0 14px 34px -24px rgba(12,21,36,.45);
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#lira-deck *{box-sizing:border-box;margin:0;padding:0}
+#lira-deck:focus{outline:none}
+#lira-deck:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* full screen: drop the frame and let the deck take the whole display */
+#lira-deck:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}
+#lira-deck:-webkit-full-screen{width:100vw;height:100vh;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}
+
+/* the deck's `animation:in` had no matching keyframes in the original,
+   so the step reveals simply appeared. Defined here. */
+@keyframes lira-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+#lira-deck .slide{position:absolute;inset:0;display:none;padding:6cqh 8cqw;flex-direction:column}
+#lira-deck .slide.on{display:flex}
+#lira-deck .eyebrow{align-self:flex-start;background:var(--ink);color:#fff;border-radius:6px;padding:.4em .9em;font-size:clamp(15px,1.5cqw,22px);letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+#lira-deck h1{margin-top:2.4cqh;font-size:clamp(32px,4.6cqw,68px);font-weight:700;line-height:1.05;letter-spacing:-.025em;max-width:20ch}
+#lira-deck .sub{margin-top:1.4cqh;color:var(--ink-2);font-size:clamp(15px,1.5cqw,22px)}
+#lira-deck .body{flex:1;display:flex;align-items:center;min-height:0}
+#lira-deck .foot{display:flex;justify-content:space-between;color:var(--ink-3);font-size:13px}
+#lira-deck .u{text-decoration:underline;text-decoration-thickness:.12em;text-underline-offset:.12em}
+/* ---- context ---- */
+#lira-deck .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:5cqw;align-items:center;width:100%}
+#lira-deck .facts{display:grid;grid-template-columns:1fr 1fr;gap:2cqh 1.6cqw}
+#lira-deck .fact{border:1px solid var(--line);border-radius:14px;padding:2.4cqh 1.6cqw}
+#lira-deck .fact .big{font-size:clamp(34px,4.4cqw,66px);font-weight:700;line-height:1;letter-spacing:-.03em}
+#lira-deck .fact .lbl{margin-top:.7cqh;font-size:clamp(13px,1.25cqw,18px);color:var(--ink-2)}
+#lira-deck .fact.hot{background:var(--ink);border-color:var(--ink);color:#fff}
+#lira-deck .fact.hot .lbl{color:#cfcfcf}
+/* app mockup window (keeps color) */
+#lira-deck .win{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 20px 50px -30px rgba(0,0,0,.25);font-size:clamp(11px,1.05cqw,15px);color:#1b1b1b}
+#lira-deck .win .top{background:var(--chrome);border-bottom:1px solid var(--line);padding:.6em 1em;display:flex;align-items:center;gap:.5em;font-weight:600;font-size:.9em}
+#lira-deck .win .top i{width:.6em;height:.6em;border-radius:50%;background:#d0d0d0;display:inline-block}
+#lira-deck .win .top i+i{margin-left:-.15em}
+#lira-deck .win .in{padding:1.4em 1.4em 1.2em;display:flex;flex-direction:column;gap:.9em;min-height:0}
+#lira-deck .qpill{align-self:flex-start;border:1px solid var(--line);border-radius:999px;padding:.3em .9em;font-size:.78em;letter-spacing:.08em;color:var(--ink-2)}
+#lira-deck .qq{font-size:1.25em;font-weight:700;line-height:1.3}
+#lira-deck .rec{display:flex;align-items:center;gap:.7em;background:#f6f6f4;border-radius:12px;padding:.8em 1em;color:var(--ink-2)}
+#lira-deck .rec .dot{width:.8em;height:.8em;border-radius:50%;background:var(--green);box-shadow:0 0 0 .3em rgba(47,138,60,.15)}
+#lira-deck .rec .lst{font-weight:600;color:var(--ink)}
+#lira-deck .rec .wave{flex:1;height:1.4em;background:repeating-linear-gradient(90deg,#b5b5b5 0 3px,transparent 3px 7px);mask:linear-gradient(90deg,#000 70%,transparent);opacity:.7}
+#lira-deck .tr{color:var(--ink-2);line-height:1.45}
+#lira-deck .ctl{display:flex;justify-content:flex-end;gap:.7em;align-items:center}
+#lira-deck .ctl .p{width:2.4em;height:2.4em;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;font-size:.85em}
+#lira-deck .ctl .end{background:var(--rose);color:#fff;border-radius:999px;padding:.6em 1.3em;font-weight:700;font-size:.9em}
+#lira-deck .cap{color:var(--ink-3);font-size:.85em;text-align:center}
+/* ---- problem ---- */
+#lira-deck .quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw;width:100%}
+#lira-deck .quote{border:1px solid var(--line);border-radius:16px;padding:3cqh 2cqw;font-size:clamp(16px,1.55cqw,24px);line-height:1.35;font-weight:500;position:relative}
+#lira-deck .quote:before{content:"\201C";position:absolute;top:-.05em;left:.3em;font-size:5em;line-height:1;color:var(--tint);font-weight:800}
+#lira-deck .quote p{position:relative}
+#lira-deck .quote .who{margin-top:2cqh;font-size:.7em;color:var(--ink-3);font-weight:600}
+#lira-deck .src{margin-top:5cqh;color:var(--ink-2);font-size:clamp(14px,1.3cqw,19px);text-align:center;width:100%}
+/* ---- ambiguity ---- */
+#lira-deck .three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.4cqw;width:100%;align-items:start}
+#lira-deck .three.or{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:1.6cqw}
+#lira-deck .ceb{font-size:clamp(11px,1cqw,14px);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:.5cqh}
+#lira-deck .orx{align-self:center;border:2px solid var(--ink);border-radius:999px;padding:.35em .7em;font-weight:700;font-size:clamp(13px,1.2cqw,18px);letter-spacing:.06em}
+#lira-deck .opt h3{font-size:clamp(17px,1.7cqw,26px);font-weight:700;letter-spacing:-.01em;margin-bottom:1.6cqh}
+#lira-deck .opt h3 span{display:inline-grid;place-items:center;width:1.35em;height:1.35em;border-radius:50%;background:var(--ink);color:#fff;font-size:.75em;margin-right:.45em;vertical-align:.1em}
+#lira-deck .opt .win .in{min-height:40cqh}
+#lira-deck .qh{color:var(--ink-3);font-size:.8em;font-weight:700;letter-spacing:.08em}
+#lira-deck .coach{display:flex;align-items:center;gap:.8em}
+#lira-deck .coach .av{width:3em;height:3em;border-radius:50%;background:linear-gradient(135deg,var(--teal),#8fc0ca);flex:none}
+#lira-deck .coach .nm{font-weight:700}
+#lira-deck .coach .st{color:var(--ink-2);font-size:.9em}
+#lira-deck .player{background:#1b1b1b;color:#fff;border-radius:14px;padding:1em;display:flex;align-items:center;gap:.8em}
+#lira-deck .player .play{width:2.2em;height:2.2em;border-radius:50%;background:#fff;color:#1b1b1b;display:grid;place-items:center;font-size:.9em;flex:none}
+#lira-deck .player .bars{flex:1;display:flex;align-items:center;gap:3px;height:2em}
+#lira-deck .player .bars i{flex:1;background:#fff;border-radius:2px;opacity:.85}
+#lira-deck .player .t{font-size:.85em;opacity:.8}
+#lira-deck .chips{display:flex;flex-wrap:wrap;gap:.5em}
+#lira-deck .chips span{border:1px solid var(--line);border-radius:999px;padding:.35em .8em;color:var(--ink-2);font-size:.9em}
+#lira-deck .chat{display:flex;flex-direction:column;gap:.6em}
+#lira-deck .msg{max-width:88%;padding:.7em .9em;border-radius:14px;line-height:1.4}
+#lira-deck .msg.ai{background:#f6f6f4;border-bottom-left-radius:4px}
+#lira-deck .msg.me{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+#lira-deck .ask{margin-top:auto;border:1.5px solid var(--line);border-radius:999px;padding:.6em 1em;color:var(--ink-3);display:flex;justify-content:space-between}
+#lira-deck .ask b{color:var(--teal)}
+#lira-deck .tx{line-height:1.7}
+#lira-deck .tx mark{background:#f7d9d7;border-radius:3px;padding:0 .15em}
+#lira-deck .tx mark.ok{background:#d6ecd9}
+#lira-deck .tx mark.hm{background:#f8e6c8}
+#lira-deck .txh{display:flex;align-items:center;gap:.6em;padding-bottom:.6em;border-bottom:1px solid var(--line)}
+#lira-deck .txh .tmic{width:2em;height:2em;border-radius:50%;background:#1b1b1b;display:grid;place-items:center;font-size:.9em}
+#lira-deck .txh small{display:block;color:var(--ink-3);font-size:.85em}
+#lira-deck .tx{background:#fafaf8;border-radius:10px;padding:.7em .8em;color:var(--ink-2)}
+#lira-deck .side i{border-radius:3px;width:.9em;height:.9em}
+#lira-deck .side{display:flex;flex-direction:column;gap:.45em;font-size:.88em}
+#lira-deck .side div{display:flex;gap:.5em;align-items:flex-start;color:var(--ink-2)}
+#lira-deck .side i{width:.7em;height:.7em;border-radius:50%;flex:none;margin-top:.35em}
+/* ---- loop ---- */
+#lira-deck .ring{width:100%;display:flex;justify-content:center}
+#lira-deck .ring svg{width:min(78cqw,105cqh);height:auto;overflow:visible}
+#lira-deck .ring text{font-family:inherit}
+#lira-deck .ring .step{font-size:30px;font-weight:700;fill:var(--ink)}
+#lira-deck .ring .day{font-size:18px;fill:var(--ink-2)}
+#lira-deck .ring .arrow{fill:none;stroke:#8a8a8a;stroke-width:3.5;stroke-linecap:round}
+#lira-deck .ring .node{fill:#fff;stroke:var(--line);stroke-width:2}
+#lira-deck .ring .node.ship{fill:var(--ink);stroke:var(--ink)}
+#lira-deck .ring .glyph{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+#lira-deck .ring .glyph.w{stroke:#fff}
+#lira-deck .ring .center{font-size:22px;fill:var(--ink-2);font-weight:500}
+#lira-deck .facts.row4{grid-template-columns:repeat(4,1fr);width:100%}
+#lira-deck .facts.row4 .fact{min-height:34cqh;display:flex;flex-direction:column;justify-content:flex-end}
+#lira-deck .facts.row4 .big{font-size:clamp(26px,3cqw,48px)}
+#lira-deck .facts.row4 .fact:first-child{background:var(--ink);border-color:var(--ink);color:#fff}
+#lira-deck .facts.row4 .fact:first-child .lbl{color:#cfcfcf}
+#lira-deck .qlist{display:flex;flex-direction:column;gap:.5em;line-height:1.35}
+#lira-deck .qlist div{display:flex;gap:.6em}
+#lira-deck .qlist b{flex:none;width:1.5em;height:1.5em;border-radius:50%;background:#f0f0f0;display:grid;place-items:center;font-size:.85em}
+#lira-deck .qlist .more{color:var(--ink-3);font-size:.9em;padding-left:2.2em}
+#lira-deck .notes{background:#f6f6f4;border-radius:10px;padding:.7em .9em;color:var(--ink-2);line-height:1.4;font-size:.95em}
+#lira-deck .ans{border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:10px;padding:.7em .9em;line-height:1.45}
+#lira-deck .opt .win .in{min-height:38cqh}
+#lira-deck .bets{display:grid;grid-template-columns:1fr 1fr;gap:3cqw;width:86%;margin:0 auto}
+#lira-deck .bet{border:2px solid var(--ink);border-radius:18px;padding:2.4cqh 1.6cqw 1cqh;background:#fff}
+#lira-deck .bet.no{border-color:#c4605a;background:#fbf1f0}
+#lira-deck .bet.yes{border-color:#2f8a3c;background:#eef6ef}
+#lira-deck .bt{display:flex;align-items:center;justify-content:center;gap:.5em;font-size:clamp(18px,2cqw,30px);font-weight:700;margin-bottom:1cqh}
+#lira-deck .bet.no .bt{color:#c4605a}
+#lira-deck .bet.yes .bt{color:#2f8a3c}
+#lira-deck .bt .x{color:#c4605a}
+#lira-deck .bt .ck{color:#2f8a3c}
+#lira-deck .betsvg{width:72%;height:auto;display:block;margin:0 auto}
+#lira-deck .betsvg .lbl{font-family:inherit;font-size:16px;font-weight:600;fill:#111}
+#lira-deck .betsvg .lbl.m{font-weight:500;fill:#7a7a7a;font-style:italic}
+#lira-deck .us{font-size:.55em;font-weight:700;background:#2f8a3c;color:#fff;border-radius:999px;padding:.3em .8em;margin-left:.4em;letter-spacing:.04em;text-transform:uppercase}
+#lira-deck .cap2{color:var(--ink-2);font-size:clamp(14px,1.3cqw,19px);text-align:center;margin-bottom:2cqh}
+#lira-deck .body.iter{align-items:stretch;gap:3cqw;min-height:0}
+#lira-deck .tl{flex:0 0 26%;display:flex}
+#lira-deck .tls{display:flex;flex-direction:column;gap:2.2cqh;border-left:2px solid var(--line);padding-left:1.4cqw;margin-top:1cqh;align-self:flex-start}
+#lira-deck .tlb{position:relative;font-size:clamp(13px,1.2cqw,17px);line-height:1.3}
+#lira-deck .tlb:before{content:"";position:absolute;left:calc(-1.4cqw - 7px);top:.35em;width:12px;height:12px;border-radius:50%;background:var(--ink)}
+#lira-deck .tlb b{font-weight:800;margin-right:.5em}
+#lira-deck .tlb span{color:var(--ink-3);font-weight:600}
+#lira-deck .tlb em{display:block;font-style:normal;color:var(--ink-2)}
+#lira-deck .tlb.tot{margin-top:1cqh;padding-top:2cqh;border-top:1px solid var(--line)}
+#lira-deck .tlb.tot:before{display:none}
+#lira-deck .stack{flex:1;overflow-y:auto;padding:1cqh 1.5cqw 4cqh .5cqw;display:flex;flex-direction:column;gap:3cqh;min-height:0;
+    background-image:radial-gradient(#dcdcdc 1px,transparent 1px);background-size:22px 22px}
+#lira-deck .stack::-webkit-scrollbar{width:8px}
+#lira-deck .stack::-webkit-scrollbar-thumb{background:#ddd;border-radius:8px}
+#lira-deck .fb{width:min(100%,460px);background:#fff;border:1px solid var(--line);border-radius:14px;padding:1.6em 1.4em;font-size:clamp(11px,1cqw,14px);color:#1b1b1b;display:flex;flex-direction:column;gap:.6em;box-shadow:0 14px 30px -22px rgba(0,0,0,.35);flex:none}
+#lira-deck .fb.noPad{padding:0;overflow:hidden}
+#lira-deck .fb .pad{padding:1.4em 1.4em 1.6em;display:flex;flex-direction:column;gap:.6em}
+#lira-deck .fb.split{flex-direction:row;gap:1em}
+#lira-deck .qcol{display:flex;flex-direction:column;gap:.5em;flex:none}
+#lira-deck .qcol span{background:#f1f1f1;border-radius:8px;padding:.7em 1em;font-weight:600;color:#666;font-size:.9em}
+#lira-deck .qcol span.on{background:#e6f0f2;color:#2d6572;border:1px solid #cfe0e4}
+#lira-deck .qcol span{color:#666}
+#lira-deck .qmain{display:flex;flex-direction:column;gap:.6em;min-width:0}
+#lira-deck .fhd{display:flex;align-items:center;gap:.6em}
+#lira-deck .fhd b{display:block}
+#lira-deck .fhd small{color:#999;display:block;margin-top:.1em}
+#lira-deck .fmic{width:2em;height:2em;border-radius:50%;background:#f1f1f1;display:grid;place-items:center;flex:none}
+#lira-deck .fmic svg{width:1.1em;height:1.1em;fill:none;stroke:#333;stroke-width:2;stroke-linecap:round}
+#lira-deck .lvl{font-size:1.7em;font-weight:800;letter-spacing:-.02em}
+#lira-deck .pips{display:flex;gap:.35em}
+#lira-deck .pips i{width:2.6em;height:.5em;border-radius:999px;background:#e6e6e6}
+#lira-deck .pt{display:flex;align-items:center;gap:.5em;border-top:1px solid var(--line);padding-top:.6em}
+#lira-deck .pt i{width:.7em;height:.7em;border-radius:50%;flex:none}
+#lira-deck .pd{color:#555;line-height:1.4}
+#lira-deck .ya{border-left:3px solid #e6e6e6;padding-left:.8em;color:#999;line-height:1.4;font-size:.92em}
+#lira-deck .ya small{display:block;font-size:.72em;letter-spacing:.1em;font-weight:700;color:#aaa;margin-bottom:.15em}
+#lira-deck .sc{display:flex;align-items:center;gap:.9em;padding:.2em 0}
+#lira-deck .sc .ring{width:3.4em;height:3.4em;border-radius:50%;border:4px solid;display:grid;place-items:center;font-weight:800;font-size:1.05em;line-height:1}
+#lira-deck .sc .ring small{font-size:.5em;font-weight:600;color:#999}
+#lira-deck .sc b{font-size:1.35em}
+#lira-deck .mb{display:grid;grid-template-columns:auto 6.5em 1fr 1.8em;align-items:center;gap:.5em;color:#555}
+#lira-deck .mb .q{width:1.1em;height:1.1em;border-radius:50%;border:1px solid #ccc;color:#aaa;font-size:.7em;display:grid;place-items:center;font-style:normal}
+#lira-deck .mb:not(:has(.q)){grid-template-columns:6.5em 1fr 1.8em}
+#lira-deck .mb .bar{height:.5em;border-radius:999px;background:#ededed;overflow:hidden}
+#lira-deck .mb .bar i{display:block;height:100%;border-radius:999px}
+#lira-deck .mb b{text-align:right;color:#1b1b1b}
+#lira-deck .vt{color:#888;border-top:1px solid var(--line);padding-top:.6em}
+#lira-deck .iq{background:#f4f4f2;padding:1.2em 1.4em;display:flex;gap:.7em;align-items:flex-start}
+#lira-deck .iq i{width:1.4em;height:1.4em;border-radius:50%;background:linear-gradient(135deg,#3a7f8f,#8fc0ca);flex:none;margin-top:.15em}
+#lira-deck .iq small{display:block;font-size:.7em;letter-spacing:.1em;color:#999;font-weight:700}
+#lira-deck .iq b{line-height:1.35}
+#lira-deck .tr{display:flex;align-items:center;gap:.6em;border-top:1px solid var(--line);padding-top:.55em;font-weight:600}
+#lira-deck .tr em{font-style:normal;font-size:.72em;font-weight:800;border-radius:5px;padding:.25em .5em;letter-spacing:.04em;white-space:nowrap}
+#lira-deck .tr i{margin-left:auto;font-style:normal;color:#bbb;font-size:.8em}
+#lira-deck .tx2{color:#555;line-height:1.4;padding-left:.2em}
+#lira-deck .cta{display:flex;gap:.6em;padding-top:.3em}
+#lira-deck .cta span{flex:1;text-align:center;border-radius:999px;padding:.6em .5em;font-weight:700}
+#lira-deck .cta .ghost{border:1px solid var(--line);color:#555}
+#lira-deck .cta .go{background:var(--teal);color:#fff}
+#lira-deck .bl{display:flex;align-items:baseline;gap:.6em;font-size:clamp(13px,1.2cqw,17px);margin-bottom:1cqh;flex-wrap:wrap}
+#lira-deck .bl b{font-weight:800}
+#lira-deck .bl span{color:var(--ink-3);font-weight:600}
+#lira-deck .bl em{font-style:normal;color:var(--ink-2);flex-basis:100%}
+#lira-deck .pairs{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.1fr);gap:3cqw;width:100%;align-items:start}
+#lira-deck .pcol{display:flex;flex-direction:column;min-width:0}
+#lira-deck .pcol .fb{width:100%}
+#lira-deck .pmid{display:flex;flex-direction:column;gap:2cqh;padding-top:5cqh}
+#lira-deck .parr{text-align:center;color:#8a8a8a;font-size:clamp(28px,3cqw,44px);line-height:1}
+#lira-deck .lrn{display:flex;flex-direction:column;gap:2cqh}
+#lira-deck .lrn h4{font-size:clamp(12px,1.05cqw,15px);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.6cqh}
+#lira-deck .lrn ul{list-style:none;display:flex;flex-direction:column;gap:.6cqh}
+#lira-deck .lrn li{display:flex;gap:.5em;align-items:flex-start;font-size:clamp(13px,1.2cqw,18px);line-height:1.3;font-weight:500}
+#lira-deck .lrn li i{font-style:normal;flex:none;width:1.4em;height:1.4em;border-radius:50%;display:grid;place-items:center;font-size:.8em;margin-top:.1em;font-weight:800}
+#lira-deck .lrn i.ok{background:#e3f1e5;color:#2f8a3c}
+#lira-deck .lrn i.no{background:#f7dfdc;color:#b0433c}
+#lira-deck .five{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1.4cqw;width:100%;align-items:start}
+#lira-deck .fcol{display:flex;flex-direction:column;min-width:0}
+#lira-deck .thumb{margin-bottom:1.4cqh}
+#lira-deck .thumb .fb{width:100%;gap:.5em}
+#lira-deck .thumb .fb.split{gap:.6em}
+#lira-deck .thumb .qcol span{padding:.5em .7em}
+#lira-deck .thumb .fb.noPad{padding:0}
+#lira-deck .five .lrn{gap:1.2cqh}
+#lira-deck .five .lrn h4{font-size:clamp(9px,.8cqw,12px);margin-bottom:.3cqh}
+#lira-deck .five .lrn li{font-size:clamp(10px,.92cqw,13px);gap:.4em}
+#lira-deck .five .bl{font-size:clamp(11px,1cqw,14px)}
+#lira-deck .pairs{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4cqw;align-items:start}
+#lira-deck .stackcol{display:flex;flex-direction:column;gap:3cqh}
+#lira-deck .stackcol .fb{font-size:clamp(9px,.82cqw,12px);padding:1.5em 1.3em;gap:.55em}
+#lira-deck .stackcol .fb.noPad{padding:0}
+#lira-deck .stackcol .parr{font-size:clamp(22px,2.2cqw,32px);padding:.2cqh 0}
+#lira-deck .lrnside{padding-top:1cqh}
+#lira-deck .lrnside .lrn{gap:3cqh}
+#lira-deck .lrnside .lrn li{font-size:clamp(15px,1.4cqw,21px)}
+#lira-deck .lrnside .lrn h4{font-size:clamp(13px,1.15cqw,17px)}
+#lira-deck .body.fivebody{align-items:stretch;min-height:0}
+#lira-deck .five.stack{display:flex;flex-direction:column;gap:0;overflow-y:auto;padding-right:1cqw;min-height:0}
+#lira-deck .five.stack::-webkit-scrollbar{width:8px}
+#lira-deck .five.stack::-webkit-scrollbar-thumb{background:#ddd;border-radius:8px}
+#lira-deck .frow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:3cqw;align-items:start;border-top:1px solid var(--line);padding-top:2cqh}
+#lira-deck .frow .bl{grid-column:1/-1;margin-bottom:0}
+#lira-deck .frow .thumb{margin:0}
+#lira-deck .frow .lesson b{background:#fff3a3;padding:0 .15em;border-radius:3px;font-weight:700}
+#lira-deck .frow .thumb .fb{font-size:clamp(9px,.8cqw,11.5px);min-height:0;padding:1.5em 1.3em}
+#lira-deck .frow .thumb .fb.noPad{padding:0}
+#lira-deck .frow .lrn{flex-direction:row;gap:3cqw}
+#lira-deck .frow .lrn>div{flex:1}
+#lira-deck .frow .lrn li{font-size:clamp(13px,1.15cqw,17px)}
+#lira-deck .frow .lrn h4{font-size:clamp(11px,.95cqw,14px)}
+#lira-deck .fb.noPad{padding:0}
+#lira-deck .gantt{width:100%;display:flex;flex-direction:column;gap:2.2cqh}
+#lira-deck .wk{display:grid;grid-template-columns:7em 1fr;align-items:center;gap:1.5cqw}
+#lira-deck .wl{font-weight:700;font-size:clamp(14px,1.4cqw,20px)}
+#lira-deck .wd{text-align:right;color:var(--ink-2);font-weight:600;font-size:clamp(13px,1.2cqw,17px)}
+#lira-deck .wbar{display:flex;height:clamp(40px,6.5cqh,64px);border-radius:10px;overflow:hidden;background:#f1f1f1}
+#lira-deck .wbar i{display:flex;align-items:center;justify-content:center;height:100%;overflow:hidden;font-style:normal}
+#lira-deck .wbar i span{white-space:nowrap;font-weight:700;font-size:clamp(11px,1.05cqw,15px);padding:0 .6em;overflow:hidden;text-overflow:ellipsis;text-align:center;line-height:1.15}
+#lira-deck .wbar i span small{display:block;font-weight:500;font-size:.82em;opacity:.85}
+#lira-deck .wbar i+i{border-left:2px solid #fff}
+#lira-deck .ui{background:var(--teal);color:#fff}
+#lira-deck .ff{background:var(--ink);color:#fff}
+#lira-deck .ot{background:#f3d9a4;color:#5a3d05}
+#lira-deck .wk.hd .days{display:grid;grid-template-columns:repeat(5,1fr);text-align:center;color:var(--ink-3);font-weight:600;font-size:clamp(12px,1.05cqw,15px)}
+#lira-deck .wk.hd .wd{color:var(--ink-3);font-size:clamp(12px,1.05cqw,15px)}
+#lira-deck .wk.tot{margin-top:1cqh}
+#lira-deck .totl{display:flex;align-items:center;gap:.6em;font-weight:700;font-size:clamp(14px,1.35cqw,20px)}
+#lira-deck .totl i{width:1.1em;height:1.1em;border-radius:4px;background:var(--ink);display:inline-block}
+#lira-deck .cmp{width:100%;display:flex;flex-direction:column;gap:2.5cqh}
+#lira-deck .ct{width:100%;border-collapse:separate;border-spacing:0;font-size:clamp(12px,1.15cqw,17px)}
+#lira-deck .ct th, #lira-deck .ct td{padding:1.1cqh .9cqw;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+#lira-deck .ct thead th small{display:block;font-size:.85em;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:600;margin-top:.15em}
+#lira-deck .ct td.pass{background:#e3f1e5;color:#1f6b2c;font-weight:700}
+#lira-deck .ct td.warn{background:#fbeedd;color:#8a5a12;font-weight:700}
+#lira-deck .ct td.fail{background:#f7dfdc;color:#9a3a34;font-weight:700}
+#lira-deck .ct td, #lira-deck .ct .sub th{border-left:2px solid #fff}
+#lira-deck .ct tbody th{text-align:left;font-weight:700}
+#lira-deck .ct thead tr:not(.grp) th{font-size:.8em;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+#lira-deck .ct .grp th{font-size:.75em;letter-spacing:.14em;text-transform:uppercase;color:#fff;font-weight:800;background:var(--ink);padding:.8cqh 1cqw;border-bottom:0}
+#lira-deck .ct .grp th:first-child{background:none}
+#lira-deck .ct th.g1, #lira-deck .ct td.g1{border-left:6px solid #fff!important}
+#lira-deck .ct .sub th{background:#f4f4f4}
+#lira-deck .ct th.blank{background:none!important;border-bottom:0}
+#lira-deck .ct td.ok{color:#2f8a3c;font-weight:800}
+#lira-deck .ct td.strong{font-weight:800}
+#lira-deck .ct .dash{color:#c8c8c8}
+#lira-deck .ct .dot{display:inline-block;width:.6em;height:.6em;border-radius:50%;margin-right:.45em;vertical-align:.05em}
+#lira-deck .ct .dot.g{background:#2f8a3c}
+#lira-deck .ct .dot.a{background:#d98a2b}
+#lira-deck .ct .dot.r{background:#c4605a}
+#lira-deck .ct tr.pick th{background:#e6f0f2}
+#lira-deck .ct tr.pick th{border-left:4px solid var(--teal)}
+#lira-deck .ct .tag{display:inline-block;margin-left:.6em;background:var(--teal);color:#fff;border-radius:999px;padding:.15em .6em;font-size:.7em;letter-spacing:.06em;text-transform:uppercase;vertical-align:.1em}
+#lira-deck .hard{display:flex;gap:2cqw;align-items:center;font-size:clamp(12px,1.1cqw,16px);color:var(--ink-2)}
+#lira-deck .hard span{display:flex;align-items:center;gap:.5em}
+#lira-deck .hard .sw{width:1em;height:1em;border-radius:3px;display:inline-block}
+#lira-deck .hard .sw.pass{background:#e3f1e5;border:1px solid #9ccba3}
+#lira-deck .hard .sw.warn{background:#fbeedd;border:1px solid #e6c48c}
+#lira-deck .hard .sw.fail{background:#f7dfdc;border:1px solid #e0a19c}
+#lira-deck .hard .note{margin-left:auto;color:var(--ink-3)}
+#lira-deck .amb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:5cqw;width:100%;align-items:start}
+#lira-deck .oq ul{list-style:none;display:flex;flex-direction:column;gap:1.6cqh;margin-top:1cqh}
+#lira-deck .oq li{font-size:clamp(17px,1.8cqw,27px);font-weight:600;line-height:1.25;padding-left:1.1em;position:relative}
+#lira-deck .oq li:before{content:"?";position:absolute;left:0;top:0;color:var(--ink-3);font-weight:800}
+#lira-deck .stage{position:relative;min-height:46cqh}
+#lira-deck .stage .step{display:none}
+#lira-deck .stage .step.on{display:block;animation:lira-in .25s ease-out}
+#lira-deck .oq ul{display:none}
+#lira-deck .stage .win{width:min(100%,420px)}
+#lira-deck .stage .win .in{min-height:34cqh}
+#lira-deck .stage h3{font-size:clamp(18px,1.9cqw,28px);font-weight:700;margin-bottom:1.4cqh}
+#lira-deck .oq .stickies{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.6cqh 1cqw;margin-top:1.5cqh}
+#lira-deck .note{background:#fff3a3;box-shadow:0 8px 18px -10px rgba(0,0,0,.45),0 1px 0 #e8d97a inset;min-height:9.5cqh;padding:.8em .7em;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:clamp(11px,1cqw,15px);line-height:1.25;transform:rotate(var(--r));font-family:"Bricolage Grotesque",Figtree,sans-serif}
+#lira-deck .note:nth-child(2n){background:#ffe98a}
+#lira-deck .note.step{display:none}
+#lira-deck .note.step.on{display:flex;animation:lira-pop .28s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes lira-pop{from{opacity:0;transform:rotate(var(--r)) scale(.7)}to{opacity:1;transform:rotate(var(--r)) scale(1)}}
+#lira-deck .bl em{flex-basis:auto}
+#lira-deck .lesson{border-left:4px solid var(--ink);padding-left:1.4cqw}
+#lira-deck .lesson p{font-size:clamp(16px,1.6cqw,24px);line-height:1.4;font-weight:500;margin-top:.8cqh}
+#lira-deck .lrnside .step, #lira-deck .stackcol .step{display:none}
+#lira-deck .lrnside.step{display:none}
+#lira-deck .lrnside.step.on{display:block;animation:lira-in .25s ease-out}
+#lira-deck .stackcol .pcol.step{display:none}
+#lira-deck .stackcol .pcol.step.on{display:flex;animation:lira-in .25s ease-out}
+#lira-deck .larr{display:none}
+#lira-deck .frow .lesson p{font-size:clamp(13px,1.2cqw,18px)}
+#lira-deck .five.stack{background-image:radial-gradient(#d9d9d9 1.2px,transparent 1.2px);background-size:22px 22px;padding:2cqh 1.5cqw 4cqh;border-radius:14px}
+#lira-deck .frow{grid-template-columns:460px minmax(0,1fr);gap:1cqh 3cqw;border-top:0;padding:0 0 5cqh;margin-bottom:5cqh;border-bottom:1px solid #dcdcdc;align-items:center}
+#lira-deck .frow:last-child{border-bottom:0;margin-bottom:0}
+#lira-deck .frow.step{display:none}
+#lira-deck .frow.step.on{display:grid;animation:lira-in .3s ease-out}
+#lira-deck .lessonwrap.step{display:none}
+#lira-deck .lessonwrap.step.on{display:block;animation:lira-in .3s ease-out}
+#lira-deck .bh{grid-column:1/-1;display:flex;align-items:center;gap:1cqw;flex-wrap:wrap;line-height:1;margin-bottom:.4cqh}
+#lira-deck .bh .bn{font-size:clamp(22px,2.4cqw,36px);font-weight:800;letter-spacing:-.02em;line-height:1}
+#lira-deck .bh .bt{font-size:clamp(18px,1.9cqw,28px);font-weight:600;color:var(--ink-2);line-height:1}
+#lira-deck .bh .bd{background:var(--ink);color:#fff;border-radius:999px;padding:.35em .9em;font-weight:700;font-size:clamp(12px,1.1cqw,16px);letter-spacing:.04em;line-height:1;align-self:center}
+#lira-deck .frow .thumb{width:460px;max-width:100%}
+#lira-deck .frow .thumb .fb{width:100%;box-sizing:border-box}
+#lira-deck .frow .thumb .fb.split .qmain{flex:1 1 auto;min-width:0}
+#lira-deck .frow .thumb .fb.split .qcol{flex:0 0 auto}
+#lira-deck .frow .lesson p{font-size:clamp(15px,1.45cqw,22px)}
+#lira-deck .speed{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:6cqw;width:100%;align-items:center}
+#lira-deck .stat .big{font-size:clamp(90px,13cqw,200px);font-weight:800;line-height:.9;letter-spacing:-.05em}
+#lira-deck .stat .big small{font-size:.28em;font-weight:700;letter-spacing:-.01em;margin-left:.15em;color:var(--ink-2)}
+#lira-deck .stat .lbl{margin-top:2cqh;font-size:clamp(15px,1.5cqw,22px);color:var(--ink-2);max-width:22ch;line-height:1.3}
+#lira-deck .whys{display:flex;flex-direction:column;gap:2.2cqh}
+#lira-deck .why{display:flex;gap:1.2cqw;align-items:flex-start}
+#lira-deck .why .n{flex:none;width:2em;height:2em;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:clamp(13px,1.2cqw,17px)}
+#lira-deck .why b{display:block;font-size:clamp(17px,1.7cqw,26px);font-weight:700;line-height:1.2;margin-bottom:.3cqh}
+#lira-deck .why p{font-size:clamp(13px,1.2cqw,17px);color:var(--ink-2);line-height:1.35}
+#lira-deck .ctxB{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:5cqw;align-items:center;width:100%}
+#lira-deck .ctxB h1{max-width:12ch}
+#lira-deck .ctxBl{display:flex;flex-direction:column;align-items:flex-start}
+#lira-deck .ctxBl .eyebrow{margin-bottom:0}
+#lira-deck .facts.grid2{grid-template-columns:1fr 1fr;gap:2cqh 1.6cqw}
+#lira-deck .facts.grid2 .fact{min-height:18cqh;display:flex;flex-direction:column;justify-content:flex-end;padding:2.4cqh 1.6cqw}
+#lira-deck .facts.grid2 .big{font-size:clamp(24px,2.6cqw,40px);font-weight:800;line-height:1.05;letter-spacing:-.02em}
+#lira-deck .facts.grid2 .fact.hot{background:var(--ink);border-color:var(--ink);color:#fff}
+#lira-deck .facts.grid2 .fact.hot .lbl{color:#cfcfcf}
+#lira-deck .archwrap{width:100%;display:flex;flex-direction:column;align-items:center;gap:1cqh}
+#lira-deck .arch{width:min(100%,160cqh);height:auto;overflow:visible;font-family:inherit}
+#lira-deck .arch .node rect{fill:#fff;stroke:#111;stroke-width:2.5}
+#lira-deck .arch .node.ext rect{stroke-dasharray:8 6;fill:#f6f6f6}
+#lira-deck .arch .nt{font-size:20px;font-weight:700;fill:#111}
+#lira-deck .arch .ns{font-size:15px;fill:#555}
+#lira-deck .arch .ic{fill:none;stroke:#111;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#lira-deck .arch .ic .f{fill:#111;stroke:none}
+#lira-deck .arch .ic.big{stroke-width:3}
+#lira-deck .arch .e{fill:none;stroke:#111;stroke-width:2.5}
+#lira-deck .arch .el{font-size:16px;fill:#333;font-weight:600}
+#lira-deck .arch .el.sm{font-size:13px;fill:#777;font-weight:500}
+#lira-deck .arch .badge circle{fill:#111}
+#lira-deck .arch .badge text{fill:#fff;font-size:14px;font-weight:800}
+#lira-deck .legend2{display:flex;gap:2cqw;color:var(--ink-2);font-size:clamp(12px,1.1cqw,16px);font-weight:500}
+#lira-deck .legend2 span{display:flex;align-items:center;gap:.5em}
+#lira-deck .legend2 .lg{width:1.6em;height:1em;border-radius:4px;border:2px solid #111;display:inline-block}
+#lira-deck .legend2 .lg.ext{border-style:dashed;background:#f6f6f6}
+#lira-deck .archhead{display:flex;justify-content:space-between;align-items:flex-start;gap:4cqw}
+#lira-deck .archhead>div:first-child{display:flex;flex-direction:column;align-items:flex-start}
+#lira-deck .archhead .stack{flex:none;border:1px solid var(--line);border-radius:12px;padding:1.6cqh 1.4cqw;margin-top:.5cqh}
+#lira-deck .archhead .stack ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.5cqh 1.6cqw;margin-top:.6cqh}
+#lira-deck .archhead .stack li{font-size:clamp(12px,1.1cqw,16px);font-weight:600;white-space:nowrap}
+#lira-deck .tail{border:0;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:.8em;width:100%}
+#lira-deck .tail .lines{gap:.7em}
+#lira-deck .tail .lines span{height:.7em}
+#lira-deck .tail .ph{font-size:1.15em}
+#lira-deck .oq .ceb.step{display:none}
+#lira-deck .oq .ceb.step.on{display:block}
+#lira-deck .prios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3cqw;width:100%;align-items:start}
+#lira-deck .prio{border-top:3px solid var(--ink);padding-top:2.4cqh}
+#lira-deck .prio h3{font-size:clamp(22px,2.4cqw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+#lira-deck .prio .m{margin-top:1.4cqh;font-size:clamp(16px,1.6cqw,24px);font-weight:600;line-height:1.3}
+#lira-deck .prio .j{margin-top:1.4cqh;font-size:clamp(16px,1.6cqw,24px);color:var(--ink-2);line-height:1.35;font-weight:500}
+#lira-deck .notopt{border:1px solid var(--line);border-radius:12px;padding:1.4cqh 1.6cqw;font-size:clamp(14px,1.3cqw,19px);color:var(--ink-2);margin-bottom:2cqh}
+#lira-deck .notopt b{color:var(--ink)}
+@container lira (max-width:820px){
+  #lira-deck .shot{flex-wrap:wrap}
+  #lira-deck .callouts{width:100%}
+  #lira-deck .co:before{display:none}
+}
+#lira-deck .in.simple{gap:1.1em;justify-content:center;min-height:38cqh}
+#lira-deck .in.simple.center{align-items:center}
+#lira-deck .chips.big span{font-size:1.05em;padding:.5em 1em}
+#lira-deck .down{color:var(--ink-3);font-size:1.3em;text-align:center;line-height:1}
+#lira-deck .sk{display:block;height:.7em;border-radius:999px;background:#e6e6e6}
+#lira-deck .sk.d{background:#cfd9dc}
+#lira-deck .qlist div{align-items:center}
+#lira-deck .notes{display:flex;flex-direction:column;gap:.55em}
+#lira-deck .ans{display:flex;flex-direction:column;gap:.55em}
+#lira-deck .mic{width:5em;height:5em;border-radius:50%;background:#222;display:grid;place-items:center;box-shadow:0 0 0 .5em #f0f0f0}
+#lira-deck .mic svg{width:2em;height:2em;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+#lira-deck .lst{font-weight:700;display:flex;align-items:center;gap:.4em}
+#lira-deck .lst i{width:.55em;height:.55em;border-radius:50%;background:var(--green)}
+#lira-deck .end{background:var(--rose);color:#fff;border-radius:999px;padding:.6em 1.3em;font-weight:700;font-size:.9em}
+#lira-deck .people{display:grid;grid-template-columns:repeat(3,1fr);gap:3cqw;width:100%;align-items:end}
+#lira-deck .person{display:flex;flex-direction:column;align-items:center;gap:1.5cqh}
+#lira-deck .bubble{position:relative;border:2px solid var(--ink);border-radius:18px;padding:2.4cqh 1.6cqw;font-size:clamp(15px,1.45cqw,22px);line-height:1.35;font-weight:500;background:#fff}
+#lira-deck .bubble:after{content:"";position:absolute;left:50%;bottom:-13px;width:22px;height:22px;background:#fff;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateX(-50%) rotate(45deg)}
+#lira-deck .ulabel{font-size:clamp(13px,1.2cqw,17px);font-weight:700;color:var(--ink-2)}
+#lira-deck .stick{width:clamp(80px,9cqw,140px);height:auto;fill:none;stroke:#111;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+/* product screenshots, modeled on the landing page */
+#lira-deck .shot{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 50px -30px rgba(0,0,0,.25);padding:1.4em;font-size:clamp(11px,1.02cqw,15px);height:46cqh;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:1em;color:#1b1b1b;min-width:0}
+#lira-deck .inputs{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
+#lira-deck .inp{display:flex;align-items:center;justify-content:center;gap:.5em;border:1px solid var(--line);border-radius:10px;padding:.6em .5em;font-weight:600;box-shadow:0 6px 16px -12px rgba(0,0,0,.25);font-size:.95em}
+#lira-deck .ic{width:1.9em;height:1.9em;border-radius:7px;display:grid;place-items:center;color:#fff;flex:none}
+#lira-deck .ic svg, #lira-deck .star svg{width:1.1em;height:1.1em;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#lira-deck .ic.pdf{background:#c4605a}
+#lira-deck .ic.web{background:#2f8a3c}
+#lira-deck .links{display:grid;grid-template-columns:1fr 1fr;height:1.6em}
+#lira-deck .links span{text-align:center;color:#8a8a8a;font-size:1.4em;line-height:1}
+#lira-deck .plan{flex:0 0 auto;border:1px solid var(--line);border-radius:12px;padding:1em;display:flex;flex-direction:column;gap:.5em;box-shadow:0 10px 24px -18px rgba(0,0,0,.3);min-width:0}
+#lira-deck .ph{display:flex;align-items:center;gap:.5em;font-weight:700;margin-bottom:.3em}
+#lira-deck .star{width:1.7em;height:1.7em;border-radius:50%;background:#1b1b1b;display:grid;place-items:center;flex:none}
+#lira-deck .star.sq{border-radius:6px;background:var(--teal)}
+#lira-deck .pr{display:flex;align-items:center;gap:.5em;background:#f6f6f4;border-radius:8px;padding:.5em .7em;font-size:.92em;min-width:0}
+#lira-deck .pr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lira-deck .pr b{width:.5em;height:.5em;border-radius:50%;flex:none}
+#lira-deck .pr em{margin-left:auto;font-style:normal;font-size:.72em;font-weight:700;border-radius:6px;padding:.2em .5em}
+#lira-deck .pr em.beh{background:#e3f1e5;color:#2f8a3c}
+#lira-deck .pr em.tec{background:#fbeedd;color:#c77a1a}
+#lira-deck .lines{display:flex;flex-direction:column;gap:.45em}
+#lira-deck .lines span{display:block;height:.55em;border-radius:999px;background:#e6e6e6}
+#lira-deck .aligned{margin-top:.4em;border:1px solid var(--line);border-radius:8px;padding:.5em;text-align:center;font-weight:600;color:var(--ink-2);font-size:.9em}
+#lira-deck .callouts{display:flex;flex-direction:column;gap:.6em}
+#lira-deck .co{position:relative;border-radius:999px;padding:.5em .8em;font-size:.82em;font-weight:600;line-height:1.25}
+#lira-deck .co:before{display:none}
+#lira-deck .co.teal{background:#e6f0f2;color:#2d6572;border:1px solid #cfe0e4}
+#lira-deck .co.blue{background:#e8effb;color:#2f6fd1;border:1px solid #d3dff5}
+#lira-deck .co.green{background:#e6f3e8;color:#2f8a3c;border:1px solid #cfe6d3}
+#lira-deck .shot.mock{align-items:center;gap:.9em;padding:2em 1.4em}
+#lira-deck .shot.mock .mic{margin:1.2em 0 .6em}
+#lira-deck .shot.mock>*{align-self:center}
+#lira-deck .shot.mock .ctl{width:auto}
+#lira-deck .shot.mock .mic{box-shadow:0 0 0 .55em #f0f0f0,0 0 0 1.1em #f7f7f7,0 0 0 1.15em #ececec}
+#lira-deck .timer{color:var(--ink-2);margin-top:-.5em}
+#lira-deck .shot.mock .ctl{justify-content:center;margin-top:.8em}
+#lira-deck .shot.mock .p{width:2.4em;height:2.4em;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:800}
+@container lira (max-width:820px){
+  #lira-deck .slide{padding:5cqh 6cqw}
+  #lira-deck .grid, #lira-deck .quotes, #lira-deck .three, #lira-deck .people, #lira-deck .bets, #lira-deck .pairs, #lira-deck .five, #lira-deck .amb, #lira-deck .frow, #lira-deck .speed, #lira-deck .ctxB, #lira-deck .prios{grid-template-columns:1fr}
+  #lira-deck .opt .win .in{min-height:0}
+}
+
+/* 16:9 is unreadable on a phone; go portrait and let a slide scroll. */
+@media (max-width:700px){
+  #lira-deck{aspect-ratio:3/4}
+}
+@container lira (max-width:820px){
+  /* a centred .body clips at BOTH ends once the content outgrows it, and no
+     amount of scrolling reaches the top. Let it take its natural height and
+     scroll the slide instead. */
+  #lira-deck .slide{overflow-y:auto}
+  #lira-deck .body{flex:0 0 auto;align-items:flex-start}
+  #lira-deck .shot{height:auto}
+}
+  </style>
+</head>
+<body>
+  <main class="wrap deck-page">
+    <article class="post">
+      <p class="back"><a href="writing.html">&larr; All posts</a></p>
+      <h1 class="post-title">Lira Feedback Engine</h1>
+      <time class="post-date" datetime="2026-09-11">September 11, 2026</time>
+
+      <p>
+        How we built Lira's feedback engine: five small bets over five weeks,
+        and the architecture that graded the interviews.
+      </p>
+    </article>
+
+    <div class="ld-frame">
+      <div class="deck" id="lira-deck" tabindex="0" role="region"
+           aria-roledescription="slide deck" aria-label="Lira feedback engine, 10 slides">
+
+  <!-- 1. CONTEXT -->
+  <section class="slide on">
+    <div class="body"><div class="ctxB">
+      <div class="ctxBl">
+        <div class="eyebrow">Context</div>
+        <h1>Lira, the startup I co-founded</h1>
+        <p class="sub">Mock interviews tailored to the candidate, the role, and the company.</p>
+      </div>
+      <div class="facts grid2">
+        <div class="fact"><div class="big">2 co-founders</div><div class="lbl">bootstrapped</div></div>
+        <div class="fact"><div class="big">1 engineer</div><div class="lbl">and it was me</div></div>
+        <div class="fact"><div class="big">MVP live</div><div class="lbl">several hundred users</div></div>
+        <div class="fact"><div class="big">$0 revenue</div><div class="lbl">no paying customers yet</div></div>
+      </div>
+    </div></div>
+    <div class="foot"><span>1 / 10</span></div>
+  </section>
+
+  <!-- 2. PRODUCT -->
+  <section class="slide">
+    <div class="eyebrow">Product</div>
+    <h1>What the MVP did</h1>
+    <div class="body"><div class="three">
+
+      <div class="opt">
+        <h3><span>1</span>Generate questions</h3>
+        <div class="shot">
+          <div class="inputs">
+            <div class="inp"><i class="ic pdf"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></i>Resume</div>
+            <div class="inp"><i class="ic web"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/></svg></i>Job Post</div>
+                      </div>
+          <div class="links"><span>&#8595;</span><span>&#8595;</span></div>
+          <div class="plan">
+            <div class="ph"><i class="star"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" fill="#fff" stroke="none"/></svg></i>Your Questions</div>
+            <div class="pr"><b style="background:#2f8a3c"></b><span>Disagreeing with a manager</span><em class="beh">Behavioral</em></div>
+            <div class="pr"><b style="background:#2f8a3c"></b><span>Onboarding drop-off</span><em class="beh">Behavioral</em></div>
+            <div class="pr"><b style="background:#d98a2b"></b><span>Migration you led</span><em class="tec">Technical</em></div>
+                      </div>
+        </div>
+      </div>
+
+      <div class="opt">
+        <h3><span>2</span>Build an answer</h3>
+        <div class="shot">
+          <div class="tail">
+            <div class="ph"><i class="star sq"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" fill="#fff" stroke="none"/></svg></i>Tailored Answer</div>
+            <div class="lines">
+              <span style="width:66%;background:#cfe3ea"></span><span style="width:100%"></span><span style="width:96%"></span><span style="width:78%"></span>
+              <span style="width:84%;background:#cdd9f4"></span><span style="width:100%"></span><span style="width:56%;background:#cfe6d3"></span><span style="width:40%"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="opt">
+        <h3><span>3</span>Practice out loud</h3>
+        <div class="shot mock">
+          <span class="qpill">Question 3 &middot; Behavioral</span>
+          <div class="mic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></div>
+          <div class="lst"><i></i>Listening&hellip;</div>
+          <div class="timer">04:23</div>
+          <div class="ctl"><span class="p">&middot;&middot;&middot;</span><span class="p">&#127908;</span><span class="end">&#9632;&nbsp; End Interview</span></div>
+        </div>
+      </div>
+
+    </div></div>
+    <div class="foot"><span>2 / 10</span></div>
+  </section>
+
+  <!-- 2. PROBLEM -->
+  <section class="slide">
+    <div class="eyebrow">Problem</div>
+    <h1>Every user interview said the same thing</h1>
+    <div class="body"><div style="width:100%">
+      <div class="people">
+        <div class="person">
+          <div class="bubble">The <span class="u">lack of feedback</span> is not helpful.</div>
+          <svg class="stick" viewBox="0 0 120 200" aria-hidden="true">
+            <circle cx="60" cy="38" r="26"/>
+            <circle cx="50" cy="34" r="2.5" fill="#111" stroke="none"/><circle cx="70" cy="34" r="2.5" fill="#111" stroke="none"/>
+            <path d="M42 26 L54 30 M78 26 L66 30"/>
+            <path d="M48 50 Q60 42 72 50"/>
+            <path d="M60 64 V130"/><path d="M60 130 L38 190"/><path d="M60 130 L82 190"/>
+            <path d="M60 80 L30 60"/><path d="M60 80 L90 60"/>
+          </svg>
+          <div class="ulabel">User #1</div>
+        </div>
+        <div class="person">
+          <div class="bubble">Feedback would make a big difference. I want to <span class="u">measure my confidence and accuracy</span> across my answers.</div>
+          <svg class="stick" viewBox="0 0 120 200" aria-hidden="true">
+            <circle cx="60" cy="38" r="26"/>
+            <circle cx="50" cy="34" r="2.5" fill="#111" stroke="none"/><circle cx="70" cy="34" r="2.5" fill="#111" stroke="none"/>
+            <path d="M44 24 Q50 20 56 24 M64 24 Q70 20 76 24"/>
+            <path d="M48 46 Q60 56 72 46"/>
+            <path d="M60 64 V130"/><path d="M60 130 L38 190"/><path d="M60 130 L82 190"/>
+            <path d="M60 80 L34 110"/><path d="M60 80 L86 110"/>
+          </svg>
+          <div class="ulabel">User #2</div>
+        </div>
+        <div class="person">
+          <div class="bubble">I welcome feedback. If it can show me how to improve, then <span class="u">I&rsquo;m open to paying.</span></div>
+          <svg class="stick" viewBox="0 0 120 200" aria-hidden="true">
+            <circle cx="60" cy="38" r="26"/>
+            <circle cx="50" cy="34" r="2.5" fill="#111" stroke="none"/><circle cx="70" cy="34" r="2.5" fill="#111" stroke="none"/>
+            <path d="M44 22 Q50 18 56 22 M64 22 Q70 18 76 22"/>
+            <path d="M46 44 Q60 60 74 44 Z"/>
+            <path d="M60 64 V130"/><path d="M60 130 L38 190"/><path d="M60 130 L82 190"/>
+            <path d="M60 80 L28 66"/><path d="M60 80 L92 96"/><circle cx="24" cy="60" r="6"/>
+          </svg>
+          <div class="ulabel">User #3</div>
+        </div>
+      </div>
+      <div class="src">Five user interviews a week.</div>
+    </div></div>
+    <div class="foot"><span>3 / 10</span></div>
+  </section>
+
+  <!-- 3. AMBIGUITY -->
+  <section class="slide" data-steps="7">
+    <div class="eyebrow">Ambiguity</div>
+    <h1>Many product open questions</h1>
+    <div class="body"><div class="amb">
+      <div class="oq">
+        <div class="ceb step" data-step="1">Open questions</div>
+        <div class="stickies"><div class="note step" data-step="1" style="--r:-3deg">Written or spoken?</div><div class="note step" data-step="2" style="--r:2deg">A score? A level? Neither?</div><div class="note step" data-step="3" style="--r:-1deg">Which metrics, if any?</div><div class="note step" data-step="4" style="--r:3deg">Per answer, or the whole interview?</div><div class="note step" data-step="4" style="--r:-2deg">What does the grader need to know?</div><div class="note step" data-step="4" style="--r:1deg">How much will anyone read?</div><div class="note step" data-step="4" style="--r:-3deg">Will they trust it?</div></div>
+      </div>
+      <div class="stage">
+        <div class="step" data-step="5">
+          <div class="ceb">Concept A</div><h3>A coach that talks back</h3>
+          <div class="win"><div class="top"><i></i><i></i><i></i>&nbsp;Debrief</div><div class="in">
+            <div class="coach"><span class="av"></span><div><div class="nm">Your interviewer</div><div class="st">Recorded a 40 second debrief</div></div></div>
+            <div class="player"><span class="play">&#9654;</span><span class="bars"><i style="height:30%"></i><i style="height:70%"></i><i style="height:45%"></i><i style="height:90%"></i><i style="height:60%"></i><i style="height:35%"></i><i style="height:80%"></i><i style="height:50%"></i><i style="height:25%"></i><i style="height:65%"></i><i style="height:40%"></i><i style="height:75%"></i></span><span class="t">0:00 / 0:41</span></div>
+          </div></div>
+        </div>
+        <div class="step" data-step="6">
+          <div class="ceb">Concept B</div><h3>A conversation about it</h3>
+          <div class="win"><div class="top"><i></i><i></i><i></i>&nbsp;Ask your coach</div><div class="in">
+            <div class="chat">
+              <div class="msg ai">Nice example. One thing: you never said what happened after you pushed back. Did your manager change course?</div>
+              <div class="msg me">She did, partially. Should I have led with that?</div>
+              <div class="msg ai">Yes. Outcomes first, then the story. Want to try it again?</div>
+            </div>
+            <div class="ask">Ask about your answer&hellip; <b>&#8593;</b></div>
+          </div></div>
+        </div>
+        <div class="step" data-step="7">
+          <div class="ceb">Concept C</div><h3>Notes on your transcript</h3>
+          <div class="win"><div class="top"><i></i><i></i><i></i>&nbsp;Transcript</div><div class="in">
+            <div class="txh"><span class="tmic">&#127908;</span><div><b>Your answer</b><small>Question 3 &middot; 1:42</small></div></div>
+            <div class="tx">So there was this one time when we were planning the roadmap and <mark class="ok">I felt strongly that we were underestimating the migration</mark>. I, um, <mark>kind of, sort of, brought it up</mark> in the meeting and <mark class="hm">we talked about it for a while</mark> and eventually it worked out.</div>
+            <div class="side">
+              <div><i style="background:#d6ecd9"></i>Clear position. Good.</div>
+              <div><i style="background:#f7d9d7"></i>Hedging. Say what you did.</div>
+              <div><i style="background:#f8e6c8"></i>What was the outcome?</div>
+            </div>
+          </div></div>
+        </div>
+        
+      </div>
+    </div></div>
+    <div class="foot"><span>4 / 10</span></div>
+  </section>
+
+  <!-- 3b. APPROACH -->
+  <section class="slide">
+    <div class="eyebrow">Approach</div>
+    <h1>Place small bets and release early</h1>
+    <div class="body"><div class="bets">
+      <div class="bet no">
+        <div class="bt"><span class="x">&#10007;</span>One large bet</div>
+        <svg viewBox="0 0 400 300" class="betsvg" aria-hidden="true">
+          <defs>
+            <marker id="lira-mg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c4605a"/></marker>
+          </defs>
+          <text x="330" y="52" text-anchor="middle" class="lbl">product-market fit</text>
+          <g transform="translate(330 95)"><circle r="26" fill="#fff" stroke="#111" stroke-width="3"/><circle r="16" fill="none" stroke="#111" stroke-width="3"/><circle r="5" fill="#111"/></g>
+          <path d="M40 250 L318 105" stroke="#bdbdbd" stroke-width="2.5" stroke-dasharray="7 7" fill="none"/>
+          <path d="M40 250 C160 235 280 225 340 205" stroke="#c4605a" stroke-width="12" fill="none" stroke-linecap="round" marker-end="url(#lira-mg)"/>
+          <text x="325" y="182" text-anchor="middle" class="lbl m" fill="#c4605a" style="fill:#c4605a">wrong direction</text>
+          <circle cx="40" cy="250" r="8" fill="#111"/>
+        </svg>
+      </div>
+      <div class="bet yes">
+        <div class="bt"><span class="ck">&#10003;</span>Five small bets</div>
+        <svg viewBox="0 0 400 300" class="betsvg" aria-hidden="true">
+          <defs>
+            <marker id="lira-mk" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2f8a3c"/></marker>
+            <marker id="lira-mkk" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#111"/></marker>
+          </defs>
+          <text x="330" y="52" text-anchor="middle" class="lbl">product-market fit</text>
+          <g transform="translate(330 95)"><circle r="26" fill="#fff" stroke="#111" stroke-width="3"/><circle r="16" fill="none" stroke="#111" stroke-width="3"/><circle r="5" fill="#111"/></g>
+          <g stroke="#2f8a3c" stroke-width="6" fill="none" stroke-linecap="round">
+            <path d="M40 250 L105 235" marker-end="url(#lira-mk)"/>
+            <path d="M105 235 L150 175" marker-end="url(#lira-mk)"/>
+            <path d="M150 175 L225 160" marker-end="url(#lira-mk)"/>
+            <path d="M225 160 L270 125" marker-end="url(#lira-mk)"/>
+            <path d="M270 125 L312 108" marker-end="url(#lira-mk)"/>
+          </g>
+          <g fill="#fff" stroke="#2f8a3c" stroke-width="3">
+            <circle cx="105" cy="235" r="8"/><circle cx="150" cy="175" r="8"/><circle cx="225" cy="160" r="8"/><circle cx="270" cy="125" r="8"/>
+          </g>
+          <circle cx="40" cy="250" r="8" fill="#111"/>
+          <text x="90" y="70" class="lbl m">at every stop,</text>
+          <text x="90" y="96" class="lbl m">learn, then correct</text>
+          <path d="M120 110 C135 140 140 150 148 166" stroke="#111" stroke-width="2" fill="none" marker-end="url(#lira-mkk)"/>
+        </svg>
+      </div>
+    </div></div>
+    <div class="foot"><span>5 / 10</span></div>
+  </section>
+
+  <!-- ITERATION -->
+  <section class="slide" data-steps="5">
+    <div class="eyebrow">Iteration</div>
+    <h1>An iterative process</h1>
+    <div class="body fivebody"><div class="five stack">
+        <div class="frow step" data-step="1">
+          <div class="bh"><span class="bn">Bet 1</span><span class="bt">A level and a note</span><span class="bd">&frac12; day</span></div>
+          <div class="thumb"><div class="fb">
+          <div class="fhd"><span class="fmic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></span><div><b>Mock Interview Results</b><small>Completed 4 weeks ago</small></div></div>
+          <div class="lvl">Beginner</div>
+          <div class="pips"><i style="background:#c4605a"></i><i></i><i></i><i></i><i></i></div>
+          <div class="pt"><i style="background:#e0b23a"></i><b>Connect passion to the mission</b></div>
+          <div class="pd">Your answer is too brief. Connect your desire to lead with the specific challenges at OpenAI.</div>
+          <div class="ya"><small>YOUR ANSWER</small>AI: Why the transition to management? User: Well, I'm excited by the opportunity to&hellip;</div>
+        </div></div>
+          <div class="lessonwrap step" data-step="2"><div class="lesson"><div class="ceb">What our users told us</div><p>Rejected candidates <b>rarely hear why</b>. Practice is their one chance to find out, and a single verdict for the whole interview <b>didn't say which answers needed work</b>. So Bet 2 broke feedback out <b>per question</b>.</p></div></div>
+        </div>
+        <div class="frow step" data-step="3">
+          <div class="bh"><span class="bn">Bet 2</span><span class="bt">One per question</span><span class="bd">1 day</span></div>
+          <div class="thumb"><div class="fb split">
+          <div class="qcol"><span class="on">Question 1</span><span>Question 2</span><span>Question 3</span></div>
+          <div class="qmain">
+            <div class="fhd"><span class="fmic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></span><div><b>Question 1</b><small>Completed 1 day ago</small></div></div>
+            <div class="lvl">Beginner</div>
+            <div class="pips"><i style="background:#c4605a"></i><i></i><i></i><i></i><i></i></div>
+            <div class="pt"><i style="background:#e0b23a"></i><b>Connect passion to the mission</b></div>
+            <div class="pd">Too brief. Tie your answer to their specific challenges.</div>
+            <div class="ya"><small>YOUR ANSWER</small>Well, I'm excited by the opportunity to&hellip;</div>
+          </div>
+        </div></div>
+          <div class="lessonwrap step" data-step="4"><div class="lesson"><div class="ceb">What our users told us</div><p>Candidates suspect they have <b>blind spots</b>, and not knowing what they are is <b>frustrating</b>. A single score confirmed the gap without naming it. So Bet 3 broke each answer into <b>scored skills</b>.</p></div></div>
+        </div>
+        <div class="frow step" data-step="5">
+          <div class="bh"><span class="bn">Bet 3</span><span class="bt">Scored metrics</span><span class="bd">2 days</span></div>
+          <div class="thumb"><div class="fb">
+          <div class="fhd"><span class="fmic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></span><div><b>Question 1</b><small>Completed 1 hour ago</small></div></div>
+          <div class="sc"><span class="ring" style="border-color:#d9a441">67<small>/ 100</small></span><b>Intermediate</b></div>
+          <div class="mb"><span>Substance</span><div class="bar"><i style="width:94%;background:#4e9a4e"></i></div><b>94</b></div><div class="mb"><span>Structure</span><div class="bar"><i style="width:22%;background:#c4605a"></i></div><b>22</b></div><div class="mb"><span>Conciseness</span><div class="bar"><i style="width:85%;background:#4e9a4e"></i></div><b>85</b></div><div class="mb"><span>Delivery</span><div class="bar"><i style="width:65%;background:#d9a441"></i></div><b>65</b></div>
+          <div class="pt"><i style="background:#e0b23a"></i><b>Go beyond surface-level keywords</b></div>
+          <div class="pd">You mention psychological safety but never tie it to how the team actually works.</div>
+          <div class="vt">&#128196; View transcript</div>
+        </div></div>
+          <div class="lessonwrap step" data-step="5"><div class="lesson"><div class="ceb">What our users told us</div><p>Now they had numbers, but <b>a number alone isn't actionable</b>. A 40 on content depth left them asking what it meant and how to fix it. So Bet 4 gave <b>every metric an explanation and a way to improve</b>.</p></div></div>
+        </div>
+        <div class="frow step" data-step="5">
+          <div class="bh"><span class="bn">Bet 4</span><span class="bt">Metrics that explain themselves</span><span class="bd">2 days</span></div>
+          <div class="thumb"><div class="fb noPad">
+          <div class="iq"><i></i><div><small>INTERVIEW QUESTION</small><b>&ldquo;Describe your hiring philosophy. What do you look for when adding to your team?&rdquo;</b></div></div>
+          <div class="pad">
+            <div class="sc"><span class="ring" style="border-color:#d9a441">62<small>/ 100</small></span><b>Intermediate</b></div>
+            <div class="mb"><i class=q>?</i><span>Structure</span><div class="bar"><i style="width:85%;background:#4e9a4e"></i></div><b>85</b></div><div class="mb"><i class=q>?</i><span>Content Depth</span><div class="bar"><i style="width:40%;background:#c4605a"></i></div><b>40</b></div><div class="mb"><i class=q>?</i><span>Role Fit</span><div class="bar"><i style="width:35%;background:#c4605a"></i></div><b>35</b></div><div class="mb"><i class=q>?</i><span>Conciseness</span><div class="bar"><i style="width:88%;background:#4e9a4e"></i></div><b>88</b></div>
+            <div class="tr"><em style="background:#e3f1e5;color:#2f8a3c">STRUCTURE &middot; 85</em>Clear, logical framework.<i>&#9662;</i></div>
+            <div class="tr"><em style="background:#fbeedd;color:#c77a1a">CONTENT DEPTH &middot; 40</em>Lacks specific examples.<i>&#9652;</i></div>
+            <div class="tx2">You list good qualities but never explain <i>how</i> you assess them. Which question tells you someone has a growth mindset?</div>
+            <div class="tr"><em style="background:#f7dfdc;color:#b0433c">ROLE FIT &middot; 35</em>Generic, not tailored.<i>&#9662;</i></div>
+            <div class="tr"><em style="background:#e3f1e5;color:#2f8a3c">CONCISENESS &middot; 88</em>Clear and to the point.<i>&#9662;</i></div>
+            <div class="vt">&#128196; View transcript</div>
+          </div>
+        </div></div>
+          <div class="lessonwrap step" data-step="5"><div class="lesson"><div class="ceb">What our users told us</div><p>Many candidates are prepping <b>while holding down a job</b>. They're time-strapped, and once they trusted the feedback, reading explanations felt like homework. They just wanted <b>the better answer, faster</b>. So Bet 5 added <b>one-click improvement</b>.</p></div></div>
+        </div>
+        <div class="frow step" data-step="5">
+          <div class="bh"><span class="bn">Bet 5</span><span class="bt">One-click improvement</span><span class="bd">1 day</span></div>
+          <div class="thumb"><div class="fb noPad">
+          <div class="iq"><i></i><div><small>INTERVIEW QUESTION</small><b>&ldquo;Describe your hiring philosophy. What do you look for when adding to your team?&rdquo;</b></div></div>
+          <div class="pad">
+            <div class="sc"><span class="ring" style="border-color:#d9a441">62<small>/ 100</small></span><b>Intermediate</b></div>
+            <div class="mb"><i class=q>?</i><span>Structure</span><div class="bar"><i style="width:85%;background:#4e9a4e"></i></div><b>85</b></div><div class="mb"><i class=q>?</i><span>Content Depth</span><div class="bar"><i style="width:40%;background:#c4605a"></i></div><b>40</b></div><div class="mb"><i class=q>?</i><span>Role Fit</span><div class="bar"><i style="width:35%;background:#c4605a"></i></div><b>35</b></div><div class="mb"><i class=q>?</i><span>Conciseness</span><div class="bar"><i style="width:88%;background:#4e9a4e"></i></div><b>88</b></div>
+            <div class="tr"><em style="background:#e3f1e5;color:#2f8a3c">STRUCTURE &middot; 85</em>Clear, logical framework.<i>&#9662;</i></div>
+            <div class="tr"><em style="background:#fbeedd;color:#c77a1a">CONTENT DEPTH &middot; 40</em>Lacks specific examples.<i>&#9652;</i></div>
+            <div class="tx2">You list good qualities but never explain <i>how</i> you assess them.</div>
+            <div class="vt">&#128196; View transcript</div>
+            <div class="cta"><span class="ghost">&#127908; Practice again</span><span class="go">Help me improve</span></div>
+          </div>
+        </div></div>
+          <div class="lessonwrap step" data-step="5"><div class="lesson"><div class="ceb">What our users told us</div><p>Candidates <b>trusted the feedback</b> and <b>started paying</b>. What remained were nice-to-haves with diminishing returns, so we <b>intentionally moved on</b> to the next bottleneck.</p></div></div>
+        </div>
+        
+    </div></div>
+    <div class="foot"><span>6 / 10</span></div>
+  </section>
+
+  <!-- SPEED -->
+  <section class="slide">
+    <div class="eyebrow">Speed</div>
+    <h1>Why it moved fast</h1>
+    <div class="body"><div class="speed">
+      <div class="stat">
+        <div class="big">6.5<small>days</small></div>
+        <div class="lbl">design and engineering, cumulative, across five weeks</div>
+      </div>
+      <div class="whys">
+        <div class="why"><span class="n">1</span><div><b>No handoffs</b><p>One person ran interviews, design, build, and prompts.</p></div></div>
+        <div class="why"><span class="n">2</span><div><b>No backtracking</b><p>Every bet is placed on conviction already earned.</p></div></div>
+        <div class="why"><span class="n">3</span><div><b>No overbuilding</b><p>Sometimes the basic version is enough. &ldquo;No&rdquo; is a valuable answer.</p></div></div>
+        <div class="why"><span class="n">4</span><div><b>Customer understanding compounds</b><p>Every bet returns a feature and a learning.</p></div></div>
+        </div>
+    </div></div>
+    <div class="foot"><span>7 / 10</span></div>
+  </section>
+
+  <!-- PRIORITIES -->
+  <section class="slide">
+    <div class="eyebrow">Technical priorities</div>
+    <h1>What mattered in the implementation</h1>
+    <div class="body"><div class="prios">
+      <div class="prio"><h3>Development speed</h3><p class="j">Releasing new versions quickly was key to finding product-market fit.</p></div>
+      <div class="prio"><h3>Maintainability</h3><p class="j">Only one technical co-founder.</p></div>
+      <div class="prio"><h3>Low cost</h3><p class="j">Bootstrapped. Profitability was essential.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>8 / 10</span></div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section class="slide">
+    <div class="archhead">
+      <div>
+        <div class="eyebrow">Architecture</div>
+        <h1>From a voice call to stored feedback</h1>
+      </div>
+      <div class="stack">
+        <div class="ceb">Tech stack</div>
+        <ul>
+          <li>TypeScript</li>
+          <li>Ruby on Rails</li>
+          <li>Postgres</li>
+          <li>Redis + Sidekiq</li>
+          <li>Vapi</li>
+          <li>Gemini 3 Pro</li>
+          <li>Render</li>
+        </ul>
+      </div>
+    </div>
+    <div class="body"><div class="archwrap"><svg viewBox="0 0 1600 700" class="arch" role="img" aria-label="Architecture of the feedback feature">
+      <defs><marker id="lira-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#111"/></marker></defs>
+
+      <path class="e" d="M122,340 L205.0,340" marker-end="url(#lira-ar)"/>
+      <g class="badge"><circle cx="160" cy="378" r="13"/><text x="160" y="383" text-anchor="middle">1</text></g><text class="el" x="160" y="418" text-anchor="middle">Ends interview</text>
+
+      <path class="e" d="M455.0,310 L535.0,140" marker-end="url(#lira-ar)"/>
+      <g class="badge"><circle cx="455" cy="174" r="13"/><text x="455" y="179" text-anchor="middle">2</text></g><text class="el" x="432" y="179" text-anchor="end">End call</text><text class="el sm" x="432" y="200" text-anchor="end">(WebSocket)</text>
+
+      <path class="e" d="M455.0,350 L535.0,350" marker-end="url(#lira-ar)" marker-start="url(#lira-ar)"/>
+      <g class="badge"><circle cx="495" cy="392" r="13"/><text x="495" y="397" text-anchor="middle">9</text></g><text class="el" x="495" y="426" text-anchor="middle">Polls for feedback</text>
+
+      <path class="e" d="M660,162.0 L660,288.0" marker-end="url(#lira-ar)"/>
+      <g class="badge"><circle cx="688" cy="225" r="13"/><text x="688" y="230" text-anchor="middle">3</text></g><text class="el" x="712" y="230" text-anchor="start">Webhook with transcript</text>
+
+      <path class="e" d="M785.0,340 L875.0,340" marker-end="url(#lira-ar)"/>
+      <g class="badge"><circle cx="830" cy="300" r="13"/><text x="830" y="305" text-anchor="middle">4</text></g><text class="el" x="830" y="272" text-anchor="middle">Enqueue job</text>
+
+      <path class="e" d="M1000,392.0 L1000,528.0" marker-end="url(#lira-ar)"/>
+      <g class="badge"><circle cx="1028" cy="460" r="13"/><text x="1028" y="465" text-anchor="middle">5</text></g><text class="el" x="1052" y="465" text-anchor="start">Picks up job</text>
+
+      <path class="e" d="M1125,562 L1315,562" marker-end="url(#lira-ar)"/>
+      <path class="e" d="M1315,598 L1125,598" marker-end="url(#lira-ar)"/>
+      <g class="badge"><circle cx="1220" cy="520" r="13"/><text x="1220" y="525" text-anchor="middle">6</text></g><text class="el" x="1220" y="548" text-anchor="middle">Prompt + transcript</text>
+      <g class="badge"><circle cx="1220" cy="654" r="13"/><text x="1220" y="659" text-anchor="middle">7</text></g><text class="el" x="1220" y="626" text-anchor="middle">Feedback</text>
+
+      <path class="e" d="M875.0,580 L785.0,580" marker-end="url(#lira-ar)"/>
+      <g class="badge"><circle cx="830" cy="538" r="13"/><text x="830" y="543" text-anchor="middle">8</text></g><text class="el" x="830" y="512" text-anchor="middle">Store feedback</text>
+
+      <path class="e" d="M660,528.0 L660,392.0" marker-end="url(#lira-ar)" marker-start="url(#lira-ar)"/>
+
+      <g class="node bare"><g transform="translate(80 320)" class="ic big"><circle cx="0" cy="-20" r="17"/><path d="M-32,32 C-32,4 32,4 32,32"/></g><text class="nt" x="80" y="262" text-anchor="middle">User</text></g>
+      <g class="node"><rect x="205.0" y="288.0" width="250" height="104" rx="16"/><g transform="translate(245 340)" class="ic"><path d="M-14,-9 L-22,0 L-14,9 M14,-9 L22,0 L14,9 M4,-14 L-4,14"/></g><text class="nt" x="284" y="338">Front end</text><text class="ns" x="284" y="360">TypeScript</text></g>
+      <g class="node ext"><rect x="535.0" y="58.0" width="250" height="104" rx="16"/><g transform="translate(575 110)" class="ic"><path d="M-16,-8 V8 M-8,-16 V16 M0,-22 V22 M8,-14 V14 M16,-6 V6 M24,-10 V10 M-24,-4 V4"/></g><text class="nt" x="614" y="108">Voice agent</text><text class="ns" x="614" y="130">Vapi</text></g>
+      <g class="node"><rect x="535.0" y="288.0" width="250" height="104" rx="16"/><g transform="translate(575 340)" class="ic"><rect x="-26" y="-24" width="52" height="16" rx="3"/><rect x="-26" y="-4" width="52" height="16" rx="3"/><rect x="-26" y="16" width="52" height="8" rx="3"/><circle cx="-18" cy="-16" r="2.5" class="f"/><circle cx="-18" cy="4" r="2.5" class="f"/></g><text class="nt" x="614" y="338">Web server</text><text class="ns" x="614" y="360">Ruby on Rails</text></g>
+      <g class="node"><rect x="535.0" y="528.0" width="250" height="104" rx="16"/><g transform="translate(575 580)" class="ic"><ellipse cx="0" cy="-20" rx="26" ry="9"/><path d="M-26,-20 V20 A26,9 0 0 0 26,20 V-20"/><path d="M-26,-6 A26,9 0 0 0 26,-6"/><path d="M-26,8 A26,9 0 0 0 26,8"/></g><text class="nt" x="614" y="578">Database</text><text class="ns" x="614" y="600">Postgres</text></g>
+      <g class="node"><rect x="875.0" y="288.0" width="250" height="104" rx="16"/><g transform="translate(915 340)" class="ic"><rect x="-30" y="-12" width="60" height="24" rx="4"/><path d="M-16,-12 V12 M-2,-12 V12 M12,-12 V12"/></g><text class="nt" x="954" y="338">Queue</text><text class="ns" x="954" y="360">Redis</text></g>
+      <g class="node"><rect x="875.0" y="528.0" width="250" height="104" rx="16"/><g transform="translate(915 580)" class="ic"><polygon points="24.0,0.0 16.6,6.9 17.0,17.0 6.9,16.6 0.0,24.0 -6.9,16.6 -17.0,17.0 -16.6,6.9 -24.0,0.0 -16.6,-6.9 -17.0,-17.0 -6.9,-16.6 -0.0,-24.0 6.9,-16.6 17.0,-17.0 16.6,-6.9"/><circle cx="0" cy="0" r="7"/></g><text class="nt" x="954" y="578">Worker</text><text class="ns" x="954" y="600">Sidekiq</text></g>
+      <g class="node ext"><rect x="1315.0" y="528.0" width="250" height="104" rx="16"/><g transform="translate(1355 580)" class="ic"><path d="M0,-24 L6,-6 L24,0 L6,6 L0,24 L-6,6 L-24,0 L-6,-6 Z" class="f"/></g><text class="nt" x="1394" y="578">LLM grader</text><text class="ns" x="1394" y="600">Gemini 3 Pro</text></g>
+    </svg>
+      <div class="legend2"><span><i class="lg int"></i>Ours</span><span><i class="lg ext"></i>Third party</span></div>
+    </div></div>
+    <div class="foot"><span>9 / 10</span></div>
+  </section>
+
+  <!-- MODEL CHOICE -->
+  <section class="slide">
+    <div class="eyebrow">Technical decision</div>
+    <h1>Choosing the model that grades the interview</h1>
+    <div class="body"><div class="cmp">
+      <table class="ct">
+        <thead>
+          <tr class="grp"><th class="blank"></th><th colspan="3" class="g1">Technical</th><th colspan="3" class="g1">Business</th><th colspan="2" class="g1">User</th></tr>
+          <tr class="sub"><th class="blank"></th>
+            <th class="g1">JSON output<small>required</small></th>
+            <th>Output speed<small>&#8805; 80 tok/s</small></th>
+            <th>Context<small>&#8805; 200K tokens</small></th>
+            <th class="g1">In / 1M<small>&#8804; $2.00</small></th>
+            <th>Out / 1M<small>&#8804; $12.00</small></th>
+            <th>Per eval<small>&#8804; $0.05</small></th>
+            <th class="g1">Helpfulness<small>5 / 5</small></th>
+            <th>Honesty<small>5 / 5</small></th>
+          </tr>
+        </thead>
+        <tbody>
+<tr class="pick"><th>Gemini 3 Pro<span class=tag>the pick</span></th><td class="pass g1">&#10003;</td><td class="pass">~120 tok/s</td><td class="pass">1M</td><td class="pass g1">$2.00</td><td class="pass">$12.00</td><td class="pass">$0.030</td><td class="pass g1">5 / 5</td><td class="pass">5 / 5</td></tr>
+<tr class=""><th>Gemini 3 Flash</th><td class="pass g1">&#10003;</td><td class="pass">~210 tok/s</td><td class="pass">1M</td><td class="pass g1">$0.50</td><td class="pass">$3.00</td><td class="pass">$0.007</td><td class="warn g1">4 / 5</td><td class="fail">3 / 5</td></tr>
+<tr class=""><th>GPT-5.2</th><td class="pass g1">&#10003;</td><td class="pass">~90 tok/s</td><td class="pass">400K</td><td class="pass g1">$1.75</td><td class="warn">$14.00</td><td class="pass">$0.032</td><td class="pass g1">5 / 5</td><td class="warn">4 / 5</td></tr>
+<tr class=""><th>GPT-5 mini</th><td class="pass g1">&#10003;</td><td class="pass">~130 tok/s</td><td class="pass">400K</td><td class="pass g1">$0.25</td><td class="pass">$2.00</td><td class="pass">$0.004</td><td class="fail g1">3 / 5</td><td class="fail">3 / 5</td></tr>
+<tr class=""><th>Claude Opus 4.5</th><td class="pass g1">&#10003;</td><td class="warn">~60 tok/s</td><td class="pass">200K</td><td class="fail g1">$5.00</td><td class="fail">$25.00</td><td class="warn">$0.068</td><td class="pass g1">5 / 5</td><td class="pass">5 / 5</td></tr>
+<tr class=""><th>Claude Sonnet 4.5</th><td class="pass g1">&#10003;</td><td class="warn">~65 tok/s</td><td class="pass">200K</td><td class="warn g1">$3.00</td><td class="warn">$15.00</td><td class="pass">$0.041</td><td class="pass g1">5 / 5</td><td class="warn">4 / 5</td></tr>
+<tr class=""><th>Claude Haiku 4.5</th><td class="pass g1">&#10003;</td><td class="pass">~120 tok/s</td><td class="pass">200K</td><td class="pass g1">$1.00</td><td class="pass">$5.00</td><td class="pass">$0.013</td><td class="warn g1">4 / 5</td><td class="fail">3 / 5</td></tr>
+        </tbody>
+      </table>
+      <div class="hard"><span><i class="sw pass"></i>Meets the limit</span><span><i class="sw warn"></i>Borderline</span><span><i class="sw fail"></i>Misses the limit</span><span class="note">Speed per Artificial Analysis, Jan 2026 &middot; Per eval assumes ~6K tokens in, ~1.5K out</span></div>
+    </div></div>
+    <div class="foot"><span>10 / 10</span></div>
+  </section>
+
+      </div>
+      <div class="ld-bar">
+        <button type="button" id="lira-prev" aria-label="Previous slide">&larr; Prev</button>
+        <button type="button" id="lira-next" aria-label="Next slide">Next &rarr;</button>
+        <span class="ld-count" id="lira-count">1 / 10</span>
+        <button type="button" id="lira-fs">Full screen</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Sam. Built with plain HTML and hosted on GitHub Pages.</p>
+    </div>
+  </footer>
+
+<script>
+/* The deck's own navigation, scoped to the deck element.
+
+   Two changes from the standalone file: the keydown listener is on the deck
+   (which is focusable) rather than on window, so the arrow keys do not hijack
+   the article; and the step reveals scroll the bet panel by hand, because
+   scrollIntoView would drag the whole page along with it. */
+(function () {
+  var deck = document.getElementById('lira-deck');
+  if (!deck) return;
+  var slides = Array.prototype.slice.call(deck.querySelectorAll('.slide'));
+  var counter = document.getElementById('lira-count');
+  var i = 0;
+
+  function stepOf(s) { return +(s.dataset.cur || 0); }
+
+  function setStep(s, n) {
+    s.dataset.cur = n;
+    s.querySelectorAll('.step').forEach(function (x) {
+      x.classList.toggle('on', +x.dataset.step <= n);
+    });
+    var stage = Array.prototype.slice.call(s.querySelectorAll('.stage .step'));
+    stage.forEach(function (x) { x.classList.remove('on'); });
+    var shown = stage.filter(function (x) { return +x.dataset.step <= n; });
+    if (shown.length) shown[shown.length - 1].classList.add('on');
+
+    var sc = s.querySelector('.five.stack');
+    if (sc) {
+      var fresh = Array.prototype.slice.call(sc.querySelectorAll('.step.on'))
+        .filter(function (x) { return +x.dataset.step === n; })[0];
+      if (fresh) setTimeout(function () {
+        var top = fresh.getBoundingClientRect().top
+                - sc.getBoundingClientRect().top + sc.scrollTop;
+        sc.scrollTo({ top: top, behavior: 'smooth' });
+      }, 50);
+    }
+  }
+
+  function update() { if (counter) counter.textContent = (i + 1) + ' / ' + slides.length; }
+
+  function go(n, toEnd) {
+    slides[i].classList.remove('on');
+    i = (n + slides.length) % slides.length;
+    slides[i].classList.add('on');
+    setStep(slides[i], toEnd ? (+slides[i].dataset.steps || 0) : 0);
+    update();
+  }
+
+  function next() {
+    var s = slides[i], max = +s.dataset.steps || 0, cur = stepOf(s);
+    if (cur < max) setStep(s, cur + 1); else go(i + 1);
+  }
+
+  function prev() {
+    var s = slides[i], cur = stepOf(s);
+    if (cur > 0) setStep(s, cur - 1); else go(i - 1, true);
+  }
+
+  deck.addEventListener('keydown', function (e) {
+    var sc = slides[i].querySelector('.five.stack');
+    if (sc && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      e.preventDefault();
+      sc.scrollBy({ top: e.key === 'ArrowDown' ? 300 : -300, behavior: 'smooth' });
+      return;
+    }
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].indexOf(e.key) > -1) { e.preventDefault(); next(); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].indexOf(e.key) > -1) { e.preventDefault(); prev(); }
+  });
+
+  deck.addEventListener('click', function (e) {
+    deck.focus({ preventScroll: true });
+    var r = deck.getBoundingClientRect();
+    if (e.clientX > r.left + r.width / 2) next(); else prev();
+  });
+
+  document.getElementById('lira-prev').addEventListener('click', prev);
+  document.getElementById('lira-next').addEventListener('click', next);
+
+  var fs = document.getElementById('lira-fs');
+  fs.addEventListener('click', function () {
+    var done;
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      done = (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      done = (deck.requestFullscreen || deck.webkitRequestFullscreen).call(deck);
+    }
+    Promise.resolve(done).then(function () {
+      deck.focus({ preventScroll: true });
+    }, function () {});
+  });
+
+  function fsLabel() {
+    fs.textContent = (document.fullscreenElement === deck) ? 'Exit full screen' : 'Full screen';
+  }
+  document.addEventListener('fullscreenchange', fsLabel);
+
+  update();
+})();
+</script>
+</body>
+</html>
