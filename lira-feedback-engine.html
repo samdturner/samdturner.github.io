@@ -10,7 +10,7 @@
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     /* the deck breaks out of the 720px reading column */
     .deck-page { max-width: 1120px; }
@@ -420,29 +420,41 @@
 #lira-deck .facts.grid2 .big{font-size:clamp(24px,2.6cqw,40px);font-weight:800;line-height:1.05;letter-spacing:-.02em}
 #lira-deck .facts.grid2 .fact.hot{background:var(--ink);border-color:var(--ink);color:#fff}
 #lira-deck .facts.grid2 .fact.hot .lbl{color:#cfcfcf}
-#lira-deck .archwrap{width:100%;display:flex;flex-direction:column;align-items:center;gap:1cqh}
-#lira-deck .arch{width:min(100%,160cqh);height:auto;overflow:visible;font-family:inherit}
-#lira-deck .arch .node rect{fill:#fff;stroke:#111;stroke-width:2.5}
-#lira-deck .arch .node.ext rect{stroke-dasharray:8 6;fill:#f6f6f6}
-#lira-deck .arch .nt{font-size:20px;font-weight:700;fill:#111}
-#lira-deck .arch .ns{font-size:15px;fill:#555}
-#lira-deck .arch .ic{fill:none;stroke:#111;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-#lira-deck .arch .ic .f{fill:#111;stroke:none}
-#lira-deck .arch .ic.big{stroke-width:3}
-#lira-deck .arch .e{fill:none;stroke:#111;stroke-width:2.5}
-#lira-deck .arch .el{font-size:16px;fill:#333;font-weight:600}
-#lira-deck .arch .el.sm{font-size:13px;fill:#777;font-weight:500}
-#lira-deck .arch .badge circle{fill:#111}
-#lira-deck .arch .badge text{fill:#fff;font-size:14px;font-weight:800}
-#lira-deck .legend2{display:flex;gap:2cqw;color:var(--ink-2);font-size:clamp(12px,1.1cqw,16px);font-weight:500}
-#lira-deck .legend2 span{display:flex;align-items:center;gap:.5em}
-#lira-deck .legend2 .lg{width:1.6em;height:1em;border-radius:4px;border:2px solid #111;display:inline-block}
-#lira-deck .legend2 .lg.ext{border-style:dashed;background:#f6f6f6}
-#lira-deck .archhead{display:flex;justify-content:space-between;align-items:flex-start;gap:4cqw}
-#lira-deck .archhead>div:first-child{display:flex;flex-direction:column;align-items:flex-start}
-#lira-deck .archhead .stack{flex:none;border:1px solid var(--line);border-radius:12px;padding:1.6cqh 1.4cqw;margin-top:.5cqh}
-#lira-deck .archhead .stack ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.5cqh 1.6cqw;margin-top:.6cqh}
-#lira-deck .archhead .stack li{font-size:clamp(12px,1.1cqw,16px);font-weight:600;white-space:nowrap}
+/* ---- architecture, drawn as a sequence diagram ----
+     Eight actors, each a header box plus its own dashed lifeline; time runs
+     down the page. The whole column lives in one <g class="sqa"> so lighting
+     an actor lights its lifeline too. Messages are revealed a step at a time
+     and the ones already walked fall back to grey (see the .sqd block in the
+     page script). */
+#lira-deck .sqwrap{flex:1 1 auto;align-self:stretch;min-height:0;display:flex;align-items:center;justify-content:center}
+#lira-deck .sqd{width:100%;flex:1 1 auto;min-height:0;max-height:100%;overflow:visible;font-family:inherit}
+#lira-deck .sqa{opacity:.24;transition:opacity .22s ease}
+#lira-deck .sqa.hot{opacity:1}
+#lira-deck .sqa rect{fill:#fff;stroke:#111;stroke-width:2.2}
+#lira-deck .sqa.ext rect{fill:#f6f6f6;stroke-dasharray:7 5}
+#lira-deck .sqa .nt{fill:#111;font-size:17px;font-weight:700}
+#lira-deck .sqa .ns{fill:#666;font-size:12px}
+#lira-deck .sqa .ic{fill:none;stroke:#111;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+#lira-deck .sqa .ic .f{fill:#111;stroke:none}
+#lira-deck .sqa .life{fill:none;stroke:#c4c4c4;stroke-width:1.6;stroke-dasharray:5 6}
+#lira-deck .sqm{opacity:0;transition:opacity .22s ease}
+#lira-deck .sqm.on{opacity:1}
+#lira-deck .sqm .ln{fill:none;stroke:#111;stroke-width:2.2}
+#lira-deck .sqm .ln.ret{stroke-dasharray:8 6}
+#lira-deck .sqm .hd{fill:#111}
+/* the white stroke knocks the label out of any lifeline it crosses */
+#lira-deck .sqm .lb{fill:#111;font-size:15px;font-weight:600;stroke:#fff;stroke-width:4.5;paint-order:stroke fill}
+#lira-deck .sqm .bn circle{fill:#111}
+#lira-deck .sqm .bn text{fill:#fff;font-size:11px;font-weight:800;stroke:none}
+#lira-deck .sqm.past .ln{stroke:#d8d8d8}
+#lira-deck .sqm.past .hd{fill:#d8d8d8}
+#lira-deck .sqm.past .lb{fill:#c6c6c6}
+#lira-deck .sqm.past .bn circle{fill:#e0e0e0}
+/* the legend rides in the footer row rather than costing the diagram a band */
+#lira-deck .sqlg{display:flex;align-items:center;gap:1.4em}
+#lira-deck .sqlg span{display:flex;align-items:center;gap:.5em}
+#lira-deck .sqlg i{width:1.5em;height:.9em;border-radius:3px;border:1.5px solid var(--ink-3);display:inline-block}
+#lira-deck .sqlg i.ext{border-style:dashed}
 #lira-deck .tail{border:0;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:.8em;width:100%}
 #lira-deck .tail .lines{gap:.7em}
 #lira-deck .tail .lines span{height:.7em}
@@ -456,6 +468,46 @@
 #lira-deck .prio .j{margin-top:1.4cqh;font-size:clamp(16px,1.6cqw,24px);color:var(--ink-2);line-height:1.35;font-weight:500}
 #lira-deck .notopt{border:1px solid var(--line);border-radius:12px;padding:1.4cqh 1.6cqw;font-size:clamp(14px,1.3cqw,19px);color:var(--ink-2);margin-bottom:2cqh}
 #lira-deck .notopt b{color:var(--ink)}
+/* the end slide: one word, centred, nothing else to read */
+#lira-deck .fin .body{align-items:center;justify-content:center}
+#lira-deck .endq{width:100%;text-align:center}
+#lira-deck .endq h1{margin:0;max-width:none;font-size:clamp(54px,9cqw,150px);letter-spacing:-.04em}
+/* traction: activation over the five bets, first revenue, and a customer mail */
+#lira-deck .tgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.72fr) minmax(0,1.48fr);
+  gap:2.6cqw;width:100%;align-items:start}
+/* each metric is a block with its own rule and number, so three different
+   shapes still read as one row of three */
+#lira-deck .tpanel{min-width:0;display:flex;flex-direction:column;gap:1.1cqh}
+#lira-deck .thead{display:flex;align-items:center;gap:.55em}
+#lira-deck .tname{font-size:clamp(16px,1.7cqw,26px);font-weight:700;letter-spacing:-.01em;
+  line-height:1.15;color:var(--ink)}
+#lira-deck .thead .n{flex:none;width:1.75em;height:1.75em;border-radius:50%;background:var(--ink);
+  color:#fff;display:grid;place-items:center;font-weight:800;font-size:clamp(12px,1.18cqw,17px)}
+/* metric 2 has no chart or screenshot of its own, so it gets a card: six
+   countable marks, the milestone, then the number in support */
+#lira-deck .paycard{border:1px solid var(--line);border-radius:14px;padding:3.2cqh 1.6cqw;
+  display:flex;flex-direction:column;gap:1.8cqh}
+#lira-deck .paycard .tsub{border-top:1px solid var(--line);padding-top:1.8cqh}
+/* the milestone leads, the count supports it */
+#lira-deck .tbig{font-size:clamp(19px,2.1cqw,32px);font-weight:700;letter-spacing:-.02em;
+  line-height:1.15;color:var(--ink)}
+#lira-deck .tsub{font-size:clamp(11px,1.1cqw,17px);color:var(--ink-3);line-height:1.35}
+#lira-deck .tsub b{color:var(--ink);font-weight:800}
+/* the activation bars, in PostHog's own green */
+#lira-deck .phc .act{fill:#529a0a}
+#lira-deck .phc .val{fill:#3f3f4d;font-size:15px;font-weight:700}
+/* the customer mail, as the screenshot itself. The highlights are percentage-
+   positioned boxes over it, measured off the image's own word boundaries, so
+   they track the picture at any size; multiply keeps the text readable. */
+#lira-deck .mailshot{position:relative;width:100%;border:1px solid #e3e3e3;border-radius:4px;
+  overflow:hidden;box-shadow:0 1px 3px rgba(17,17,27,.06);line-height:0}
+#lira-deck .mailshot img{width:100%;height:auto;display:block}
+#lira-deck .mailshot .hl{position:absolute;background:#fff3a3;mix-blend-mode:multiply;
+  border-radius:2px;pointer-events:none}
+#lira-deck .mailshot .hla{left:16.59%;top:21.65%;width:72.28%;height:7.36%}
+#lira-deck .mailshot .hlb{left:2.00%;top:30.52%;width:10.98%;height:7.36%}
+#lira-deck .mailshot .hlc{left:47.28%;top:39.18%;width:48.64%;height:7.36%}
+#lira-deck .mailshot .hld{left:22.12%;top:56.28%;width:46.15%;height:7.36%}
 @container lira (max-width:820px){
   #lira-deck .shot{flex-wrap:wrap}
   #lira-deck .callouts{width:100%}
@@ -536,6 +588,146 @@
   #lira-deck .body{flex:0 0 auto;align-items:flex-start}
   #lira-deck .shot{height:auto}
 }
+/* ---- the failure-mode run: v1 diagram, charts, failure tables ----
+     The v2 slide steps through fixes rather than messages, so its diagram is
+     whole from the start and the step mechanism only lights the tags (plus the
+     fallback grader, which genuinely appears). The sequence-diagram dimming in
+     the page script keys off message steps, which this slide has none of, so
+     it is switched off here rather than special-cased in the script. */
+#lira-deck .sqwrap.col{flex-direction:column;gap:1.2cqh}
+#lira-deck .sqwrap.col .cap2{margin-bottom:0}
+#lira-deck .sqm .ln.em{stroke-width:4.5}
+#lira-deck .sqm .ln.alt{stroke-dasharray:7 5}
+/* an actor that arrives with a fix: hidden until its step, then dimmed or lit
+   like any other */
+#lira-deck .arch2 .sqa.step{opacity:0}
+#lira-deck .arch2 .sqa.step.on{opacity:.24}
+#lira-deck .arch2 .sqa.step.on.hot{opacity:1}
+/* v1 routed the grading inline. Those messages belong to step 0 alone, and the
+   page script only ever adds .on, so they are hidden by the slide's own cursor
+   instead. */
+#lira-deck .arch2[data-cur]:not([data-cur="0"]) .sqm.v1{display:none}
+/* a fix, tagged on the diagram. Also an .sqm, so it greys with everything else
+   once the next fix lands. */
+#lira-deck .sqt rect{fill:var(--green)}
+#lira-deck .sqt text{fill:#fff;font-size:14px;font-weight:700}
+#lira-deck .sqt.past rect{fill:#e3f1e5}
+#lira-deck .sqt.past text{fill:#6f9d77}
+/* the why, one line at a time, under the diagram */
+#lira-deck .arch2 .stage{position:static;min-height:4.6cqh;width:100%;display:flex;align-items:center;justify-content:center}
+#lira-deck .fixline p{color:var(--ink-2);font-size:clamp(13px,1.3cqw,19px);line-height:1.35;text-align:center;max-width:60ch}
+#lira-deck .fixline b{color:var(--ink);font-weight:700}
+/* what broke: chart left, symptoms right */
+#lira-deck .broke{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:3cqw;width:100%;align-items:center}
+#lira-deck .broke.wide{grid-template-columns:minmax(0,1.75fr) minmax(0,1fr)}
+#lira-deck .broke .whys{gap:1.9cqh}
+/* the point of the chart, alongside it */
+#lira-deck .brtext{display:flex;flex-direction:column;gap:2.4cqh;min-width:0}
+/* before and after, said out loud rather than implied by an arrow: each number
+   is led by its own label and sits against a rule that darkens on the after */
+#lira-deck .ba{display:flex;flex-direction:column;align-items:stretch;gap:4.4cqh}
+#lira-deck .bastat{border-left:4px solid var(--ink-3);padding-left:1.2cqw}
+#lira-deck .bastat.now{border-left-color:var(--ink)}
+#lira-deck .bastat .ceb{margin-bottom:.7cqh}
+#lira-deck .bastat.now .ceb{color:var(--ink)}
+/* the problem a fix answers, named on the line that explains it */
+#lira-deck .prob{display:inline-flex;align-items:center;gap:.5em;background:#f7dfdc;color:#9a3a34;
+  border-radius:999px;padding:.25em .85em .25em .85em;margin-bottom:.9cqh;white-space:nowrap;
+  font-size:clamp(11px,1.12cqw,16px);font-weight:700}
+#lira-deck .prob i{flex:none;width:1.7em;height:1.7em;border-radius:50%;background:#9a3a34;color:#fff;
+  display:grid;place-items:center;font-style:normal;font-size:.9em;font-weight:800}
+#lira-deck .fixline .step{text-align:center}
+#lira-deck .fixline p{margin:0 auto}
+/* where the failures sit: solved against monitored */
+/* every evaluation in one ring, then the failure modes grouped by what we did */
+#lira-deck .fmgrid{display:grid;grid-template-columns:minmax(0,.86fr) repeat(3,minmax(0,1fr));
+  gap:2.2cqw;width:100%;align-items:start}
+#lira-deck .fmpie{display:flex;flex-direction:column;gap:1.3cqh;min-width:0}
+#lira-deck .fmpie .ceb{margin-bottom:0}
+#lira-deck .donut{width:clamp(120px,14.5cqw,215px);height:auto;display:block}
+#lira-deck .donut .seg{fill:none;stroke-width:34}
+#lira-deck .donut .s1{stroke:var(--green)}
+/* the failed slice, split by cause; the same four tints tag the list beside it */
+#lira-deck .fs1,#lira-deck .donut .fs1{stroke:#c62c39;background:#c62c39}
+#lira-deck .fs2,#lira-deck .donut .fs2{stroke:#f14f58;background:#f14f58}
+#lira-deck .fs3,#lira-deck .donut .fs3{stroke:#f5847c;background:#f5847c}
+#lira-deck .fs4,#lira-deck .donut .fs4{stroke:#f9b3ab;background:#f9b3ab}
+#lira-deck .fmkey{display:flex;flex-direction:column;gap:.8cqh;
+  font-size:clamp(13px,1.3cqw,20px);color:var(--ink-2)}
+#lira-deck .fmkey span{display:flex;align-items:center;gap:.6em}
+#lira-deck .fmkey i{width:.8em;height:.8em;border-radius:50%;flex:none}
+#lira-deck .fmkey i.ok{background:var(--green)}
+#lira-deck .fmkey i.multi{width:1.9em;border-radius:2px;background:linear-gradient(90deg,
+  #c62c39 0 55%,#f14f58 55% 75%,#f5847c 75% 92%,#f9b3ab 92% 100%)}
+#lira-deck .fmkey b{color:var(--ink);font-weight:800}
+/* a column per decision: solved because we saw it, solved anyway, or watched */
+#lira-deck .fmcol{border-top:3px solid var(--line);padding-top:1.2cqh;min-width:0}
+#lira-deck .fmcol.ok{border-top-color:var(--green)}
+/* watched rather than fixed: still green, but a lighter one than the two
+   columns of failures we actually built against */
+#lira-deck .fmcol.wt{border-top-color:#8ac79a}
+#lira-deck .fmcol .ceb,#lira-deck .fmpie .ceb{font-size:clamp(12px,1.18cqw,17px)}
+#lira-deck .fmcol .ceb{margin-bottom:.5cqh}
+#lira-deck .fmcol .sub{font-size:clamp(11px,1.1cqw,17px);color:var(--ink-3);line-height:1.35}
+#lira-deck .fmcol ul{list-style:none;display:flex;flex-direction:column;gap:.8cqh;margin-top:1.2cqh}
+#lira-deck .fmcol li{font-size:clamp(13px,1.3cqw,20px);color:var(--ink-2);line-height:1.3;
+  display:flex;align-items:center;gap:.6em}
+#lira-deck .fmcol li i{width:.75em;height:.75em;border-radius:50%;flex:none}
+#lira-deck .fmcol li b{margin-left:auto;padding-left:.6em;color:var(--ink);font-weight:800;
+  font-variant-numeric:tabular-nums}
+/* before and after */
+#lira-deck .cmp.tight{gap:1cqh}
+#lira-deck .stat.sm .big{font-size:clamp(30px,3.7cqw,58px)}
+/* the whole point on one line: the unit hugs the number, the descriptor sits
+   beside it at reading weight rather than as a caption underneath */
+#lira-deck .stat.sm .big small{font-size:.34em;margin-left:.04em}
+#lira-deck .stat.sm .big em{font-style:normal;font-size:.36em;font-weight:600;
+  letter-spacing:0;color:var(--ink-2);margin-left:.42em}
+#lira-deck .stat.sm .lbl{margin-top:.3cqh;font-size:clamp(11px,1.08cqw,16px);max-width:26ch}
+/* the two charts are mocked up as PostHog insight cards, following a screenshot
+   of the real thing: eyebrow over a bold title, accent ribbon, header rule,
+   dashed gridlines with solid spines, square bars, rotated date ticks, and an
+   annotation badge on the axis. PostHog's own type and data palette, so they
+   read as screenshots of the tool rather than as deck furniture. Stacks run
+   success on top, failure underneath. */
+/* a crop of the PostHog page around the card, so it reads as a screenshot */
+#lira-deck .phshot{width:100%;background:#f3f4ef;border:1px solid #e4e4de;border-radius:8px;
+  padding:0 1cqw 1.1cqh;display:flex;flex-direction:column;gap:.7cqh;overflow:hidden}
+#lira-deck .phtop{height:1.8cqh;display:flex;justify-content:flex-end;align-items:flex-end;overflow:hidden}
+#lira-deck .phchip{display:inline-flex;align-items:center;gap:.4em;background:#fff;
+  border:1px solid #e0e0e6;border-radius:6px;padding:.45em .7em;line-height:1;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:clamp(8px,.82cqw,12px);color:#6a6a70;white-space:nowrap}
+#lira-deck .phcard{width:100%;background:#fff;border:1px solid #e0e0e6;border-radius:6px;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#1d1f27}
+#lira-deck .phhd{display:flex;align-items:flex-start;gap:.8em;padding:1.2cqh 1.1cqw 1cqh}
+#lira-deck .phbar{flex:none;width:4px;align-self:stretch;min-height:2.4em;background:#1d1f27;border-radius:2px}
+#lira-deck .phmeta{flex:1;min-width:0}
+#lira-deck .pheb{font-size:clamp(8px,.78cqw,11px);font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:#8f8fa0}
+#lira-deck .phttl{margin-top:.3cqh;font-size:clamp(12px,1.28cqw,19px);font-weight:700;
+  letter-spacing:-.01em;line-height:1.2;color:#1d1f27}
+#lira-deck .phact{display:flex;align-items:center;gap:.55em;flex:none;color:#5f5f70}
+#lira-deck .phi{width:clamp(11px,1.1cqw,16px);height:clamp(11px,1.1cqw,16px);fill:none;
+  stroke:#5f5f70;stroke-width:1.7;stroke-linecap:round}
+#lira-deck .phsd{font-size:clamp(9px,.95cqw,13px);font-weight:600}
+#lira-deck .phkb{color:#8f8fa0;font-size:clamp(11px,1.1cqw,16px);line-height:1;letter-spacing:.1em}
+#lira-deck .phdiv{height:1px;background:#ebebef}
+#lira-deck .phc{width:100%;height:auto;display:block;padding:1cqh 1cqw .2cqh;font-family:inherit}
+#lira-deck .phc .gl{fill:none;stroke:#e3e3ea;stroke-width:1;stroke-dasharray:4 4}
+#lira-deck .phc .sp{fill:none;stroke:#d5d5de;stroke-width:1.2}
+#lira-deck .phc .tk{fill:#3f3f4d;font-size:13px;font-weight:400}
+#lira-deck .phc .bad{fill:#f14f58}
+/* an annotation: dashed marker line, label, and the badge PostHog parks on the axis */
+#lira-deck .phc .ann{fill:none;stroke:#8f8fa0;stroke-width:1.4;stroke-dasharray:4 4}
+#lira-deck .phc .annb{fill:#5f5f70}
+#lira-deck .phc .annl{fill:#fff;font-size:12px;font-weight:600}
+#lira-deck .phc .annd{fill:#1d4aff;stroke:#fff;stroke-width:2}
+#lira-deck .phc .annn{fill:#fff;font-size:12px;font-weight:700}
+@container lira (max-width:820px){
+  #lira-deck .broke{grid-template-columns:1fr}
+}
+
   </style>
 </head>
 <body>
@@ -570,7 +762,7 @@
         <div class="fact"><div class="big">$0 revenue</div><div class="lbl">no paying customers yet</div></div>
       </div>
     </div></div>
-    <div class="foot"><span>1 / 10</span></div>
+    <div class="foot"><span>1 / 16</span></div>
   </section>
 
   <!-- 2. PRODUCT -->
@@ -621,7 +813,7 @@
       </div>
 
     </div></div>
-    <div class="foot"><span>2 / 10</span></div>
+    <div class="foot"><span>2 / 16</span></div>
   </section>
 
   <!-- 2. PROBLEM -->
@@ -669,7 +861,7 @@
       </div>
       <div class="src">Five user interviews a week.</div>
     </div></div>
-    <div class="foot"><span>3 / 10</span></div>
+    <div class="foot"><span>3 / 16</span></div>
   </section>
 
   <!-- 3. AMBIGUITY -->
@@ -715,7 +907,7 @@
         
       </div>
     </div></div>
-    <div class="foot"><span>4 / 10</span></div>
+    <div class="foot"><span>4 / 16</span></div>
   </section>
 
   <!-- 3b. APPROACH -->
@@ -763,7 +955,7 @@
         </svg>
       </div>
     </div></div>
-    <div class="foot"><span>5 / 10</span></div>
+    <div class="foot"><span>5 / 16</span></div>
   </section>
 
   <!-- ITERATION -->
@@ -845,7 +1037,7 @@
         </div>
         
     </div></div>
-    <div class="foot"><span>6 / 10</span></div>
+    <div class="foot"><span>6 / 16</span></div>
   </section>
 
   <!-- SPEED -->
@@ -864,7 +1056,83 @@
         <div class="why"><span class="n">4</span><div><b>Customer understanding compounds</b><p>Every bet returns a feature and a learning.</p></div></div>
         </div>
     </div></div>
-    <div class="foot"><span>7 / 10</span></div>
+    <div class="foot"><span>7 / 16</span></div>
+  </section>
+
+  <!-- TRACTION -->
+  <section class="slide">
+    <div class="eyebrow">Traction</div>
+    <h1>Success metrics</h1>
+    <div class="body"><div class="tgrid">
+      <div class="tpanel">
+        <div class="thead"><span class="n">1</span><div class="tname">Activation</div></div>
+        <div class="phshot">
+          <div class="phtop"><span class="phchip">&#8635; Last updated 3 minutes ago</span></div>
+          <div class="phcard">
+            <div class="phhd">
+              <span class="phbar"></span>
+              <div class="phmeta">
+                <div class="pheb">Trends &bull; Last 5 weeks</div>
+                <div class="phttl">Users who start a second question</div>
+              </div>
+              <div class="phact"><svg class="phi" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10.5h18M9.5 10.5V19"/></svg><span class="phkb">&middot;&middot;&middot;</span></div>
+            </div>
+            <div class="phdiv"></div>
+            <svg viewBox="0 0 380 236" class="phc" role="img" aria-label="Bar chart: the share of users who start a second question rises from 28 percent after bet 1 to 61 percent after bet 5">
+              <path class="gl" d="M44,200.0 H372"/>
+              <path class="gl" d="M44,154.5 H372"/>
+              <path class="gl" d="M44,109.0 H372"/>
+              <path class="gl" d="M44,63.5 H372"/>
+              <path class="gl" d="M44,18.0 H372"/>
+              <path class="gl" d="M109.6,18.0 V200.0"/>
+              <path class="gl" d="M175.2,18.0 V200.0"/>
+              <path class="gl" d="M240.8,18.0 V200.0"/>
+              <path class="gl" d="M306.4,18.0 V200.0"/>
+              <rect class="act" x="56.8" y="136.3" width="40" height="63.7"/>
+              <text class="val" x="76.8" y="128.3" text-anchor="middle">28%</text>
+              <text class="tk" x="76.8" y="220" text-anchor="middle">Bet 1</text>
+              <rect class="act" x="122.4" y="111.3" width="40" height="88.7"/>
+              <text class="val" x="142.4" y="103.3" text-anchor="middle">39%</text>
+              <text class="tk" x="142.4" y="220" text-anchor="middle">Bet 2</text>
+              <rect class="act" x="188.0" y="118.1" width="40" height="81.9"/>
+              <text class="val" x="208.0" y="110.1" text-anchor="middle">36%</text>
+              <text class="tk" x="208.0" y="220" text-anchor="middle">Bet 3</text>
+              <rect class="act" x="253.6" y="81.7" width="40" height="118.3"/>
+              <text class="val" x="273.6" y="73.7" text-anchor="middle">52%</text>
+              <text class="tk" x="273.6" y="220" text-anchor="middle">Bet 4</text>
+              <rect class="act" x="319.2" y="61.2" width="40" height="138.8"/>
+              <text class="val" x="339.2" y="53.2" text-anchor="middle">61%</text>
+              <text class="tk" x="339.2" y="220" text-anchor="middle">Bet 5</text>
+              <path class="sp" d="M44,18.0 V200.0"/>
+              <path class="sp" d="M44,200.0 H372"/>
+              <text class="tk" x="35" y="204.0" text-anchor="end">0</text>
+              <text class="tk" x="35" y="158.5" text-anchor="end">20%</text>
+              <text class="tk" x="35" y="113.0" text-anchor="end">40%</text>
+              <text class="tk" x="35" y="67.5" text-anchor="end">60%</text>
+              <text class="tk" x="35" y="22.0" text-anchor="end">80%</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="tpanel">
+        <div class="thead"><span class="n">2</span><div class="tname">Revenue</div></div>
+        <div class="paycard">
+          <div class="tbig">Initial paying users</div>
+          <p class="tsub"><b>6</b> by the end of bet&nbsp;5, up from zero.</p>
+        </div>
+      </div>
+      <div class="tpanel">
+        <div class="thead"><span class="n">3</span><div class="tname">Qualitative feedback</div></div>
+        <div class="mailshot">
+        <img src="lira-testimonial.png" alt="Email from a paying customer: &quot;You have built one of the best platform that is currently available in the market for mock interviews. It is helping me with my interview preparation even when my domain is so niche and technical. I am going to give a shoutout to you and your platform on LinkedIn once I get the offer.&quot;" />
+        <span class="hl hla"></span>
+        <span class="hl hlb"></span>
+        <span class="hl hlc"></span>
+        <span class="hl hld"></span>
+        </div>
+      </div>
+    </div></div>
+    <div class="foot"><span>8 / 16</span></div>
   </section>
 
   <!-- PRIORITIES -->
@@ -877,72 +1145,541 @@
       <div class="prio"><h3>Low cost</h3><p class="j">Bootstrapped. Profitability was essential.</p></div>
       </div>
     </div>
-    <div class="foot"><span>8 / 10</span></div>
+    <div class="foot"><span>9 / 16</span></div>
   </section>
 
-  <!-- ARCHITECTURE -->
-  <section class="slide">
-    <div class="archhead">
-      <div>
-        <div class="eyebrow">Architecture</div>
-        <h1>From a voice call to stored feedback</h1>
-      </div>
-      <div class="stack">
-        <div class="ceb">Tech stack</div>
-        <ul>
-          <li>TypeScript</li>
-          <li>Ruby on Rails</li>
-          <li>Postgres</li>
-          <li>Redis + Sidekiq</li>
-          <li>Vapi</li>
-          <li>Gemini 3 Pro</li>
-          <li>Render</li>
-        </ul>
-      </div>
-    </div>
-    <div class="body"><div class="archwrap"><svg viewBox="0 0 1600 700" class="arch" role="img" aria-label="Architecture of the feedback feature">
-      <defs><marker id="lira-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#111"/></marker></defs>
+  <!-- ARCHITECTURE v1 -->
+  <section class="slide" data-steps="8">
+    <div class="eyebrow">Architecture, v1</div>
+    <h1>Beta implementation</h1>
+    <div class="body"><div class="sqwrap col">
+      <svg viewBox="0 0 1260 422" class="sqd" role="img" aria-label="Sequence diagram: the web server grades the interview inside the webhook request">
 
-      <path class="e" d="M122,340 L205.0,340" marker-end="url(#lira-ar)"/>
-      <g class="badge"><circle cx="160" cy="378" r="13"/><text x="160" y="383" text-anchor="middle">1</text></g><text class="el" x="160" y="418" text-anchor="middle">Ends interview</text>
+      <!-- actors: header box plus the lifeline hanging below it -->
+      <g class="sqa" data-a="user">
+        <rect x="64" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(130 30) scale(0.46)"><circle cx="0" cy="-20" r="17"/><path d="M-32,32 C-32,4 32,4 32,32"/></g>
+        <text class="nt" x="130" y="68" text-anchor="middle">User</text>
+        <path class="life" d="M130,86 V410"/>
+      </g>
+      <g class="sqa" data-a="fe">
+        <rect x="264" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(330 30) scale(0.64)"><path d="M-14,-9 L-22,0 L-14,9 M14,-9 L22,0 L14,9 M4,-14 L-4,14"/></g>
+        <text class="nt" x="330" y="60" text-anchor="middle">Front end</text>
+        <text class="ns" x="330" y="77" text-anchor="middle">TypeScript</text>
+        <path class="life" d="M330,86 V410"/>
+      </g>
+      <g class="sqa ext" data-a="voice">
+        <rect x="464" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(530 30) scale(0.56)"><path d="M-16,-8 V8 M-8,-16 V16 M0,-22 V22 M8,-14 V14 M16,-6 V6 M24,-10 V10 M-24,-4 V4"/></g>
+        <text class="nt" x="530" y="60" text-anchor="middle">Voice agent</text>
+        <text class="ns" x="530" y="77" text-anchor="middle">Vapi</text>
+        <path class="life" d="M530,86 V410"/>
+      </g>
+      <g class="sqa" data-a="web">
+        <rect x="664" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(730 30) scale(0.54)"><rect x="-26" y="-24" width="52" height="16" rx="3"/><rect x="-26" y="-4" width="52" height="16" rx="3"/><rect x="-26" y="16" width="52" height="8" rx="3"/><circle cx="-18" cy="-16" r="2.5" class="f"/><circle cx="-18" cy="4" r="2.5" class="f"/></g>
+        <text class="nt" x="730" y="60" text-anchor="middle">Web server</text>
+        <text class="ns" x="730" y="77" text-anchor="middle">Ruby on Rails</text>
+        <path class="life" d="M730,86 V410"/>
+      </g>
+      <g class="sqa" data-a="db">
+        <rect x="864" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(930 30) scale(0.48)"><ellipse cx="0" cy="-20" rx="26" ry="9"/><path d="M-26,-20 V20 A26,9 0 0 0 26,20 V-20"/><path d="M-26,-6 A26,9 0 0 0 26,-6"/><path d="M-26,8 A26,9 0 0 0 26,8"/></g>
+        <text class="nt" x="930" y="60" text-anchor="middle">Database</text>
+        <text class="ns" x="930" y="77" text-anchor="middle">Postgres</text>
+        <path class="life" d="M930,86 V410"/>
+      </g>
+      <g class="sqa ext" data-a="llm">
+        <rect x="1064" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(1130 30) scale(0.58)"><path d="M0,-24 L6,-6 L24,0 L6,6 L0,24 L-6,6 L-24,0 L-6,-6 Z" class="f"/></g>
+        <text class="nt" x="1130" y="60" text-anchor="middle">LLM grader</text>
+        <text class="ns" x="1130" y="77" text-anchor="middle">Gemini 3 Pro</text>
+        <path class="life" d="M1130,86 V410"/>
+      </g>
 
-      <path class="e" d="M455.0,310 L535.0,140" marker-end="url(#lira-ar)"/>
-      <g class="badge"><circle cx="455" cy="174" r="13"/><text x="455" y="179" text-anchor="middle">2</text></g><text class="el" x="432" y="179" text-anchor="end">End call</text><text class="el sm" x="432" y="200" text-anchor="end">(WebSocket)</text>
-
-      <path class="e" d="M455.0,350 L535.0,350" marker-end="url(#lira-ar)" marker-start="url(#lira-ar)"/>
-      <g class="badge"><circle cx="495" cy="392" r="13"/><text x="495" y="397" text-anchor="middle">9</text></g><text class="el" x="495" y="426" text-anchor="middle">Polls for feedback</text>
-
-      <path class="e" d="M660,162.0 L660,288.0" marker-end="url(#lira-ar)"/>
-      <g class="badge"><circle cx="688" cy="225" r="13"/><text x="688" y="230" text-anchor="middle">3</text></g><text class="el" x="712" y="230" text-anchor="start">Webhook with transcript</text>
-
-      <path class="e" d="M785.0,340 L875.0,340" marker-end="url(#lira-ar)"/>
-      <g class="badge"><circle cx="830" cy="300" r="13"/><text x="830" y="305" text-anchor="middle">4</text></g><text class="el" x="830" y="272" text-anchor="middle">Enqueue job</text>
-
-      <path class="e" d="M1000,392.0 L1000,528.0" marker-end="url(#lira-ar)"/>
-      <g class="badge"><circle cx="1028" cy="460" r="13"/><text x="1028" y="465" text-anchor="middle">5</text></g><text class="el" x="1052" y="465" text-anchor="start">Picks up job</text>
-
-      <path class="e" d="M1125,562 L1315,562" marker-end="url(#lira-ar)"/>
-      <path class="e" d="M1315,598 L1125,598" marker-end="url(#lira-ar)"/>
-      <g class="badge"><circle cx="1220" cy="520" r="13"/><text x="1220" y="525" text-anchor="middle">6</text></g><text class="el" x="1220" y="548" text-anchor="middle">Prompt + transcript</text>
-      <g class="badge"><circle cx="1220" cy="654" r="13"/><text x="1220" y="659" text-anchor="middle">7</text></g><text class="el" x="1220" y="626" text-anchor="middle">Feedback</text>
-
-      <path class="e" d="M875.0,580 L785.0,580" marker-end="url(#lira-ar)"/>
-      <g class="badge"><circle cx="830" cy="538" r="13"/><text x="830" y="543" text-anchor="middle">8</text></g><text class="el" x="830" y="512" text-anchor="middle">Store feedback</text>
-
-      <path class="e" d="M660,528.0 L660,392.0" marker-end="url(#lira-ar)" marker-start="url(#lira-ar)"/>
-
-      <g class="node bare"><g transform="translate(80 320)" class="ic big"><circle cx="0" cy="-20" r="17"/><path d="M-32,32 C-32,4 32,4 32,32"/></g><text class="nt" x="80" y="262" text-anchor="middle">User</text></g>
-      <g class="node"><rect x="205.0" y="288.0" width="250" height="104" rx="16"/><g transform="translate(245 340)" class="ic"><path d="M-14,-9 L-22,0 L-14,9 M14,-9 L22,0 L14,9 M4,-14 L-4,14"/></g><text class="nt" x="284" y="338">Front end</text><text class="ns" x="284" y="360">TypeScript</text></g>
-      <g class="node ext"><rect x="535.0" y="58.0" width="250" height="104" rx="16"/><g transform="translate(575 110)" class="ic"><path d="M-16,-8 V8 M-8,-16 V16 M0,-22 V22 M8,-14 V14 M16,-6 V6 M24,-10 V10 M-24,-4 V4"/></g><text class="nt" x="614" y="108">Voice agent</text><text class="ns" x="614" y="130">Vapi</text></g>
-      <g class="node"><rect x="535.0" y="288.0" width="250" height="104" rx="16"/><g transform="translate(575 340)" class="ic"><rect x="-26" y="-24" width="52" height="16" rx="3"/><rect x="-26" y="-4" width="52" height="16" rx="3"/><rect x="-26" y="16" width="52" height="8" rx="3"/><circle cx="-18" cy="-16" r="2.5" class="f"/><circle cx="-18" cy="4" r="2.5" class="f"/></g><text class="nt" x="614" y="338">Web server</text><text class="ns" x="614" y="360">Ruby on Rails</text></g>
-      <g class="node"><rect x="535.0" y="528.0" width="250" height="104" rx="16"/><g transform="translate(575 580)" class="ic"><ellipse cx="0" cy="-20" rx="26" ry="9"/><path d="M-26,-20 V20 A26,9 0 0 0 26,20 V-20"/><path d="M-26,-6 A26,9 0 0 0 26,-6"/><path d="M-26,8 A26,9 0 0 0 26,8"/></g><text class="nt" x="614" y="578">Database</text><text class="ns" x="614" y="600">Postgres</text></g>
-      <g class="node"><rect x="875.0" y="288.0" width="250" height="104" rx="16"/><g transform="translate(915 340)" class="ic"><rect x="-30" y="-12" width="60" height="24" rx="4"/><path d="M-16,-12 V12 M-2,-12 V12 M12,-12 V12"/></g><text class="nt" x="954" y="338">Queue</text><text class="ns" x="954" y="360">Redis</text></g>
-      <g class="node"><rect x="875.0" y="528.0" width="250" height="104" rx="16"/><g transform="translate(915 580)" class="ic"><polygon points="24.0,0.0 16.6,6.9 17.0,17.0 6.9,16.6 0.0,24.0 -6.9,16.6 -17.0,17.0 -16.6,6.9 -24.0,0.0 -16.6,-6.9 -17.0,-17.0 -6.9,-16.6 -0.0,-24.0 6.9,-16.6 17.0,-17.0 16.6,-6.9"/><circle cx="0" cy="0" r="7"/></g><text class="nt" x="954" y="578">Worker</text><text class="ns" x="954" y="600">Sidekiq</text></g>
-      <g class="node ext"><rect x="1315.0" y="528.0" width="250" height="104" rx="16"/><g transform="translate(1355 580)" class="ic"><path d="M0,-24 L6,-6 L24,0 L6,6 L0,24 L-6,6 L-24,0 L-6,-6 Z" class="f"/></g><text class="nt" x="1394" y="578">LLM grader</text><text class="ns" x="1394" y="600">Gemini 3 Pro</text></g>
-    </svg>
-      <div class="legend2"><span><i class="lg int"></i>Ours</span><span><i class="lg ext"></i>Third party</span></div>
+      <!-- messages, revealed a step at a time -->
+      <g class="sqm step" data-from="user" data-to="fe" data-step="1">
+        <path class="ln" d="M157,116 H320"/>
+        <path class="hd" d="M330,116 L319,110 L319,122 Z"/>
+        <g class="bn"><circle cx="144" cy="116" r="11"/><text x="144" y="120" text-anchor="middle">1</text></g>
+        <text class="lb" x="230" y="104" text-anchor="middle">Ends interview</text>
+      </g>
+      <g class="sqm step" data-from="fe" data-to="voice" data-step="2">
+        <path class="ln" d="M357,150 H520"/>
+        <path class="hd" d="M530,150 L519,144 L519,156 Z"/>
+        <g class="bn"><circle cx="344" cy="150" r="11"/><text x="344" y="154" text-anchor="middle">2</text></g>
+        <text class="lb" x="430" y="138" text-anchor="middle">End call (WebSocket)</text>
+      </g>
+      <g class="sqm step" data-from="voice" data-to="web" data-step="3">
+        <path class="ln" d="M557,184 H720"/>
+        <path class="hd" d="M730,184 L719,178 L719,190 Z"/>
+        <g class="bn"><circle cx="544" cy="184" r="11"/><text x="544" y="188" text-anchor="middle">3</text></g>
+        <text class="lb" x="630" y="172" text-anchor="middle">Webhook with transcript</text>
+      </g>
+      <g class="sqm step" data-from="web" data-to="llm" data-step="4">
+        <path class="ln em" d="M757,218 H1120"/>
+        <path class="hd" d="M1130,218 L1119,212 L1119,224 Z"/>
+        <g class="bn"><circle cx="744" cy="218" r="11"/><text x="744" y="222" text-anchor="middle">4</text></g>
+        <text class="lb" x="930" y="206" text-anchor="middle">Prompt + transcript</text>
+      </g>
+      <g class="sqm step" data-from="llm" data-to="web" data-step="5">
+        <path class="ln ret" d="M1103,252 H740"/>
+        <path class="hd" d="M730,252 L741,246 L741,258 Z"/>
+        <g class="bn"><circle cx="1116" cy="252" r="11"/><text x="1116" y="256" text-anchor="middle">5</text></g>
+        <text class="lb" x="930" y="240" text-anchor="middle">Feedback</text>
+      </g>
+      <g class="sqm step" data-from="web" data-to="db" data-step="6">
+        <path class="ln" d="M757,286 H920"/>
+        <path class="hd" d="M930,286 L919,280 L919,292 Z"/>
+        <g class="bn"><circle cx="744" cy="286" r="11"/><text x="744" y="290" text-anchor="middle">6</text></g>
+        <text class="lb" x="830" y="274" text-anchor="middle">Store feedback</text>
+      </g>
+      <g class="sqm step" data-from="fe" data-to="web" data-step="7">
+        <path class="ln" d="M357,320 H720"/>
+        <path class="hd" d="M730,320 L719,314 L719,326 Z"/>
+        <g class="bn"><circle cx="344" cy="320" r="11"/><text x="344" y="324" text-anchor="middle">7</text></g>
+        <text class="lb" x="530" y="308" text-anchor="middle">Polls for feedback</text>
+      </g>
+      <g class="sqm step" data-from="web" data-to="db" data-step="7">
+        <path class="ln" d="M741,354 H919"/>
+        <path class="hd" d="M930,354 L919,348 L919,360 Z"/><path class="hd" d="M730,354 L741,348 L741,360 Z"/>
+        <text class="lb" x="830" y="342" text-anchor="middle">Reads feedback</text>
+      </g>
+      <g class="sqm step" data-from="web" data-to="fe" data-step="7">
+        <path class="ln ret" d="M719,388 H340"/>
+        <path class="hd" d="M330,388 L341,382 L341,394 Z"/>
+        <text class="lb" x="530" y="376" text-anchor="middle">Feedback</text>
+      </g>
+      </svg>
+      <p class="cap2">Grading ran inside the webhook request. Half a day to build.</p>
     </div></div>
-    <div class="foot"><span>9 / 10</span></div>
+    <div class="foot"><span>10 / 16</span><span class="sqlg"><span><i></i>Ours</span><span><i class="ext"></i>Third party</span></span></div>
+  </section>
+
+  <!-- WHAT BROKE -->
+  <section class="slide">
+    <div class="eyebrow">The problem</div>
+    <h1>Errors started to increase</h1>
+    <div class="body"><div class="broke">
+      <div class="phshot">
+        <div class="phtop"><span class="phchip">&#8635; Last updated 3 minutes ago</span></div>
+        <div class="phcard">
+          <div class="phhd">
+            <span class="phbar"></span>
+            <div class="phmeta">
+              <div class="pheb">Trends &bull; Last 6 weeks</div>
+              <div class="phttl">Evaluations that failed for the user</div>
+            </div>
+            <div class="phact"><svg class="phi" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10.5h18M9.5 10.5V19"/></svg><span class="phkb">&middot;&middot;&middot;</span></div>
+          </div>
+          <div class="phdiv"></div>
+          <svg viewBox="0 0 640 306" class="phc" role="img" aria-label="Bar chart: the share of evaluations that failed for the user climbs from 2 percent in mid-February to 14 percent by 23 March">
+            <path class="gl" d="M78,234.0 H628"/>
+            <path class="gl" d="M78,179.5 H628"/>
+            <path class="gl" d="M78,125.0 H628"/>
+            <path class="gl" d="M78,70.5 H628"/>
+            <path class="gl" d="M78,16.0 H628"/>
+            <path class="gl" d="M169.7,16.0 V234.0"/>
+            <path class="gl" d="M261.3,16.0 V234.0"/>
+            <path class="gl" d="M353.0,16.0 V234.0"/>
+            <path class="gl" d="M444.7,16.0 V234.0"/>
+            <path class="gl" d="M536.3,16.0 V234.0"/>
+            <rect class="bad" x="95.8" y="206.8" width="56" height="27.2"/>
+            <rect class="bad" x="187.5" y="193.1" width="56" height="40.9"/>
+            <rect class="bad" x="279.2" y="179.5" width="56" height="54.5"/>
+            <rect class="bad" x="370.8" y="152.2" width="56" height="81.8"/>
+            <rect class="bad" x="462.5" y="111.4" width="56" height="122.6"/>
+            <rect class="bad" x="554.2" y="43.2" width="56" height="190.8"/>
+            <path class="sp" d="M78,16.0 V234.0"/>
+            <path class="sp" d="M78,234.0 H628"/>
+            <text class="tk" x="68" y="238.0" text-anchor="end">0</text>
+            <text class="tk" x="68" y="183.5" text-anchor="end">4%</text>
+            <text class="tk" x="68" y="129.0" text-anchor="end">8%</text>
+            <text class="tk" x="68" y="74.5" text-anchor="end">12%</text>
+            <text class="tk" x="68" y="20.0" text-anchor="end">16%</text>
+            <text class="tk" transform="rotate(-45 123.8 248)" x="123.8" y="248" text-anchor="end">16-Feb-2026</text>
+            <text class="tk" transform="rotate(-45 215.5 248)" x="215.5" y="248" text-anchor="end">23-Feb-2026</text>
+            <text class="tk" transform="rotate(-45 307.2 248)" x="307.2" y="248" text-anchor="end">2-Mar-2026</text>
+            <text class="tk" transform="rotate(-45 398.8 248)" x="398.8" y="248" text-anchor="end">9-Mar-2026</text>
+            <text class="tk" transform="rotate(-45 490.5 248)" x="490.5" y="248" text-anchor="end">16-Mar-2026</text>
+            <text class="tk" transform="rotate(-45 582.2 248)" x="582.2" y="248" text-anchor="end">23-Mar-2026</text>
+          </svg>
+        </div>
+      </div>
+      <div class="brtext">
+        <div class="stat sm"><div class="big">~14<small>%</small><em>error rate</em></div></div>
+        <div class="whys">
+          <div class="why"><span class="n">1</span><div><b>503 from Gemini</b><p>Service unavailable, in bursts, mostly evenings US time.</p></div></div>
+          <div class="why"><span class="n">2</span><div><b>LLM provider outage</b><p>A provider down for an hour at a time, not for seconds.</p></div></div>
+          <div class="why"><span class="n">3</span><div><b>Webhook delivered twice</b><p>Grading ran 20 to 40&thinsp;s inside the request. Vapi gave up and retried, so we graded twice.</p></div></div>
+          <div class="why"><span class="n">4</span><div><b>Near-empty transcript</b><p>The user ended the call early. Nothing to grade, so the feedback came back empty.</p></div></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="foot"><span>11 / 16</span></div>
+  </section>
+
+  <!-- ARCHITECTURE v2 -->
+  <section class="slide arch2" data-steps="6">
+    <div class="eyebrow">Architecture, v2</div>
+    <h1>Adding resiliency</h1>
+    <div class="body"><div class="sqwrap col">
+      <svg viewBox="0 0 1260 510" class="sqd" role="img" aria-label="Sequence diagram: the v1 flow rebuilt one fix at a time, ending with a queued worker, retries and a fallback provider">
+
+      <!-- actors: the queue, the worker and the fallback grader arrive with their fix -->
+      <g class="sqa" data-a="user">
+        <rect x="4" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(70 30) scale(0.46)"><circle cx="0" cy="-20" r="17"/><path d="M-32,32 C-32,4 32,4 32,32"/></g>
+        <text class="nt" x="70" y="68" text-anchor="middle">User</text>
+        <path class="life" d="M70,86 V498"/>
+      </g>
+      <g class="sqa" data-a="fe">
+        <rect x="144" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(210 30) scale(0.64)"><path d="M-14,-9 L-22,0 L-14,9 M14,-9 L22,0 L14,9 M4,-14 L-4,14"/></g>
+        <text class="nt" x="210" y="60" text-anchor="middle">Front end</text>
+        <text class="ns" x="210" y="77" text-anchor="middle">TypeScript</text>
+        <path class="life" d="M210,86 V498"/>
+      </g>
+      <g class="sqa ext" data-a="voice">
+        <rect x="284" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(350 30) scale(0.56)"><path d="M-16,-8 V8 M-8,-16 V16 M0,-22 V22 M8,-14 V14 M16,-6 V6 M24,-10 V10 M-24,-4 V4"/></g>
+        <text class="nt" x="350" y="60" text-anchor="middle">Voice agent</text>
+        <text class="ns" x="350" y="77" text-anchor="middle">Vapi</text>
+        <path class="life" d="M350,86 V498"/>
+      </g>
+      <g class="sqa" data-a="web">
+        <rect x="424" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(490 30) scale(0.54)"><rect x="-26" y="-24" width="52" height="16" rx="3"/><rect x="-26" y="-4" width="52" height="16" rx="3"/><rect x="-26" y="16" width="52" height="8" rx="3"/><circle cx="-18" cy="-16" r="2.5" class="f"/><circle cx="-18" cy="4" r="2.5" class="f"/></g>
+        <text class="nt" x="490" y="60" text-anchor="middle">Web server</text>
+        <text class="ns" x="490" y="77" text-anchor="middle">Ruby on Rails</text>
+        <path class="life" d="M490,86 V498"/>
+      </g>
+      <g class="sqa" data-a="db">
+        <rect x="564" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(630 30) scale(0.48)"><ellipse cx="0" cy="-20" rx="26" ry="9"/><path d="M-26,-20 V20 A26,9 0 0 0 26,20 V-20"/><path d="M-26,-6 A26,9 0 0 0 26,-6"/><path d="M-26,8 A26,9 0 0 0 26,8"/></g>
+        <text class="nt" x="630" y="60" text-anchor="middle">Database</text>
+        <text class="ns" x="630" y="77" text-anchor="middle">Postgres</text>
+        <path class="life" d="M630,86 V498"/>
+      </g>
+      <g class="sqa step" data-a="queue" data-step="1">
+        <rect x="704" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(770 30) scale(0.46)"><rect x="-30" y="-12" width="60" height="24" rx="4"/><path d="M-16,-12 V12 M-2,-12 V12 M12,-12 V12"/></g>
+        <text class="nt" x="770" y="60" text-anchor="middle">Queue</text>
+        <text class="ns" x="770" y="77" text-anchor="middle">Redis</text>
+        <path class="life" d="M770,86 V498"/>
+      </g>
+      <g class="sqa step" data-a="worker" data-step="1">
+        <rect x="844" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(910 30) scale(0.58)"><polygon points="24.0,0.0 16.6,6.9 17.0,17.0 6.9,16.6 0.0,24.0 -6.9,16.6 -17.0,17.0 -16.6,6.9 -24.0,0.0 -16.6,-6.9 -17.0,-17.0 -6.9,-16.6 -0.0,-24.0 6.9,-16.6 17.0,-17.0 16.6,-6.9"/><circle cx="0" cy="0" r="7"/></g>
+        <text class="nt" x="910" y="60" text-anchor="middle">Worker</text>
+        <text class="ns" x="910" y="77" text-anchor="middle">Sidekiq</text>
+        <path class="life" d="M910,86 V498"/>
+      </g>
+      <g class="sqa ext" data-a="llm">
+        <rect x="984" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(1050 30) scale(0.58)"><path d="M0,-24 L6,-6 L24,0 L6,6 L0,24 L-6,6 L-24,0 L-6,-6 Z" class="f"/></g>
+        <text class="nt" x="1050" y="60" text-anchor="middle">LLM grader</text>
+        <text class="ns" x="1050" y="77" text-anchor="middle">Vertex AI</text>
+        <path class="life" d="M1050,86 V498"/>
+      </g>
+      <g class="sqa ext step" data-a="llm2" data-step="3">
+        <rect x="1124" y="6" width="132" height="80" rx="12"/>
+        <g class="ic" transform="translate(1190 30) scale(0.58)"><path d="M0,-24 L6,-6 L24,0 L6,6 L0,24 L-6,6 L-24,0 L-6,-6 Z" class="f"/></g>
+        <text class="nt" x="1190" y="60" text-anchor="middle">LLM grader</text>
+        <text class="ns" x="1190" y="77" text-anchor="middle">AI Studio</text>
+        <path class="life" d="M1190,86 V498"/>
+      </g>
+
+      <!-- the spine, unchanged between versions -->
+      <g class="sqm step" data-from="user" data-to="fe" data-step="0">
+        <path class="ln" d="M81,116 H200"/>
+        <path class="hd" d="M210,116 L199,110 L199,122 Z"/>
+        <text class="lb" x="140" y="104" text-anchor="middle">Ends interview</text>
+      </g>
+      <g class="sqm step" data-from="fe" data-to="voice" data-step="0">
+        <path class="ln" d="M221,150 H340"/>
+        <path class="hd" d="M350,150 L339,144 L339,156 Z"/>
+        <text class="lb" x="280" y="138" text-anchor="middle">End call (WebSocket)</text>
+      </g>
+      <g class="sqm step" data-from="voice" data-to="web" data-step="0">
+        <path class="ln" d="M361,184 H480"/>
+        <path class="hd" d="M490,184 L479,178 L479,190 Z"/>
+        <text class="lb" x="420" y="172" text-anchor="middle">Webhook with transcript</text>
+      </g>
+      <g class="sqm step" data-from="fe" data-to="web" data-step="0">
+        <path class="ln" d="M221,422 H480"/>
+        <path class="hd" d="M490,422 L479,416 L479,428 Z"/>
+        <text class="lb" x="350" y="410" text-anchor="middle">Polls for feedback</text>
+      </g>
+      <g class="sqm step" data-from="web" data-to="db" data-step="0">
+        <path class="ln" d="M501,456 H619"/>
+        <path class="hd" d="M630,456 L619,450 L619,462 Z"/><path class="hd" d="M490,456 L501,450 L501,462 Z"/>
+        <text class="lb" x="560" y="444" text-anchor="middle">Reads feedback</text>
+      </g>
+      <g class="sqm step" data-from="web" data-to="fe" data-step="0">
+        <path class="ln ret" d="M479,490 H220"/>
+        <path class="hd" d="M210,490 L221,484 L221,496 Z"/>
+        <text class="lb" x="350" y="478" text-anchor="middle">Feedback</text>
+      </g>
+
+      <!-- v1 did the grading inline; shown only on step 0 -->
+      <g class="sqm on v1" data-from="web" data-to="llm">
+        <path class="ln em" d="M501,218 H1040"/>
+        <path class="hd" d="M1050,218 L1039,212 L1039,224 Z"/>
+        <text class="lb" x="770" y="206" text-anchor="middle">Prompt + transcript</text>
+      </g>
+      <g class="sqm on v1" data-from="llm" data-to="web">
+        <path class="ln ret" d="M1039,252 H500"/>
+        <path class="hd" d="M490,252 L501,246 L501,258 Z"/>
+        <text class="lb" x="770" y="240" text-anchor="middle">Feedback</text>
+      </g>
+      <g class="sqm on v1" data-from="web" data-to="db">
+        <path class="ln" d="M501,388 H620"/>
+        <path class="hd" d="M630,388 L619,382 L619,394 Z"/>
+        <text class="lb" x="560" y="376" text-anchor="middle">Store feedback</text>
+      </g>
+
+      <!-- ...and the job path that replaces it -->
+      <g class="sqm step" data-from="web" data-to="queue" data-step="1">
+        <path class="ln" d="M501,218 H760"/>
+        <path class="hd" d="M770,218 L759,212 L759,224 Z"/>
+        <text class="lb" x="630" y="206" text-anchor="middle">Enqueue job</text>
+      </g>
+      <g class="sqm step" data-from="queue" data-to="worker" data-step="1">
+        <path class="ln" d="M781,252 H900"/>
+        <path class="hd" d="M910,252 L899,246 L899,258 Z"/>
+        <text class="lb" x="840" y="240" text-anchor="middle">Picks up job</text>
+      </g>
+      <g class="sqm step" data-from="worker" data-to="llm" data-step="1">
+        <path class="ln" d="M921,286 H1040"/>
+        <path class="hd" d="M1050,286 L1039,280 L1039,292 Z"/>
+        <text class="lb" x="980" y="274" text-anchor="middle">Prompt + transcript</text>
+      </g>
+      <g class="sqm step" data-from="llm" data-to="worker" data-step="1">
+        <path class="ln ret" d="M1039,320 H920"/>
+        <path class="hd" d="M910,320 L921,314 L921,326 Z"/>
+        <text class="lb" x="980" y="308" text-anchor="middle">Feedback</text>
+      </g>
+      <g class="sqm step" data-from="worker" data-to="db" data-step="1">
+        <path class="ln" d="M899,388 H640"/>
+        <path class="hd" d="M630,388 L641,382 L641,394 Z"/>
+        <text class="lb" x="770" y="376" text-anchor="middle">Store feedback</text>
+      </g>
+
+      <!-- the fallback provider -->
+      <g class="sqm step" data-from="worker" data-to="llm2" data-step="3">
+        <path class="ln alt" d="M921,354 H1180"/>
+        <path class="hd" d="M1190,354 L1179,348 L1179,360 Z"/>
+        <text class="lb" x="1064" y="342" text-anchor="middle">On sustained error</text>
+      </g>
+
+      <!-- each fix, pinned where it changes the diagram -->
+      <g class="sqm sqt step" data-step="1" data-from="web" data-to="queue">
+        <rect x="565" y="224" width="130" height="20" rx="6"/>
+        <text x="630" y="238" text-anchor="middle">Grade in a job</text>
+      </g>
+      <g class="sqm sqt step" data-step="2" data-from="worker" data-to="llm">
+        <rect x="793" y="292" width="115" height="20" rx="6"/>
+        <text x="850" y="306" text-anchor="middle">Retry, cap 5</text>
+      </g>
+      <g class="sqm sqt step" data-step="3" data-from="worker" data-to="llm2">
+        <rect x="1020" y="360" width="160" height="20" rx="6"/>
+        <text x="1100" y="374" text-anchor="middle">Automatic fallback</text>
+      </g>
+      <g class="sqm sqt step" data-step="4" data-from="worker" data-to="db">
+        <rect x="550" y="394" width="181" height="20" rx="6"/>
+        <text x="640" y="408" text-anchor="middle">Idempotent</text>
+      </g>
+      <g class="sqm sqt step" data-step="5" data-from="worker" data-to="llm">
+        <rect x="1049" y="292" width="182" height="20" rx="6"/>
+        <text x="1140" y="306" text-anchor="middle">Handled in the prompt</text>
+      </g>
+      </svg>
+      <div class="stage fixline">
+        <div class="step" data-step="0">
+          <p>Where we started: the web server graded the interview inside the request.</p>
+        </div>
+        <div class="step" data-step="1">
+          <p><b>Grade in a background job.</b> Ack the webhook in milliseconds, then take as long as grading needs.</p>
+        </div>
+        <div class="step" data-step="2">
+          <span class="prob">503 from Gemini</span>
+          <p><b>Retry with backoff, cap 5.</b> They arrive in bursts and clear within seconds.</p>
+        </div>
+        <div class="step" data-step="3">
+          <span class="prob">LLM provider outage</span>
+          <p><b>Fall back to the second provider.</b> One can be out for an hour; both rarely are.</p>
+        </div>
+        <div class="step" data-step="4">
+          <span class="prob">Webhook delivered twice</span>
+          <p><b>Idempotent.</b> The second delivery is a no-op.</p>
+        </div>
+        <div class="step" data-step="5">
+          <span class="prob">Near-empty transcript</span>
+          <p><b>Handle it in the prompt.</b> Return a &ldquo;nothing to grade&rdquo; message.</p>
+        </div>
+      </div>
+    </div></div>
+    <div class="foot"><span>12 / 16</span><span class="sqlg"><span><i></i>Ours</span><span><i class="ext"></i>Third party</span></span></div>
+  </section>
+
+  <!-- WHAT WE SOLVED -->
+  <section class="slide">
+    <div class="eyebrow">Failure modes</div>
+    <h1>Handling failures appropriately</h1>
+    <div class="body"><div class="fmgrid">
+      <div class="fmpie">
+        <div class="ceb">All evaluations, 30 days before v2</div>
+        <svg viewBox="0 0 240 240" class="donut" role="img" aria-label="Donut chart: 86 percent of evaluations succeeded; the 14 percent that failed is split between Gemini 503s, sustained outages, duplicate webhooks and empty transcripts">
+          <g transform="rotate(-90 120 120)">
+            <circle class="seg s1" cx="120" cy="120" r="84" stroke-dasharray="452.10 527.79" stroke-dashoffset="-0.90"/>
+            <circle class="seg fs1" cx="120" cy="120" r="84" stroke-dasharray="38.84 527.79" stroke-dashoffset="-454.80"/>
+            <circle class="seg fs2" cx="120" cy="120" r="84" stroke-dasharray="12.98 527.79" stroke-dashoffset="-495.44"/>
+            <circle class="seg fs3" cx="120" cy="120" r="84" stroke-dasharray="10.76 527.79" stroke-dashoffset="-510.22"/>
+            <circle class="seg fs4" cx="120" cy="120" r="84" stroke-dasharray="4.11 527.79" stroke-dashoffset="-522.78"/>
+          </g>
+        </svg>
+        <div class="fmkey">
+          <span><i class="ok"></i><b>86%</b> succeeded</span>
+          <span><i class="multi"></i><b>14%</b> failed</span>
+        </div>
+      </div>
+        <div class="fmcol ok">
+          <div class="ceb">Seen and solved</div>
+          <p class="sub">The 14% that failed, by cause.</p>
+          <ul>
+          <li><i class="fs1"></i>Gemini 503<b>55%</b></li>
+          <li><i class="fs2"></i>Sustained outage<b>20%</b></li>
+          <li><i class="fs3"></i>Duplicate webhook<b>17%</b></li>
+          <li><i class="fs4"></i>Empty transcript<b>8%</b></li>
+          </ul>
+        </div>
+        <div class="fmcol ok">
+          <div class="ceb">Not seen, solved anyway</div>
+          <ul>
+          <li>Killed worker</li>
+          <li>User closes the tab mid-grading</li>
+          <li>Off-schema JSON</li>
+          <li>Invalid webhook signature</li>
+          </ul>
+        </div>
+        <div class="fmcol wt">
+          <div class="ceb">Monitored & alerted on</div>
+          <p class="sub">Very unlikely or too expensive to fix.</p>
+          <ul>
+          <li>Webhook never arrives</li>
+          <li>Poll fails on user&rsquo;s network</li>
+          <li>Gemini 429</li>
+          <li>Large queue backlog</li>
+          <li>Both providers down</li>
+          </ul>
+        </div>
+    </div></div>
+    <div class="foot"><span>13 / 16</span></div>
+  </section>
+
+  <!-- BEFORE AND AFTER -->
+  <section class="slide">
+    <div class="eyebrow">Result</div>
+    <h1>Errors stopped reaching the user</h1>
+    <div class="body"><div class="broke wide">
+      <div class="phshot">
+        <div class="phtop"><span class="phchip">&#8635; Last updated 3 minutes ago</span></div>
+        <div class="phcard">
+          <div class="phhd">
+            <span class="phbar"></span>
+            <div class="phmeta">
+              <div class="pheb">Trends &bull; Last 14 weeks</div>
+              <div class="phttl">Evaluations that failed for the user</div>
+            </div>
+            <div class="phact"><svg class="phi" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10.5h18M9.5 10.5V19"/></svg><span class="phsd">Show details</span><span class="phkb">&middot;&middot;&middot;</span></div>
+          </div>
+          <div class="phdiv"></div>
+          <svg viewBox="0 0 860 312" class="phc" role="img" aria-label="Bar chart: the share of evaluations that failed for the user climbs to 14 percent, then collapses to near zero once v2 ships at the end of March">
+            <path class="gl" d="M66,252.0 H850"/>
+            <path class="gl" d="M66,197.5 H850"/>
+            <path class="gl" d="M66,143.0 H850"/>
+            <path class="gl" d="M66,88.5 H850"/>
+            <path class="gl" d="M66,34.0 H850"/>
+            <path class="gl" d="M122.0,34.0 V252.0"/>
+            <path class="gl" d="M178.0,34.0 V252.0"/>
+            <path class="gl" d="M234.0,34.0 V252.0"/>
+            <path class="gl" d="M290.0,34.0 V252.0"/>
+            <path class="gl" d="M346.0,34.0 V252.0"/>
+            <path class="gl" d="M402.0,34.0 V252.0"/>
+            <path class="gl" d="M458.0,34.0 V252.0"/>
+            <path class="gl" d="M514.0,34.0 V252.0"/>
+            <path class="gl" d="M570.0,34.0 V252.0"/>
+            <path class="gl" d="M626.0,34.0 V252.0"/>
+            <path class="gl" d="M682.0,34.0 V252.0"/>
+            <path class="gl" d="M738.0,34.0 V252.0"/>
+            <path class="gl" d="M794.0,34.0 V252.0"/>
+            <rect class="bad" x="77.0" y="224.8" width="34" height="27.2"/>
+            <rect class="bad" x="133.0" y="211.1" width="34" height="40.9"/>
+            <rect class="bad" x="189.0" y="197.5" width="34" height="54.5"/>
+            <rect class="bad" x="245.0" y="170.2" width="34" height="81.8"/>
+            <rect class="bad" x="301.0" y="129.4" width="34" height="122.6"/>
+            <rect class="bad" x="357.0" y="61.2" width="34" height="190.8"/>
+            <rect class="bad" x="413.0" y="231.6" width="34" height="20.4"/>
+            <rect class="bad" x="469.0" y="241.1" width="34" height="10.9"/>
+            <rect class="bad" x="525.0" y="246.6" width="34" height="5.5"/>
+            <rect class="bad" x="581.0" y="247.9" width="34" height="4.1"/>
+            <rect class="bad" x="637.0" y="245.2" width="34" height="6.8"/>
+            <rect class="bad" x="693.0" y="249.3" width="34" height="2.7"/>
+            <rect class="bad" x="749.0" y="247.9" width="34" height="4.1"/>
+            <rect class="bad" x="805.0" y="249.3" width="34" height="2.7"/>
+            <path class="sp" d="M66,34.0 V252.0"/>
+            <path class="sp" d="M66,252.0 H850"/>
+            <path class="ann" d="M402.0,34.0 V252.0"/>
+            <rect class="annb" x="408.0" y="4" width="80" height="19" rx="4"/>
+            <text class="annl" x="415.0" y="17">v2 shipped</text>
+            <circle class="annd" cx="402.0" cy="252.0" r="9"/>
+            <text class="annn" x="402.0" y="256.0" text-anchor="middle">1</text>
+            <text class="tk" x="56" y="256.0" text-anchor="end">0</text>
+            <text class="tk" x="56" y="201.5" text-anchor="end">4%</text>
+            <text class="tk" x="56" y="147.0" text-anchor="end">8%</text>
+            <text class="tk" x="56" y="92.5" text-anchor="end">12%</text>
+            <text class="tk" x="56" y="38.0" text-anchor="end">16%</text>
+            <text class="tk" transform="rotate(-45 94.0 266)" x="94.0" y="266" text-anchor="end">16 Feb</text>
+            <text class="tk" transform="rotate(-45 150.0 266)" x="150.0" y="266" text-anchor="end">23 Feb</text>
+            <text class="tk" transform="rotate(-45 206.0 266)" x="206.0" y="266" text-anchor="end">2 Mar</text>
+            <text class="tk" transform="rotate(-45 262.0 266)" x="262.0" y="266" text-anchor="end">9 Mar</text>
+            <text class="tk" transform="rotate(-45 318.0 266)" x="318.0" y="266" text-anchor="end">16 Mar</text>
+            <text class="tk" transform="rotate(-45 374.0 266)" x="374.0" y="266" text-anchor="end">23 Mar</text>
+            <text class="tk" transform="rotate(-45 430.0 266)" x="430.0" y="266" text-anchor="end">30 Mar</text>
+            <text class="tk" transform="rotate(-45 486.0 266)" x="486.0" y="266" text-anchor="end">6 Apr</text>
+            <text class="tk" transform="rotate(-45 542.0 266)" x="542.0" y="266" text-anchor="end">13 Apr</text>
+            <text class="tk" transform="rotate(-45 598.0 266)" x="598.0" y="266" text-anchor="end">20 Apr</text>
+            <text class="tk" transform="rotate(-45 654.0 266)" x="654.0" y="266" text-anchor="end">27 Apr</text>
+            <text class="tk" transform="rotate(-45 710.0 266)" x="710.0" y="266" text-anchor="end">4 May</text>
+            <text class="tk" transform="rotate(-45 766.0 266)" x="766.0" y="266" text-anchor="end">11 May</text>
+            <text class="tk" transform="rotate(-45 822.0 266)" x="822.0" y="266" text-anchor="end">18 May</text>
+          </svg>
+        </div>
+      </div>
+      <div class="brtext">
+        <div class="ba">
+          <div class="bastat">
+            <div class="ceb">Before v2</div>
+            <div class="stat sm"><div class="big">14<small>%</small><em>peak week</em></div></div>
+          </div>
+          <div class="bastat now">
+            <div class="ceb">After v2</div>
+            <div class="stat sm"><div class="big">0.3<small>%</small><em>typical week</em></div></div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+    <div class="foot"><span>14 / 16</span></div>
+  </section>
+
+  <!-- QUESTIONS -->
+  <section class="slide fin">
+    <div class="body"><div class="endq">
+      <h1>Questions?</h1>
+    </div></div>
+    <div class="foot"><span>15 / 16</span></div>
   </section>
 
   <!-- MODEL CHOICE -->
@@ -965,8 +1702,8 @@
           </tr>
         </thead>
         <tbody>
-<tr class="pick"><th>Gemini 3 Pro<span class=tag>the pick</span></th><td class="pass g1">&#10003;</td><td class="pass">~120 tok/s</td><td class="pass">1M</td><td class="pass g1">$2.00</td><td class="pass">$12.00</td><td class="pass">$0.030</td><td class="pass g1">5 / 5</td><td class="pass">5 / 5</td></tr>
-<tr class=""><th>Gemini 3 Flash</th><td class="pass g1">&#10003;</td><td class="pass">~210 tok/s</td><td class="pass">1M</td><td class="pass g1">$0.50</td><td class="pass">$3.00</td><td class="pass">$0.007</td><td class="warn g1">4 / 5</td><td class="fail">3 / 5</td></tr>
+<tr class="pick"><th>Gemini Pro<span class=tag>the pick</span></th><td class="pass g1">&#10003;</td><td class="pass">~120 tok/s</td><td class="pass">1M</td><td class="pass g1">$2.00</td><td class="pass">$12.00</td><td class="pass">$0.030</td><td class="pass g1">5 / 5</td><td class="pass">5 / 5</td></tr>
+<tr class=""><th>Gemini Flash</th><td class="pass g1">&#10003;</td><td class="pass">~210 tok/s</td><td class="pass">1M</td><td class="pass g1">$0.50</td><td class="pass">$3.00</td><td class="pass">$0.007</td><td class="warn g1">4 / 5</td><td class="fail">3 / 5</td></tr>
 <tr class=""><th>GPT-5.2</th><td class="pass g1">&#10003;</td><td class="pass">~90 tok/s</td><td class="pass">400K</td><td class="pass g1">$1.75</td><td class="warn">$14.00</td><td class="pass">$0.032</td><td class="pass g1">5 / 5</td><td class="warn">4 / 5</td></tr>
 <tr class=""><th>GPT-5 mini</th><td class="pass g1">&#10003;</td><td class="pass">~130 tok/s</td><td class="pass">400K</td><td class="pass g1">$0.25</td><td class="pass">$2.00</td><td class="pass">$0.004</td><td class="fail g1">3 / 5</td><td class="fail">3 / 5</td></tr>
 <tr class=""><th>Claude Opus 4.5</th><td class="pass g1">&#10003;</td><td class="warn">~60 tok/s</td><td class="pass">200K</td><td class="fail g1">$5.00</td><td class="fail">$25.00</td><td class="warn">$0.068</td><td class="pass g1">5 / 5</td><td class="pass">5 / 5</td></tr>
@@ -976,14 +1713,14 @@
       </table>
       <div class="hard"><span><i class="sw pass"></i>Meets the limit</span><span><i class="sw warn"></i>Borderline</span><span><i class="sw fail"></i>Misses the limit</span><span class="note">Speed per Artificial Analysis, Jan 2026 &middot; Per eval assumes ~6K tokens in, ~1.5K out</span></div>
     </div></div>
-    <div class="foot"><span>10 / 10</span></div>
+    <div class="foot"><span>16 / 16</span></div>
   </section>
 
       </div>
       <div class="ld-bar">
         <button type="button" id="lira-prev" aria-label="Previous slide">&larr; Prev</button>
         <button type="button" id="lira-next" aria-label="Next slide">Next &rarr;</button>
-        <span class="ld-count" id="lira-count">1 / 10</span>
+        <span class="ld-count" id="lira-count">1 / 16</span>
         <button type="button" id="lira-fs">Full screen</button>
       </div>
     </div>
@@ -1031,9 +1768,64 @@
         sc.scrollTo({ top: top, behavior: 'smooth' });
       }, 50);
     }
+
+    /* Sequence diagram: everything up to n is on (handled above). Here the
+       step just taken stays in full colour, the ones before it fall back to
+       grey, and only the two actors in play keep their lifelines lit. On the
+       last step -- and before the first -- nothing is greyed or dimmed, so the
+       slide opens and closes on the whole system in colour. */
+    var sq = s.querySelector('.sqd');
+    if (sq) {
+      var last = +(s.dataset.steps || 0);
+      var whole = (n === 0 || n >= last);
+      var lit = {};
+      sq.querySelectorAll('.sqm').forEach(function (m) {
+        var k = +m.dataset.step;
+        m.classList.toggle('past', !whole && k < n);
+        if (!whole && k === n) { lit[m.dataset.from] = 1; lit[m.dataset.to] = 1; }
+      });
+      sq.querySelectorAll('.sqa').forEach(function (a) {
+        a.classList.toggle('hot', whole || !!lit[a.dataset.a]);
+      });
+    }
+
+    /* next()/prev() move between steps without going through go(), so the
+       address bar is refreshed here rather than only in update() */
+    writeUrl();
   }
 
-  function update() { if (counter) counter.textContent = (i + 1) + ' / ' + slides.length; }
+  /* Deep links. ?slide=11 opens on that slide, &step=3 on that step within it,
+     and both are written back as you move so the address bar is always a link
+     to what is on screen. replaceState, not pushState: Back should leave the
+     article, not walk the deck backwards. The write is held off until the deck
+     has been used, so an ordinary reader never sees ?slide=1 appear. */
+  var live = false;
+
+  function writeUrl() {
+    if (!live || !history.replaceState) return;
+    var q = new URLSearchParams(location.search);
+    var st = stepOf(slides[i]);
+    q.set('slide', i + 1);
+    if (st) q.set('step', st); else q.delete('step');
+    history.replaceState(null, '', location.pathname + '?' + q + location.hash);
+  }
+
+  function readUrl() {
+    var q = new URLSearchParams(location.search);
+    var n = parseInt(q.get('slide'), 10);
+    if (!(n >= 1 && n <= slides.length)) return false;
+    slides[i].classList.remove('on');
+    i = n - 1;
+    slides[i].classList.add('on');
+    var max = +slides[i].dataset.steps || 0;
+    setStep(slides[i], Math.min(Math.max(parseInt(q.get('step'), 10) || 0, 0), max));
+    return true;
+  }
+
+  function update() {
+    if (counter) counter.textContent = (i + 1) + ' / ' + slides.length;
+    writeUrl();
+  }
 
   function go(n, toEnd) {
     slides[i].classList.remove('on');
@@ -1044,11 +1836,13 @@
   }
 
   function next() {
+    live = true;
     var s = slides[i], max = +s.dataset.steps || 0, cur = stepOf(s);
     if (cur < max) setStep(s, cur + 1); else go(i + 1);
   }
 
   function prev() {
+    live = true;
     var s = slides[i], cur = stepOf(s);
     if (cur > 0) setStep(s, cur - 1); else go(i - 1, true);
   }
@@ -1091,6 +1885,11 @@
   }
   document.addEventListener('fullscreenchange', fsLabel);
 
+  if (readUrl()) {
+    live = true;
+    deck.focus({ preventScroll: true });
+    deck.scrollIntoView({ block: 'center' });
+  }
   update();
 })();
 </script>
